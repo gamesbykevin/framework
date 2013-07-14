@@ -230,7 +230,7 @@ public class Layer
 
                     if (mi.isMousePressed() || mi.hasMouseMoved())
                     {
-                        option = getOption(mi.getMouseLocation());
+                        option = getOption(mi.getLocation());
 
                         if (option != null)
                         {
@@ -283,7 +283,7 @@ public class Layer
             {
                 if (mi.hasMouseMoved() && hasOptions())
                 {   //highlight the current Option
-                    setIndex(mi.getMouseLocation());
+                    setIndex(mi.getLocation());
                 }
             }
         }
