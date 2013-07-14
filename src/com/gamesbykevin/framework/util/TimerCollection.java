@@ -9,6 +9,7 @@ public class TimerCollection
     public static final String FORMAT_3 = "HH:mm:ss";
     public static final String FORMAT_4 = "HH:mm:ss.SSS";
     public static final String FORMAT_5 = "ss";
+    public static final String FORMAT_6 = "mm:ss.SSS";
     
     public static final long NANO_SECONDS_PER_SECOND = 1000000000;
     public static final long NANO_SECONDS_PER_MILLISECOND = 1000000;

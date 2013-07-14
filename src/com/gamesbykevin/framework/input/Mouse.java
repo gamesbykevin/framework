@@ -8,9 +8,9 @@ public class Mouse
     private boolean mouseMoved = false, mousePressed = false, mouseDragged = false, mouseExited = false;
     private boolean mouseEntered = false, mouseReleased = false, mouseClicked = false;
     
-    private Point mouseLocation = new Point();
+    private Point location = new Point();
     
-    private int mouseButton = -1;
+    private int button = -1;
     
     public Mouse()
     {
@@ -19,13 +19,13 @@ public class Mouse
     
     public void dispose()
     {
-        mouseLocation = null;
+        location = null;
     }
     
-    public void setMouseMoved(Point p)
+    public void setMouseMoved(final Point location)
     {
         this.mouseMoved = true;
-        this.mouseLocation = p;
+        this.location = location;
     }
     
     public boolean hasMouseMoved()
@@ -35,9 +35,9 @@ public class Mouse
     
     public void setMousePressed(MouseEvent e)
     {
-        this.mouseButton = e.getButton();
+        this.button = e.getButton();
         this.mousePressed = true;
-        this.mouseLocation = e.getPoint();
+        this.location = e.getPoint();
     }
     
     public boolean isMousePressed()
@@ -45,10 +45,10 @@ public class Mouse
         return this.mousePressed;
     }
     
-    public void setMouseDragged(Point p)
+    public void setMouseDragged(final Point location)
     {
         this.mouseDragged = true;
-        this.mouseLocation = p;
+        this.location = location;
     }
     
     public boolean isMouseDragged()
@@ -56,10 +56,10 @@ public class Mouse
         return this.mouseDragged;
     }
     
-    public void setMouseExited(Point p)
+    public void setMouseExited(final Point location)
     {
         this.mouseExited = true;
-        this.mouseLocation = p;
+        this.location = location;
     }
     
     public boolean hasMouseExited()
@@ -67,10 +67,10 @@ public class Mouse
         return this.mouseExited;
     }
     
-    public void setMouseEntered(Point p)
+    public void setMouseEntered(final Point location)
     {
         this.mouseEntered = true;
-        this.mouseLocation = p;
+        this.location = location;
     }
     
     public boolean hasMouseEntered()
@@ -80,9 +80,9 @@ public class Mouse
     
     public void setMouseReleased(MouseEvent e)
     {
-        this.mouseButton = e.getButton();
+        this.button = e.getButton();
         this.mouseReleased = true;
-        this.mouseLocation = e.getPoint();
+        this.location = e.getPoint();
     }
     
     public boolean isMouseReleased()
@@ -92,9 +92,9 @@ public class Mouse
     
     public void setMouseClicked(MouseEvent e)
     {
-        this.mouseButton = e.getButton();
+        this.button = e.getButton();
         this.mouseClicked = true;
-        this.mouseLocation = e.getPoint();
+        this.location = e.getPoint();
     }
     
     public boolean isMouseClicked()
@@ -102,29 +102,29 @@ public class Mouse
         return this.mouseClicked;
     }
     
-    public Point getMouseLocation()
+    public Point getLocation()
     {
-        return this.mouseLocation;
+        return this.location;
     }
     
-    public int getMouseButton()
+    public int getButton()
     {
-        return this.mouseButton;
+        return this.button;
     }
     
     public boolean hitMouseLeftButton()
     {
-        return (this.mouseButton == MouseEvent.BUTTON1);
+        return (this.button == MouseEvent.BUTTON1);
     }
     
     public boolean hitMouseMiddleButton()
     {
-        return (this.mouseButton == MouseEvent.BUTTON2);
+        return (this.button == MouseEvent.BUTTON2);
     }
     
      public boolean hitMouseRightButton()
     {
-        return (this.mouseButton == MouseEvent.BUTTON3);
+        return (this.button == MouseEvent.BUTTON3);
     }
    
     public void resetMouseEvents()
