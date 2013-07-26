@@ -169,6 +169,16 @@ public final class SpriteSheet
      */
     private SpriteSheetAnimation getSpriteSheetAnimation()
     {
-        return animations.get(current);
+        return getSpriteSheetAnimation(current);
+    }
+    
+    /**
+     * Get the sprite sheet animation
+     * @param key Unique identifier used to get the appropriate animation
+     * @return 
+     */
+    public SpriteSheetAnimation getSpriteSheetAnimation(Object key)
+    {
+        return animations.get(key);
     }
 }

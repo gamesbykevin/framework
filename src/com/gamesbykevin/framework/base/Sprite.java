@@ -6,7 +6,7 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 
-public abstract class Sprite extends Cell 
+public class Sprite extends Cell 
 {
     private int x, y, dx, dy, w, h;
     
@@ -57,7 +57,7 @@ public abstract class Sprite extends Cell
         spriteSheet = null;
     }
     
-    protected SpriteSheet getSpriteSheet()
+    public SpriteSheet getSpriteSheet()
     {
         return spriteSheet;
     }
