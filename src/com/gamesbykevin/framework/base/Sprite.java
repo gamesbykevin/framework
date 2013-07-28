@@ -286,7 +286,7 @@ public class Sprite extends Cell
      * in our sprite sheet if it exists. Also update
      * the x,y location based on the current x,y velocity.
      */
-    protected void update()
+    public void update()
     {
         if (hasAutoSize())
         {
@@ -301,7 +301,7 @@ public class Sprite extends Cell
         move();
     }
     
-    protected Graphics draw(Graphics g, final Image img)
+    public Graphics draw(Graphics g, final Image img)
     {
         if (spriteSheet.hasAnimations())
         {
@@ -313,7 +313,7 @@ public class Sprite extends Cell
         }
     }
     
-    protected Graphics draw(Graphics g, final Image img, final Rectangle location)
+    public Graphics draw(Graphics g, final Image img, final Rectangle location)
     {
         int dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2;
 
@@ -382,7 +382,7 @@ public class Sprite extends Cell
         return g;
     }
     
-    protected Graphics draw(Graphics g)
+    public Graphics draw(Graphics g)
     {
         if (spriteSheet.hasAnimations())
         {
@@ -394,7 +394,7 @@ public class Sprite extends Cell
         }
     }
     
-    protected Graphics draw(Graphics g, final Rectangle location)
+    public Graphics draw(Graphics g, final Rectangle location)
     {
         if (getImage() != null)
         {
@@ -446,7 +446,7 @@ public class Sprite extends Cell
         return g;
     }
     
-    protected Graphics draw(Graphics g, Image tmp, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2)
+    public Graphics draw(Graphics g, Image tmp, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2)
     {
         g.drawImage(tmp, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, null);
         return g;
