@@ -78,6 +78,15 @@ public class Sprite extends Cell
     }
     
     /**
+     * Get the center of the object
+     * @return Center of Sprite
+     */
+    public Point getCenter()
+    {
+        return new Point(getX() + (getWidth() / 2), getY() + (getHeight() / 2));
+    }
+    
+    /**
      * Returns the location of the Sprite
      * @return Point the (x,y) coordinates where the Sprite is located
      */
