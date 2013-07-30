@@ -16,8 +16,11 @@ public final class SpriteSheet
     //delay per frame (nanoseconds)
     private long delayPerFrame = -1; 
     
-    //all of our animations will be contained here
-    //private List<SpriteSheetAnimation> animations;
+    public SpriteSheet(final SpriteSheet spriteSheet)
+    {
+        this();
+        setDelay(spriteSheet.getDelay());
+    }
     
     public SpriteSheet(final long delayPerFrame)
     {
@@ -155,10 +158,14 @@ public final class SpriteSheet
     /**
      * Update the current animation in this sprite sheet
      */
-    public void update() 
+    public void update() throws Exception
     {
         if (isPaused())
             return;
+        
+        //make sure a delay is set even if it is 0
+        if (getDelay() < 0)
+            throw new Exception("Delay is not set for this SpriteSheet");
         
         getSpriteSheetAnimation().update(getDelay());
     }

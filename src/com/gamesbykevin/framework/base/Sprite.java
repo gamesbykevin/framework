@@ -295,7 +295,7 @@ public class Sprite extends Cell
      * in our sprite sheet if it exists. Also update
      * the x,y location based on the current x,y velocity.
      */
-    public void update()
+    public void update() throws Exception
     {
         if (hasAutoSize())
         {
