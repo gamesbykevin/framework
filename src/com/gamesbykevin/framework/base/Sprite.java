@@ -257,6 +257,8 @@ public class Sprite extends Cell
     
     /**
      * Does the user have velocityX or velocityY
+     * Will return true if x velocity or y velocity
+     * are not equal to 0
      * @return boolean
      */
     public boolean hasVelocity()
