@@ -43,7 +43,13 @@ public class Sprite extends Cell
         this.setVelocity(dx, dy);
         this.setDimensions(w, h);
         this.setImage(img);
-        
+    }
+    
+    /**
+     * Create a Sprite Sheet for this Sprite so we can add animations
+     */
+    public void createSpriteSheet()
+    {
         this.spriteSheet = new SpriteSheet();
     }
     
@@ -67,7 +73,7 @@ public class Sprite extends Cell
         return new Cell(getCol(), getRow());
     }
     
-    public void setAutoSizeSprite(final boolean autoSize)
+    public void setAutoSize(final boolean autoSize)
     {
         this.autoSize = autoSize;
     }
@@ -395,7 +401,7 @@ public class Sprite extends Cell
     
     public Graphics draw(Graphics g)
     {
-        if (spriteSheet.hasAnimations())
+        if (spriteSheet != null && spriteSheet.hasAnimations())
         {
             return draw(g, spriteSheet.getLocation());
         }
