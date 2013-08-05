@@ -1,15 +1,21 @@
 package com.gamesbykevin.framework.input;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Keyboard 
 {
     private boolean keyTyped, keyReleased, keyPressed;
     
-    private ArrayList keysPressed = new ArrayList(), keysReleased = new ArrayList(), keysTyped = new ArrayList();
+    private List<Integer> keysPressed, keysReleased;
+    private List<Character> keysTyped;
     
     public Keyboard()
     {
+        keysPressed  = new ArrayList<>();
+        keysReleased = new ArrayList<>();
+        keysTyped    = new ArrayList<>();
+        
         this.resetAllKeyEvents();
     }
     
@@ -25,19 +31,20 @@ public class Keyboard
         keysTyped = null;
     }
     
-    public void setKeyTyped(char keyChar)
+    public void setKeyTyped(final char keyChar)
     {
-        this.keyTyped = true;
+        keyTyped = true;
         
-        if (this.keysTyped.indexOf(keyChar) < 0)
-            this.keysTyped.add(keyChar);
+        if (keysTyped.indexOf(keyChar) < 0 && keysTyped.size() > 0)
+            keysTyped.add(keyChar);
     }
     
-    public void removeKeyTyped(char keyChar)
+    public void removeKeyTyped(final char keyChar)
     {
-        int index = this.keysTyped.indexOf(keyChar);
-        if (index > -1)
-            this.keysTyped.remove(index);
+        final int index = keysTyped.indexOf(keyChar);
+        
+        if (index > -1 && keysTyped.size() > 0)
+            keysTyped.remove(index);
     }
     
     public boolean isKeyTyped()
@@ -45,91 +52,95 @@ public class Keyboard
         return this.keyTyped;
     }
     
-    public boolean hasKeyTyped(char keyChar)
+    public boolean hasKeyTyped(final char keyChar)
     {
-        return (this.keyTyped && this.keysTyped.indexOf(keyChar) > -1);
+        return (keyTyped && keysTyped.indexOf(keyChar) > -1);
     }
     
-    public void setKeyReleased(int keyReleasedCode)
+    public void setKeyReleased(final int keyReleasedCode)
     {
-        this.keyReleased = true;
+        keyReleased = true;
         
-        if (this.keysReleased.indexOf(keyReleasedCode) < 0)
-            this.keysReleased.add(keyReleasedCode);
+        if (keysReleased.indexOf(keyReleasedCode) < 0)
+            keysReleased.add(keyReleasedCode);
         
-        int index = this.keysPressed.indexOf(keyReleasedCode);
-        if (index > -1)
-            this.keysPressed.remove(index);
+        final int index = keysPressed.indexOf(keyReleasedCode);
+        
+        if (index > -1 && keysPressed.size() > 0)
+            keysPressed.remove(index);
     }
     
-    public void removeKeyReleased(int keyReleasedCode)
+    public void removeKeyReleased(final int keyReleasedCode)
     {
-        int index = this.keysReleased.indexOf(keyReleasedCode);
-        if (index > -1)
-            this.keysReleased.remove(index);
+        final int index = keysReleased.indexOf(keyReleasedCode);
+        
+        if (index > -1 && keysReleased.size() > 0)
+            keysReleased.remove(index);
     }
     
     public boolean isKeyReleased()
     {
-        return this.keyReleased;
+        return keyReleased;
     }
     
-    public boolean hasKeyReleased(int keyReleasedCode)
+    public boolean hasKeyReleased(final int keyReleasedCode)
     {
-        return (this.keyReleased && this.keysReleased.indexOf(keyReleasedCode) > -1);
+        return (keyReleased && keysReleased.indexOf(keyReleasedCode) > -1);
     }
 
-    public void setKeyPressed(int keyPressedCode)
+    public void setKeyPressed(final int keyPressedCode)
     {
-        this.keyPressed = true;
+        keyPressed = true;
         
-        if (this.keysPressed.indexOf(keyPressedCode) < 0)
-            this.keysPressed.add(keyPressedCode);
+        if (keysPressed.indexOf(keyPressedCode) < 0)
+            keysPressed.add(keyPressedCode);
         
-        int index = this.keysReleased.indexOf(keyPressedCode);
-        if (index > -1)
-            this.keysReleased.remove(index);
+        final int index = keysReleased.indexOf(keyPressedCode);
+        
+        if (index > -1 && keysReleased.size() > 0)
+            keysReleased.remove(index);
     }
     
-    public void removeKeyPressed(int keyPressedCode)
+    public void removeKeyPressed(final int keyPressedCode)
     {
-        int index = this.keysPressed.indexOf(keyPressedCode);
-        if (index > -1)
-            this.keysPressed.remove(index);
+        final int index = keysPressed.indexOf(keyPressedCode);
+        
+        if (index > -1&& keysPressed.size() > 0)
+            keysPressed.remove(index);
     }
     
     public boolean isKeyPressed()
     {
-        return this.keyPressed;
+        return keyPressed;
     }
     
-    public boolean hasKeyPressed(int keyPressedCode)
+    public boolean hasKeyPressed(final int keyPressedCode)
     {
-        return (this.keyPressed && this.keysPressed.indexOf(keyPressedCode) > -1);
+        return (keyPressed && keysPressed.indexOf(keyPressedCode) > -1);
     }
     
     public void resetKeyReleasedEvent()
     {
-        this.keyReleased = false;
-        this.keysReleased.clear();
+        keyReleased = false;
+        keysReleased.clear();
     }
     
     public void resetKeyPressedEvent()
     {
-        this.keyPressed = false;
-        this.keysPressed.clear();
+        keyPressed = false;
+        keysPressed.clear();
     }
     
     public void resetKeyTypedEvent()
     {
-        this.keyTyped = false;
-        this.keysTyped.clear();
+        keyTyped = false;
+        keysTyped.clear();
     }
     
     public void resetAllKeyEvents()
     {
-        this.resetKeyPressedEvent();
-        this.resetKeyReleasedEvent();
-        this.resetKeyTypedEvent();
+        resetKeyPressedEvent();
+        resetKeyReleasedEvent();
+        resetKeyTypedEvent();
     }
 }
