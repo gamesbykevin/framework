@@ -178,6 +178,22 @@ public class Sprite extends Cell
         return this.y;
     }
     
+    /**
+     * Set the width and height based on the same width/height of the image
+     * 
+     * @param image The image we want to copy the dimensions from
+     */
+    public void setDimensions(final Image image)
+    {
+        setDimensions(image.getWidth(null), image.getHeight(null));
+    }
+    
+    /**
+     * Set the width and height based on parameters passed.
+     * 
+     * @param w Width
+     * @param h Height
+     */
     public void setDimensions(final int w, final int h)
     {
         setWidth(w);
