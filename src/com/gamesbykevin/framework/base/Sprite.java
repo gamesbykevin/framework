@@ -18,7 +18,7 @@ public class Sprite extends Cell
     //switch image north-south
     private boolean verticalFlip = false;
     
-    private Image img;
+    private Image image;
     
     private SpriteSheet spriteSheet;
     
@@ -55,10 +55,10 @@ public class Sprite extends Cell
     
     public void dispose()
     {
-        if (img != null)
-            img.flush();
+        if (image != null)
+            image.flush();
 
-        img = null;
+        image = null;
 
         spriteSheet = null;
     }
@@ -101,14 +101,20 @@ public class Sprite extends Cell
         return new Point(getX(), getY());
     }
     
-    public void setImage(final Image img)
+    public void setImage(final Image image)
     {
-        this.img = img;
+        this.image = image;
     }
     
+    /**
+     * Get the image assigned to the sprite. <br>
+     * If no image exists null will be returned.
+     * 
+     * @return Image 
+     */
     public Image getImage()
     {
-        return this.img;
+        return this.image;
     }
     
     public void setVerticalFlip(final boolean verticalFlip)
@@ -346,7 +352,7 @@ public class Sprite extends Cell
         }
     }
     
-    public Graphics draw(Graphics g, final Image img, final Rectangle location)
+    public Graphics draw(Graphics g, final Image image, final Rectangle location)
     {
         int dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2;
 
@@ -390,27 +396,27 @@ public class Sprite extends Cell
             if (!hasHorizontalFlip())
             {
                 sx1 = 0;
-                sx2 = img.getWidth(null);
+                sx2 = image.getWidth(null);
             }
             else
             {
-                sx1 = img.getWidth(null);
+                sx1 = image.getWidth(null);
                 sx2 = 0;
             }
             
             if (!hasVerticalFlip())
             {
                 sy1 = 0;
-                sy2 = img.getHeight(null);
+                sy2 = image.getHeight(null);
             }
             else
             {
-                sy1 = img.getHeight(null);
+                sy1 = image.getHeight(null);
                 sy2 = 0;
             }
         }
         
-        draw(g, img, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2);
+        draw(g, image, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2);
         
         return g;
     }
@@ -429,6 +435,7 @@ public class Sprite extends Cell
     
     public Graphics draw(Graphics g, final Rectangle location)
     {
+        //verify image exists before drawing
         if (getImage() != null)
         {
             if (hasAutoSize())
@@ -467,13 +474,6 @@ public class Sprite extends Cell
             }
             
             draw(g, getImage(), dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2);
-        }
-        else
-        {
-            g.setColor(Color.RED);
-            g.fillRect(getX(), getY(), getWidth(), getHeight());
-            g.setColor(Color.BLACK);
-            g.drawRect(getX(), getY(), getWidth(), getHeight());
         }
         
         return g;
