@@ -1,18 +1,26 @@
 package com.gamesbykevin.framework.menu;
 
-import com.gamesbykevin.framework.resources.AudioResource;
+import com.gamesbykevin.framework.resources.Audio;
 
 import java.awt.*;
 import java.util.*;
 
 public class Option 
 {
-    //I used LinkedHashMap because it maintains order of items in map unlike HashMap
-    private LinkedHashMap selections = new LinkedHashMap(); //all possible selections for this option
-    private Object nextLayerKey = null;                     //does the option when selected change the Layer
-    private int index = 0;                                  //what is the current selection displayed
-    private Rectangle location;                             //where is this option located
-    private String title = "";                              //title of the options
+    //all possible selections for this option, LinkedHashMap retains order when selections are added
+    private LinkedHashMap selections = new LinkedHashMap(); 
+    
+    //does this option "when selected" determine the next layer
+    private Object nextLayerKey = null;
+    
+    //what is the current selection displayed
+    private int index = 0;
+    
+    //where is this option located
+    private Rectangle location;
+    
+    //title of the options
+    private String title = "";
     
     public Option(Object nextLayerKey)
     {
@@ -47,7 +55,7 @@ public class Option
         return location.contains(mouseLocation);
     }
     
-    public void add(String description, AudioResource sound) 
+    public void add(String description, Audio sound) 
     {
         int key = selections.size();
         
@@ -76,35 +84,58 @@ public class Option
         return index;
     }
     
+    /**
+     * Get the next layer for the menu to navigate to
+     * @return Object
+     */
     public Object getNextLayerKey()
-    {   //returns which is the next layer to navigate to
+    {
         return this.nextLayerKey;
     }
     
+    /**
+     * Checks if there are option selections for this Option
+     * @return boolean
+     */
     public boolean hasOptionSelection()
-    {   //are there option selections for this Option
+    {
         return (selections.size() > 0);
     }
     
+    /**
+     * Move to the next selection in this option
+     */
     public void next()
-    {   //move to the next Selection in this option
-        getOptionSelection().stop();    //stop audio of current selection if applicable
+    {
+        //stop audio of current selection if applicable
+        getOptionSelection().stopSound();
         
-        index++;    //change index of current selection
+        //change index of current selection
+        index++;
         
-        if (index >= selections.size()) //make sure index does not go out of bounds
+        //make sure index does not go out of bounds
+        if (index >= selections.size()) 
             index = 0;
         
-        getOptionSelection().play();    //play audio of current selection if applicable
+        //play audio of current selection if exists
+        getOptionSelection().play();
     }
     
+    /**
+     * Get the current option selection
+     * @return OptionSelection 
+     */
     private OptionSelection getOptionSelection()
-    {   //gets the current OptionSelection
+    {
         return (OptionSelection)selections.get(getKey());
     }
     
+    /**
+     * Get the unique key for the current index in the hash map
+     * @return 
+     */
     private Object getKey()
-    {   //gets the key of the current index in our hashmap;
+    {
         return selections.keySet().toArray()[index];
     }
     
@@ -117,7 +148,8 @@ public class Option
         
         int textWidth = g.getFontMetrics().stringWidth(phrase);
         
-        if (textWidth > drawArea.width) //if words expand the width then draw on multiple lines
+        //if words expand the width then draw on multiple lines
+        if (textWidth > drawArea.width)
         {
             String[] eachWord = phrase.split(" ");
             String currentSentence = "";
@@ -201,19 +233,25 @@ public class Option
         return g;
     }
     
+    /**
+     * Free up resources
+     */
     public void dispose()
     {
-        index = 0;
-        
         if (selections != null)
         {
-            while(index < selections.size())
+            for (Object key : selections.keySet().toArray())
             {
-                getOptionSelection().dispose();
-                index++;
+                ((OptionSelection)selections.get(key)).dispose();
+                selections.put(key, null);
             }
+            
+            selections.clear();
+            selections = null;
         }
         
-        selections = null;
+        nextLayerKey = null;
+        location = null;
+        title = null;
     }
 }

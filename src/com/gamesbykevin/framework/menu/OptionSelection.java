@@ -1,51 +1,74 @@
 package com.gamesbykevin.framework.menu;
 
-import com.gamesbykevin.framework.resources.AudioResource;
+import com.gamesbykevin.framework.resources.Audio;
 
 import java.util.*;
 import java.awt.*;
 
+/**
+ * Each menu layer can contain a number of Options and each Option can have a number of option selections
+ * @author GOD
+ */
 public class OptionSelection 
-{   //each Menu Layer can contain a number of Options
-    private AudioResource sound;    //play sound when specific selection is selected
-    private String description;     //text to display for selection
+{
+    //play sound when specific selection is selected
+    private Audio sound;    
     
-    public OptionSelection(String description, AudioResource sound)
+    //text to display for selection
+    private String description;
+    
+    public OptionSelection(String description, Audio sound)
     {
         this.description = description;
         this.sound = sound;
     }
-    
+ 
+    /**
+     * Get the text that is displayed for this option selection
+     * @return String
+     */
     public String getDescription()
     {
         return this.description;
     }
     
-    public void stop()
-    {   //stops sound associated to selection
+    /**
+     * stops sound associated to selection if sound is playing
+     */
+    public void stopSound()
+    {   
         if (this.sound != null)
         {
-            this.sound.stop();
+            this.sound.stopSound();
         }
     }
     
+    /**
+     * Play sound associated to this option selection
+     */
     public void play()
     {   
         play(false);
     }
     
+    /**
+     * Play sound associated to this option selection
+     */
     public void play(boolean loop)
-    {   //plays sound associated to selection
+    {   
         if (this.sound != null)
         {
             this.sound.play(loop);
         }
     }
     
+    /**
+     * Free up resources
+     */
     public void dispose()
     {
         if (sound != null)
-            sound.stop();
+            sound.stopSound();
         
         sound = null;
         

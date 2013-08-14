@@ -44,6 +44,9 @@ public class Progress
         current++;
     }
     
+    /**
+     * Make the progress 100% complete
+     */
     public void setComplete()
     {
         current = total;

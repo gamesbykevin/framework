@@ -4,12 +4,12 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TextResource 
+public class Text 
 {
     //each line in the text file is stored in this array list
     private List<String> lines;
     
-    public TextResource(Class source, final String location) throws Exception
+    public Text(Class source, final String location) throws Exception
     {
         InputStream in = source.getResource(location).openStream();
         BufferedReader input =  new BufferedReader(new InputStreamReader(in));
@@ -49,5 +49,14 @@ public class TextResource
     public String getLine(final int index)
     {
         return lines.get(index);
+    }
+    
+    /**
+     * Free up resources
+     */
+    public void dispose()
+    {
+        lines.clear();
+        lines = null;
     }
 }

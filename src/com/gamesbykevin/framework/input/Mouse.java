@@ -127,7 +127,7 @@ public class Mouse
         return (this.button == MouseEvent.BUTTON3);
     }
    
-    public void resetMouseEvents()
+    public void reset()
     {
         this.mouseClicked  = false;
         this.mouseDragged  = false;

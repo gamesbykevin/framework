@@ -139,7 +139,7 @@ public class Menu
         if (isMenuFinished())
             return;
         
-        getLayer().manage(this, mouseInput, keyBoardInput, screen, timeDeduction);
+        getLayer().update(this, mouseInput, keyBoardInput, screen, timeDeduction);
     }
     
     public Graphics render(Graphics g) 

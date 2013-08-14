@@ -4,12 +4,28 @@ import com.gamesbykevin.framework.input.*;
 import com.gamesbykevin.framework.resources.*;
 import com.gamesbykevin.framework.util.*;
 
-import java.awt.*;
+import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
+import java.awt.Composite;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Stroke;
 import java.awt.event.KeyEvent;
 import java.util.LinkedHashMap;
 
+/**
+ * This contains the proper information for this layer.
+ * A menu will have multiple layers.
+ * 
+ * @author GOD
+ */
 public class Layer 
-{   //each Menu will contain a number of layers
+{  
     public enum Type
     {
         NONE, 
@@ -29,24 +45,54 @@ public class Layer
         SCROLL_VERTICAL_SOUTH_REPEAT 
     }
     
+    //the transition for this layer
     private Type type;
-    private int index = 0;                              //which option is the current one selected
+    
+    //which option is the current one selected
+    private int index = 0;
+    
     //I used LinkedHashMap because it maintains order of items in map unlike HashMap
-    private LinkedHashMap options = new LinkedHashMap();//options tied to this layer
-    private Timer timer;                                //time mechanism for this layer
-    private Rectangle location;                         //location to draw layer
-    private float visibility = 1;                       //transparency of layer
-    private float percentComplete = 0;                  //some Layer.Type's will need to track progress
-    private boolean pause = false;                      //pause layer after time mechanism complete
-    private boolean force = false;                      //force user to view layer
-    private Image image;                                //does this Layer have an image as the background
-    private Object nextLayerKey;                        //after layer complete which is next
-    private String title;                               //if this layer has options what is the title
-    private AudioResource sound;                        //does this layer have background sound
+    //options assigned to this layer
+    private LinkedHashMap options = new LinkedHashMap();
+    
+    //time mechanism for this layer
+    private Timer timer;
+    
+    //window in which layer will be drawn
+    private Rectangle location;
+    
+    //transparency of layer
+    private float visibility = 1;
+    
+    //some Layers will need to track progress
+    private float percentComplete = 0;
+    
+    //pause layer after time mechanism complete
+    private boolean pause = false;
+    
+    //force user to view layer
+    private boolean force = false;
+    
+    //does this Layer have an image as the background
+    private Image image;
+    
+    //after layer complete which is next
+    private Object nextLayerKey;
+    
+    //if this layer has options a title will need to be set
+    private String title;
+    
+    //does this layer have background sound to play
+    private Audio sound;
 
-    private Color menuColor1 = Color.WHITE; //border
-    private Color menuColor2 = Color.BLACK; //text
-    private Color menuColor3 = Color.BLUE;  //menu background
+    //border color
+    private Color menuColor1 = Color.WHITE; 
+    
+    //text color
+    private Color menuColor2 = Color.BLACK;
+    
+    //menu background color
+    private Color menuColor3 = Color.BLUE;
     
     public Layer(Type type, Rectangle screen)
     {
@@ -123,7 +169,7 @@ public class Layer
         this.timer = timer;
     }
     
-    public void setSound(AudioResource sound)
+    public void setSound(Audio sound)
     {
         this.sound = sound;
     }
@@ -159,13 +205,17 @@ public class Layer
         options.put(key, option);
     }
     
-    public void setIndex(Point mouseLocation)
-    {   //if the mouse intersects the option set as current option
+    /**
+     * If the mouse intersects the option set as current option
+     * @param location 
+     */
+    public void setIndex(final Point location)
+    {
         for (int i=0; i < options.size(); i++)
         {
             Option tmp = getOption(getKey(i));
             
-            if (tmp.hasLocation(mouseLocation))
+            if (tmp.hasLocation(location))
             {
                 this.index = i;
                 break;
@@ -196,46 +246,66 @@ public class Layer
         return (Option)options.get(key);
     }
     
+    /**
+     * Get the current option
+     * @return 
+     */
     public Option getOption()
-    {   //gets the current Option
+    {
         return getOption(getKey());
     }
     
+    /**
+     * Gets the key of the current index in our hash map
+     * @return Object
+     */
     private Object getKey()
-    {   //gets the key of the current index in our hashmap;
+    {
         return getKey(this.index);
     }
     
+    /**
+     * Gets the key of a specific index in our hash map
+     * 
+     * @param index
+     * @return Object
+     */
     private Object getKey(int index)
-    {   //gets the key of a specific index in our hashmap
+    {
         if (!hasOptions())
             return null;
         
         return options.keySet().toArray()[index];
     }
     
-    public void manage(Menu menu, Mouse mi, Keyboard ki, Rectangle screen, long timeDeduction) 
+    public void update(Menu menu, Mouse mi, Keyboard ki, Rectangle screen, long timeDeduction) 
     {
+        //make sure we aren't forced to view this layer
         if (!getForce())
-        {   //if the user is not forced to watch the current layer check for input to skip to the next layer
+        {
+            //check for input to skip to the next layer
             if (ki.isKeyPressed() || mi.isMousePressed())
             {
+                //if we have no options and we have the next layer set
                 if (getNextLayerKey() != null && !hasOptions())
-                {   //verify this option is supposed to take us to another layer in the menu and has no Options
+                {
                     menu.setLayer(getNextLayerKey());
                 }
                 else
                 {
                     Option option;
 
+                    //if the mouse was pressed or the mouse was moved
                     if (mi.isMousePressed() || mi.hasMouseMoved())
                     {
                         option = getOption(mi.getLocation());
 
+                        //does the option exist
                         if (option != null)
                         {
                             if (mi.isMousePressed())
-                            {   //move to next option selection in this option or possibly change layer
+                            {   
+                                //move to next option selection in this option or possibly change layer
                                 if (option.getNextLayerKey() == null)
                                 {
                                     option.next();
@@ -243,7 +313,9 @@ public class Layer
                                 else
                                 {
                                     menu.setLayer(option.getNextLayerKey());
-                                    menu.resetLayer();//since we are possibly re-selecting a layer reset the time
+                                    
+                                    //since we are possibly re-selecting a layer reset the time
+                                    menu.resetLayer();
                                 }
                             }
                         }
@@ -260,7 +332,9 @@ public class Layer
                         else
                         {
                             menu.setLayer(option.getNextLayerKey());
-                            menu.resetLayer();//since we are possibly re-selecting a layer reset the time
+                            
+                            //since we are possibly re-selecting a layer reset the time
+                            menu.resetLayer();
                         }
                     }
 
@@ -276,13 +350,14 @@ public class Layer
                         index = 0;
                 }
 
-                ki.resetAllKeyEvents();
-                mi.resetMouseEvents();
+                ki.reset();
+                mi.reset();
             }
             else
             {
                 if (mi.hasMouseMoved() && hasOptions())
-                {   //highlight the current Option
+                {   
+                    //highlight the current Option
                     setIndex(mi.getLocation());
                 }
             }
@@ -503,7 +578,7 @@ public class Layer
     public void dispose()
     {
         if (sound != null)
-            sound.stop();
+            sound.stopSound();
         
         sound = null;
         
@@ -514,12 +589,9 @@ public class Layer
         
         if (options != null)
         {
-            index = 0;
-
-            while(index < options.size())
+            for (Object key : options.keySet().toArray())
             {
-                getOption().dispose();
-                index++;
+                getOption(key).dispose();
             }
             
             options.clear();

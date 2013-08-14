@@ -5,8 +5,6 @@ import java.util.List;
 
 public class Keyboard 
 {
-    private boolean keyTyped, keyReleased, keyPressed;
-    
     private List<Integer> keysPressed, keysReleased;
     private List<Character> keysTyped;
     
@@ -15,10 +13,11 @@ public class Keyboard
         keysPressed  = new ArrayList<>();
         keysReleased = new ArrayList<>();
         keysTyped    = new ArrayList<>();
-        
-        this.resetAllKeyEvents();
     }
     
+    /**
+     * Free up resources
+     */
     public void dispose()
     {
         keysPressed.clear();
@@ -31,14 +30,20 @@ public class Keyboard
         keysTyped = null;
     }
     
-    public void setKeyTyped(final char keyChar)
+    /**
+     * Add the specified keyChar typed
+     * @param keyChar 
+     */
+    public void addKeyTyped(final char keyChar)
     {
-        keyTyped = true;
-        
-        if (keysTyped.indexOf(keyChar) < 0 && keysTyped.size() > 0)
+        if (keysTyped.indexOf(keyChar) < 0)
             keysTyped.add(keyChar);
     }
     
+    /**
+     * Remove the specified key typed
+     * @param keyChar 
+     */
     public void removeKeyTyped(final char keyChar)
     {
         final int index = keysTyped.indexOf(keyChar);
@@ -47,100 +52,150 @@ public class Keyboard
             keysTyped.remove(index);
     }
     
+    /**
+     * Have there been keys typed
+     * @return boolean
+     */
     public boolean isKeyTyped()
     {
-        return this.keyTyped;
+        return keysTyped.size() > 0;
     }
     
+    /**
+     * Checks if the keyTyped flag is true and if the 
+     * keyChar is in the keysTyped List.
+     * 
+     * @param keyChar
+     * @return boolean
+     */
     public boolean hasKeyTyped(final char keyChar)
     {
-        return (keyTyped && keysTyped.indexOf(keyChar) > -1);
+        return keysTyped.indexOf(keyChar) > -1;
     }
     
-    public void setKeyReleased(final int keyReleasedCode)
+    /**
+     * Add keyCode to List
+     * 
+     * @param keyCode 
+     */
+    public void addKeyReleased(final int keyCode)
     {
-        keyReleased = true;
+        if (keysReleased.indexOf(keyCode) < 0)
+            keysReleased.add(keyCode);
         
-        if (keysReleased.indexOf(keyReleasedCode) < 0)
-            keysReleased.add(keyReleasedCode);
+        //cant have key released and pressed so remove from other list
+        removeKeyPressed(keyCode);
+    }
+    
+    /**
+     * Remove keyCode from List
+     * 
+     * @param keyCode 
+     */
+    public void removeKeyReleased(final int keyCode)
+    {
+        final int index = keysReleased.indexOf(keyCode);
         
-        final int index = keysPressed.indexOf(keyReleasedCode);
+        if (index > -1 && keysReleased.size() > 0)
+            keysReleased.remove(index);
+    }
+    
+    /**
+     * Check if any keys have been released
+     * 
+     * @return boolean
+     */
+    public boolean isKeyReleased()
+    {
+        return keysReleased.size() > 0;
+    }
+    
+    /**
+     * Does keyCode exist in list
+     * @param keyCode
+     * @return boolean
+     */
+    public boolean hasKeyReleased(final int keyCode)
+    {
+        return keysReleased.indexOf(keyCode) > -1;
+    }
+
+    /**
+     * Add keyCode to List
+     * @param keyCode 
+     */
+    public void addKeyPressed(final int keyCode)
+    {
+        if (keysPressed.indexOf(keyCode) < 0)
+            keysPressed.add(keyCode);
+        
+        //cant have key released and pressed so remove from other list
+        removeKeyReleased(keyCode);
+    }
+    
+    /**
+     * Removes the keyCode from the List
+     * @param keyCode 
+     */
+    public void removeKeyPressed(final int keyCode)
+    {
+        final int index = keysPressed.indexOf(keyCode);
         
         if (index > -1 && keysPressed.size() > 0)
             keysPressed.remove(index);
     }
     
-    public void removeKeyReleased(final int keyReleasedCode)
-    {
-        final int index = keysReleased.indexOf(keyReleasedCode);
-        
-        if (index > -1 && keysReleased.size() > 0)
-            keysReleased.remove(index);
-    }
-    
-    public boolean isKeyReleased()
-    {
-        return keyReleased;
-    }
-    
-    public boolean hasKeyReleased(final int keyReleasedCode)
-    {
-        return (keyReleased && keysReleased.indexOf(keyReleasedCode) > -1);
-    }
-
-    public void setKeyPressed(final int keyPressedCode)
-    {
-        keyPressed = true;
-        
-        if (keysPressed.indexOf(keyPressedCode) < 0)
-            keysPressed.add(keyPressedCode);
-        
-        final int index = keysReleased.indexOf(keyPressedCode);
-        
-        if (index > -1 && keysReleased.size() > 0)
-            keysReleased.remove(index);
-    }
-    
-    public void removeKeyPressed(final int keyPressedCode)
-    {
-        final int index = keysPressed.indexOf(keyPressedCode);
-        
-        if (index > -1&& keysPressed.size() > 0)
-            keysPressed.remove(index);
-    }
-    
+    /**
+     * Has any key been pressed
+     * @return boolean
+     */
     public boolean isKeyPressed()
     {
-        return keyPressed;
+        return keysPressed.size() > 0;
     }
     
-    public boolean hasKeyPressed(final int keyPressedCode)
+    /**
+     * Checks if keyPressed flag is set to true and if parameter
+     * keyCode exists in the List
+     * @param keyCode
+     * @return boolean
+     */
+    public boolean hasKeyPressed(final int keyCode)
     {
-        return (keyPressed && keysPressed.indexOf(keyPressedCode) > -1);
+        return (keysPressed.indexOf(keyCode) > -1);
     }
     
-    public void resetKeyReleasedEvent()
+    /**
+     * Reset all key released events
+     */
+    public void resetKeyReleased()
     {
-        keyReleased = false;
         keysReleased.clear();
     }
     
-    public void resetKeyPressedEvent()
+    /**
+     * Reset all key pressed events
+     */
+    public void resetKeyPressed()
     {
-        keyPressed = false;
         keysPressed.clear();
     }
     
-    public void resetKeyTypedEvent()
+    /**
+     * Reset all key typed events
+     */
+    public void resetKeyTyped()
     {
-        keyTyped = false;
         keysTyped.clear();
     }
     
-    public void resetAllKeyEvents()
+    /**
+     * Reset all key pressed, released, typed events
+     */
+    public void reset()
     {
-        resetKeyPressedEvent();
-        resetKeyReleasedEvent();
-        resetKeyTypedEvent();
+        resetKeyPressed();
+        resetKeyReleased();
+        resetKeyTyped();
     }
 }
