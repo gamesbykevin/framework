@@ -466,8 +466,9 @@ public class Layer
             }
         }
         
+        //make sure there are options first
         if (hasOptions())
-        {   //make sure there are options first
+        {
             int middleX = screen.x + (screen.width  / 2);
             int middleY = screen.y + (screen.height / 2);
 
@@ -539,9 +540,14 @@ public class Layer
             //return original stoke and font when done
             g2d.setStroke(cachedStroke);
             g2d.setFont(cachedFont);
+            
+            cachedStroke = null;
+            cachedFont = null;
         }
         
         g2d.setComposite(originalComposite);
+        
+        originalComposite = null;
         
         g2d.setColor(Color.BLACK);
         
