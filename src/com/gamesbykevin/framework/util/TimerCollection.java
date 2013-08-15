@@ -39,14 +39,14 @@ public class TimerCollection
     public static final long NANO_SECONDS_PER_MINUTE = 60000000000L;
     public static final long NANO_SECONDS_PER_HOUR = 3600000000000L;
     
-    private HashMap timers;
+    private HashMap<Object, Timer> timers;
     
     private long timeDeduction;
     
     public TimerCollection(final long timeDeduction)
     {
         this.timeDeduction = timeDeduction;
-        timers = new HashMap();
+        timers = new HashMap<>();
     }
     
     /**
@@ -142,7 +142,7 @@ public class TimerCollection
      */
     public Timer getTimer(Object key)
     {
-        return (Timer)timers.get(key);
+        return timers.get(key);
     }
     
     /**
@@ -150,9 +150,7 @@ public class TimerCollection
      */
     public void resetRemaining()
     {
-        Object[] keys = timers.keySet().toArray();
-        
-        for (Object key : keys)
+        for (Object key : timers.keySet().toArray())
         {
             resetRemaining(key);
         }

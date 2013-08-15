@@ -1,18 +1,23 @@
 package com.gamesbykevin.framework.ai;
 
 import com.gamesbykevin.framework.base.Cell;
+
 import java.util.ArrayList;
+import java.util.List;
 
 public class AStar 
 {
     private Node start, goal;
     
-    private ArrayList closedList, openList, path = new ArrayList();
+    private List<Node> openList, closedList, path;
     
     private boolean foundGoal = false;
     
     public AStar()
     {
+        openList = new ArrayList<>();
+        closedList = new ArrayList<>();
+        path = new ArrayList<>();
     }
     
     public AStar(Cell start, Cell goal)
@@ -116,10 +121,10 @@ public class AStar
         //ArrayList otherObstacles are any other cells in the way note: can be null if no obstacles
         
         if (openList == null)
-            openList = new ArrayList();
+            openList = new ArrayList<>();
         
         if (closedList == null)
-            closedList = new ArrayList();
+            closedList = new ArrayList<>();
         
         start.setBounds(0, map[0].length -  1, 0, map.length - 1);  //set boundaries for the start cell
         start.setGoalScore(getGoalScore(start));
@@ -145,7 +150,7 @@ public class AStar
             }
 
             //add nodes surrounding the current node
-            ArrayList possibleNewNodes = new ArrayList();
+            List<Node> possibleNewNodes = new ArrayList<>();
             
             for (int x=-1; x <= 1; x++)
             {
@@ -163,7 +168,7 @@ public class AStar
             
             for (int i=0; i < possibleNewNodes.size(); i++)
             {
-                node = (Node)possibleNewNodes.get(i);
+                node = possibleNewNodes.get(i);
 
                 if (current.getCol() != node.getCol() && current.getRow() != node.getRow())
                 {
@@ -199,7 +204,7 @@ public class AStar
         //after we found the goal backtrack the closed list to create the path until we reach the start
         if (closedList.size() > 0 && foundGoal)
         {
-            current = (Node)closedList.get(closedList.size() - 1);
+            current = closedList.get(closedList.size() - 1);
 
             while(true)
             {   //start at goal and finish at the start
@@ -265,7 +270,7 @@ public class AStar
         {
             for (int i=0; i < openList.size(); i++)
             {
-                Node tmp = (Node)openList.get(i);
+                Node tmp = openList.get(i);
 
                 if (node.equals(tmp))
                 {
@@ -294,7 +299,7 @@ public class AStar
         
         for (int i=0; i < openList.size(); i++)
         {
-            Node tmp = (Node)openList.get(i);
+            Node tmp = openList.get(i);
             
             if (i == 0 || tmp.getTotalScore() < lowestScore)
             {
@@ -305,7 +310,7 @@ public class AStar
             tmp = null;
         }
         
-        return (Node)openList.get(index);
+        return openList.get(index);
     }
     
     private boolean hasOpenNode()
@@ -317,7 +322,7 @@ public class AStar
     {
         for (int i=0; i < openList.size(); i++)
         {
-            Node tmp = (Node)openList.get(i);
+            Node tmp = openList.get(i);
             
             if (testNode.equals(tmp))
                 return tmp;
@@ -332,7 +337,7 @@ public class AStar
     {
         for (int i=0; i < closedList.size(); i++)
         {
-            Node tmp = (Node)closedList.get(i);
+            Node tmp = closedList.get(i);
             
             if (testNode.equals(tmp))
             {
@@ -349,7 +354,7 @@ public class AStar
     {
         for (int i=0; i < openList.size(); i++)
         {
-            Node tmpNode = (Node)openList.get(i);
+            Node tmpNode = openList.get(i);
             
             if (node.equals(tmpNode))
             {
@@ -385,7 +390,7 @@ public class AStar
         return goal;
     }
     
-    public ArrayList getPath()
+    public List<Node> getPath()
     {   //returns an arraylist of cell's from the goal to the start
         return path;
     }

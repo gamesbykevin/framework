@@ -8,7 +8,7 @@ import java.util.*;
 public class Option 
 {
     //all possible selections for this option, LinkedHashMap retains order when selections are added
-    private LinkedHashMap selections = new LinkedHashMap(); 
+    private LinkedHashMap<Object, OptionSelection> selections;
     
     //does this option "when selected" determine the next layer
     private Object nextLayerKey = null;
@@ -25,6 +25,8 @@ public class Option
     public Option(Object nextLayerKey)
     {
         this.nextLayerKey = nextLayerKey;
+        
+        selections = new LinkedHashMap<>(); 
     }
     
     public Option(String title)
@@ -57,6 +59,9 @@ public class Option
     
     public void add(String description, Audio sound) 
     {
+        if (selections == null)
+            selections = new LinkedHashMap<>(); 
+        
         int key = selections.size();
         
         OptionSelection optionSelection = new OptionSelection(description, sound);
@@ -127,7 +132,17 @@ public class Option
      */
     private OptionSelection getOptionSelection()
     {
-        return (OptionSelection)selections.get(getKey());
+        return getpOptionSelection(getKey());
+    }
+    
+    /**
+     * Get the option selection based on the key parameter
+     * @param key
+     * @return OptionSelection
+     */
+    private OptionSelection getpOptionSelection(Object key)
+    {
+        return (OptionSelection)selections.get(key);
     }
     
     /**
@@ -242,7 +257,7 @@ public class Option
         {
             for (Object key : selections.keySet().toArray())
             {
-                ((OptionSelection)selections.get(key)).dispose();
+                getpOptionSelection(key).dispose();
                 selections.put(key, null);
             }
             

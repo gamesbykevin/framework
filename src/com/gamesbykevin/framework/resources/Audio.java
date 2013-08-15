@@ -166,6 +166,7 @@ public class Audio implements Runnable
             switch(getType())
             {
                 case MID:
+                    
                     //create a sequencer for the sequence
                     sequencer = MidiSystem.getSequencer();
 
@@ -173,7 +174,7 @@ public class Audio implements Runnable
                     sequencer.open();
 
                     //let the sequencer know where the midi file data is located
-                    sequencer.setSequence(sequence);  
+                    sequencer.setSequence(sequence); 
 
                     //are we looping sound
                     if (loop)
@@ -206,6 +207,7 @@ public class Audio implements Runnable
 
                 case MP3:
                     
+                    //create a new player with the assigned file name
                     player = new Player(source.getResourceAsStream(fileName));
 
                     //are we looping sound

@@ -8,8 +8,10 @@ import java.awt.Rectangle;
 
 public class Sprite extends Cell 
 {
+    //(x, y) = location (dx, dy) = velocity for x/y coordinates, (w, h) = width and height
     private int x, y, dx, dy, w, h;
     
+    //do we automatically set the width and height based on the current animations dimensions
     private boolean autoSize = false;
     
     //switch image east/west
@@ -18,9 +20,17 @@ public class Sprite extends Cell
     //switch image north-south
     private boolean verticalFlip = false;
     
+    //window dimensions of original image, will update every time setImage() is called
+    private Rectangle imageDimensions;
+    
+    //image that we will be using to draw on screen
     private Image image;
     
+    //sprite sheet containing all the animations for this sprite
     private SpriteSheet spriteSheet;
+    
+    //the rectangle representing the sprites x,y width,height coordinates
+    private Rectangle rectangle;
     
     public Sprite()
     {
@@ -311,12 +321,20 @@ public class Sprite extends Cell
     }
     
     /**
-     * Create a Rectangle object based on the current x, y, width, height
+     * Get a Rectangle object based on the current x, y, width, height
      * @return Rectangle
      */
     public Rectangle getRectangle()
     {
-        return new Rectangle(getX(), getY(), getWidth(), getHeight());
+        if (rectangle == null)
+            rectangle = new Rectangle(getX(), getY(), getWidth(), getHeight());
+        
+        rectangle.x = getX();
+        rectangle.y = getY();
+        rectangle.width = getWidth();
+        rectangle.height = getHeight();
+        
+        return rectangle;
     }
     
     /**
@@ -340,7 +358,7 @@ public class Sprite extends Cell
         move();
     }
     
-    public Graphics draw(Graphics g, final Image img)
+    public Graphics draw(final Graphics g, final Image img)
     {
         if (spriteSheet.hasAnimations())
         {
@@ -352,7 +370,7 @@ public class Sprite extends Cell
         }
     }
     
-    public Graphics draw(Graphics g, final Image image, final Rectangle location)
+    public Graphics draw(final Graphics g, final Image image, final Rectangle location)
     {
         int dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2;
 
@@ -421,7 +439,7 @@ public class Sprite extends Cell
         return g;
     }
     
-    public Graphics draw(Graphics g)
+    public Graphics draw(final Graphics g)
     {
         if (spriteSheet != null && spriteSheet.hasAnimations())
         {
@@ -429,11 +447,14 @@ public class Sprite extends Cell
         }
         else
         {
-            return draw(g, new Rectangle(0, 0, this.getImage().getWidth(null), this.getImage().getHeight(null)));
+            if (imageDimensions == null || imageDimensions.width != image.getWidth(null) || imageDimensions.height != image.getHeight(null))
+                imageDimensions = new Rectangle(0, 0, image.getWidth(null), image.getHeight(null));
+            
+            return draw(g, imageDimensions);
         }
     }
     
-    public Graphics draw(Graphics g, final Rectangle location)
+    public Graphics draw(final Graphics g, final Rectangle location)
     {
         //verify image exists before drawing
         if (getImage() != null)
@@ -479,7 +500,7 @@ public class Sprite extends Cell
         return g;
     }
     
-    public Graphics draw(Graphics g, Image tmp, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2)
+    public Graphics draw(final Graphics g, Image tmp, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2)
     {
         g.drawImage(tmp, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, null);
         return g;

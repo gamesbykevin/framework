@@ -14,7 +14,6 @@ public class Mouse
     
     public Mouse()
     {
-        
     }
     
     public void dispose()
@@ -25,7 +24,7 @@ public class Mouse
     public void setMouseMoved(final Point location)
     {
         this.mouseMoved = true;
-        this.location = location;
+        setLocation(location);
     }
     
     public boolean hasMouseMoved()
@@ -37,7 +36,7 @@ public class Mouse
     {
         this.button = e.getButton();
         this.mousePressed = true;
-        this.location = e.getPoint();
+        setLocation(location);
     }
     
     public boolean isMousePressed()
@@ -48,7 +47,7 @@ public class Mouse
     public void setMouseDragged(final Point location)
     {
         this.mouseDragged = true;
-        this.location = location;
+        setLocation(location);
     }
     
     public boolean isMouseDragged()
@@ -59,7 +58,7 @@ public class Mouse
     public void setMouseExited(final Point location)
     {
         this.mouseExited = true;
-        this.location = location;
+        setLocation(location);
     }
     
     public boolean hasMouseExited()
@@ -70,7 +69,7 @@ public class Mouse
     public void setMouseEntered(final Point location)
     {
         this.mouseEntered = true;
-        this.location = location;
+        setLocation(location);
     }
     
     public boolean hasMouseEntered()
@@ -82,7 +81,7 @@ public class Mouse
     {
         this.button = e.getButton();
         this.mouseReleased = true;
-        this.location = e.getPoint();
+        setLocation(e.getPoint());
     }
     
     public boolean isMouseReleased()
@@ -94,7 +93,7 @@ public class Mouse
     {
         this.button = e.getButton();
         this.mouseClicked = true;
-        this.location = e.getPoint();
+        setLocation(e.getPoint());
     }
     
     public boolean isMouseClicked()
@@ -102,9 +101,18 @@ public class Mouse
         return this.mouseClicked;
     }
     
+    /**
+     * Get the x,y coordinates
+     * @return Point
+     */
     public Point getLocation()
     {
         return this.location;
+    }
+    
+    private void setLocation(final Point location)
+    {
+        this.location = location;
     }
     
     public int getButton()
@@ -112,17 +120,17 @@ public class Mouse
         return this.button;
     }
     
-    public boolean hitMouseLeftButton()
+    public boolean hitLeftButton()
     {
         return (this.button == MouseEvent.BUTTON1);
     }
     
-    public boolean hitMouseMiddleButton()
+    public boolean hitMiddleButton()
     {
         return (this.button == MouseEvent.BUTTON2);
     }
     
-     public boolean hitMouseRightButton()
+     public boolean hitRightButton()
     {
         return (this.button == MouseEvent.BUTTON3);
     }

@@ -53,7 +53,7 @@ public class Layer
     
     //I used LinkedHashMap because it maintains order of items in map unlike HashMap
     //options assigned to this layer
-    private LinkedHashMap options = new LinkedHashMap();
+    private LinkedHashMap<Object, Option> options;
     
     //time mechanism for this layer
     private Timer timer;
@@ -96,6 +96,8 @@ public class Layer
     
     public Layer(Type type, Rectangle screen)
     {
+        options = new LinkedHashMap<>();
+        
         this.type = type;
         
         switch (type)
@@ -598,6 +600,7 @@ public class Layer
             for (Object key : options.keySet().toArray())
             {
                 getOption(key).dispose();
+                options.put(key, null);
             }
             
             options.clear();

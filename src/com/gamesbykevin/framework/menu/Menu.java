@@ -10,26 +10,35 @@ import java.util.LinkedHashMap;
 public class Menu 
 {
     //I used LinkedHashMap because it maintains order of items in map unlike HashMap
-    private LinkedHashMap layers = new LinkedHashMap();
+    private LinkedHashMap<Object, Layer> layers;
+    
+    //screen menu will be drawn within
     private Rectangle screen;
-    private int index = 0;                  //current layer
-    private int indexFinish = 0;            //which layer is last
+    
+    //current layer
+    private int index = 0;
+    
+    //which layer is last
+    private int indexFinish = 0;
     
     public Menu(Rectangle screen) 
     {
         this.screen = new Rectangle(screen);
+        
+        layers = new LinkedHashMap<>();
     }
     
     public void dispose()
     {
-        index = 0;
-        
-        while(index < layers.size())
+        //loop through every key available
+        for (Object key : layers.keySet().toArray())
         {
-            getLayer().dispose();
-            index++;
+            //recycle layer elements
+            getLayer(key).dispose();
+            layers.put(key, null);
         }
         
+        layers.clear();
         layers = null;
     }
     
