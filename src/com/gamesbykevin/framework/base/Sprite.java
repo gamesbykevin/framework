@@ -11,9 +11,6 @@ public class Sprite extends Cell
     //(x, y) = location (dx, dy) = velocity for x/y coordinates, (w, h) = width and height
     private int x, y, dx, dy, w, h;
     
-    //do we automatically set the width and height based on the current animations dimensions
-    private boolean autoSize = false;
-    
     //switch image east/west
     private boolean horizontalFlip = false;
     
@@ -81,16 +78,6 @@ public class Sprite extends Cell
     public Cell getCell()
     {
         return new Cell(getCol(), getRow());
-    }
-    
-    public void setAutoSize(final boolean autoSize)
-    {
-        this.autoSize = autoSize;
-    }
-    
-    public boolean hasAutoSize()
-    {
-        return this.autoSize;
     }
     
     /**
@@ -345,15 +332,6 @@ public class Sprite extends Cell
      */
     public void update() throws Exception
     {
-        if (hasAutoSize())
-        {
-            if (spriteSheet != null)
-            {
-                setWidth(spriteSheet.getLocation().width);
-                setHeight(spriteSheet.getLocation().height);
-            }
-        }
-        
         //update x,y
         move();
     }
@@ -373,12 +351,6 @@ public class Sprite extends Cell
     public Graphics draw(final Graphics g, final Image image, final Rectangle location)
     {
         int dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2;
-
-        if (hasAutoSize() && location != null)
-        {
-            setWidth(location.width);
-            setHeight(location.height);
-        }
             
         dx1 = getX();
         dy1 = getY();
@@ -459,12 +431,6 @@ public class Sprite extends Cell
         //verify image exists before drawing
         if (getImage() != null)
         {
-            if (hasAutoSize())
-            {
-                setWidth(location.width);
-                setHeight(location.height);
-            }
-            
             int dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2;
             
             dx1 = getX();

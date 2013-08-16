@@ -34,19 +34,32 @@ public class TimerCollection
      */
     public static final String FORMAT_6 = "mm:ss.SSS";
     
-    public static final long NANO_SECONDS_PER_SECOND = 1000000000;
+    //how many nano seconds per .......
+    public static final long NANO_SECONDS_PER_SECOND      = 1000000000;
     public static final long NANO_SECONDS_PER_MILLISECOND = 1000000;
-    public static final long NANO_SECONDS_PER_MINUTE = 60000000000L;
-    public static final long NANO_SECONDS_PER_HOUR = 3600000000000L;
+    public static final long NANO_SECONDS_PER_MINUTE      = 60000000000L;
+    public static final long NANO_SECONDS_PER_HOUR        = 3600000000000L;
     
+    //list of timers as well as the key to retrieving each timer
     private HashMap<Object, Timer> timers;
     
+    //the timer to deduct every time update() is called
     private long timeDeduction;
     
     public TimerCollection(final long timeDeduction)
     {
         this.timeDeduction = timeDeduction;
-        timers = new HashMap<>();
+        
+        this.timers = new HashMap<>();
+    }
+    
+    /**
+     * Release resources
+     */
+    public void dispose()
+    {
+        timers.clear();
+        timers = null;
     }
     
     /**
@@ -54,9 +67,7 @@ public class TimerCollection
      */
     public void update()
     {
-        Object[] keys = timers.keySet().toArray();
-        
-        for (Object key : keys)
+        for (Object key : timers.keySet().toArray())
         {
             update(key);
         }
@@ -83,7 +94,7 @@ public class TimerCollection
     
     /**
      * Add Timer with no time limit
-     * @param key The identifier for this Timer
+     * @param key The unique identifier for this Timer
      */
     public void add(Object key)
     {
@@ -92,11 +103,12 @@ public class TimerCollection
     
     /**
      * Add Timer with specific time limit
+     * 
      * @param key The identifier for this Timer
      * @param reset The time limit (usually is milliseconds or nanoseconds)
      */
     public void add(final Object key, final long reset)
-    {   //add timer to collection
+    {
         timers.put(key, new Timer(reset));
     }
     
@@ -107,9 +119,7 @@ public class TimerCollection
      */
     public void setPause(final boolean pause)
     {
-        Object[] keys = timers.keySet().toArray();
-        
-        for (Object key : keys)
+        for (Object key : timers.keySet().toArray())
         {
             getTimer(key).setPause(pause);
         }
@@ -117,19 +127,32 @@ public class TimerCollection
     
     /**
      * Pauses/Un-Pauses a specific timer
+     * 
      * @param key The identifier for this Timer
      * @param pause Do we pause the specific timer
      */
     public void setPause(final Object key, final boolean pause)
-    {   //set pause for specific timer
+    {
         getTimer(key).setPause(pause);
     }
     
+    /**
+     * 
+     * @param key The identifier for this Timer
+     * @param remaining The time remaining on the timer before it completes
+     */
     public void setRemaining(final Object key, final long remaining)
-    {   //set time remaining for specific timer
+    {
         getTimer(key).setRemaining(remaining);
     }
     
+    /**
+     * Gets a percentage as to how close 
+     * the timer is to the finish line.
+     * 
+     * @param key The identifier for this Timer
+     * @return float
+     */
     public float getProgress(final Object key)
     {
         return getTimer(key).getProgress();
@@ -137,6 +160,7 @@ public class TimerCollection
     
     /**
      * Gets the Timer at the specific key
+     * 
      * @param key The identifier for this Timer
      * @return Timer The timer
      */
