@@ -153,48 +153,95 @@ public class Sprite extends Cell
         return this.horizontalFlip;
     }
     
-    public void setLocation(final Point p)
+    /**
+     * Set the x, y coordinate location for this sprite
+     * 
+     * @param location 
+     */
+    public void setLocation(final Point location)
     {
-        setLocation(p.x, p.y);
+        setLocation(location.x, location.y);
     }
     
+    /**
+     * Set the x, y coordinate location for this sprite
+     * 
+     * @param x
+     * @param y 
+     */
     public void setLocation(final double x, final double y)
     {
-        setX(x);
-        setY(y);
+        setLocation((int)x, (int)y);
     }
     
+    /**
+     * Set the x, y coordinate location for this sprite
+     * 
+     * @param x
+     * @param y 
+     */
     public void setLocation(final int x, final int y)
     {
         setX(x);
         setY(y);
     }
     
+    /**
+     * Set the x coordinate location for this sprite
+     * 
+     * @param x 
+     */
     public void setX(final double x)
     {
         setX((int)x);
     }
     
+    /**
+     * Set the x coordinate location for this sprite
+     * 
+     * @param x 
+     */
     public void setX(final int x)
     {
         this.x = x;
     }
     
+    /**
+     * Get x coordinate location set for this sprite
+     * 
+     * @return int
+     */
     public int getX()
     {
         return this.x;
     }
     
+    /**
+     * Set the y coordinate location for this sprite
+     * 
+     * @param y 
+     */
     public void setY(final double y)
     {
         setY((int)y);
     }
     
+    
+    /**
+     * Set the y coordinate location for this sprite
+     * 
+     * @param y 
+     */
     public void setY(final int y)
     {
         this.y = y;
     }
     
+    /**
+     * Get y coordinate location set for this sprite
+     * 
+     * @return int
+     */
     public int getY()
     {
         return this.y;
@@ -222,58 +269,113 @@ public class Sprite extends Cell
         setHeight(h);
     }
     
+    /**
+     * Set the width dimension of this sprite
+     * @param w 
+     */
     public void setWidth(final double w)
     {
         setWidth((int)w);
     }
     
+    /**
+     * Set the width dimension of this sprite
+     * @param w 
+     */
     public void setWidth(final int w)
     {
         this.w = w;
     }
     
+    /**
+     * Get the width dimension of this sprite
+     * @return int
+     */
     public int getWidth()
     {
         return this.w;
     }
     
+    /**
+     * Set the height dimension of this sprite
+     * @param h 
+     */
     public void setHeight(final double h)
     {
         setHeight((int)h);
     }
     
+    /**
+     * Set the height dimension of this sprite
+     * @param h 
+     */
     public void setHeight(final int h)
     {
         this.h = h;
     }
     
+    /**
+     * Get the height dimension of this sprite
+     * @return int
+     */
     public int getHeight()
     {
         return this.h;
     }
     
+    /**
+     * Sets the x, y velocity so when update is called
+     * the sprite position will be updated accordingly.
+     * 
+     * @param dx
+     * @param dy 
+     */
     public void setVelocity(final double dx, final double dy)
     {
-        this.setVelocityX(dx);
-        this.setVelocityY(dy);
+        setVelocity((int)dx, (int)dy);
     }
     
+    /**
+     * Sets the x, y velocity so when update is called
+     * the sprite position will be updated accordingly.
+     * 
+     * @param dx
+     * @param dy 
+     */
     public void setVelocity(final int dx, final int dy)
     {
         this.setVelocityX(dx);
         this.setVelocityY(dy);
     }
     
+    /**
+     * Sets the x, y velocity so when update is called
+     * the sprite position will be updated accordingly.
+     * 
+     * @param velocity
+     */
     public void setVelocity(final Point velocity)
     {
         setVelocity(velocity.x, velocity.y);
     }
     
+    /**
+     * Sets the x velocity so when update is called
+     * the sprite position will be updated accordingly.
+     * 
+     * @param dx
+     */
     public void setVelocityX(final double dx)
     {
-        this.dx = (int)dx;
+        setVelocityX((int)dx);
     }
     
+    /**
+     * Sets the x velocity so when update is called
+     * the sprite position will be updated accordingly.
+     * 
+     * @param dx
+     */
     public void setVelocityX(final int dx)
     {
         this.dx = dx;
@@ -286,7 +388,7 @@ public class Sprite extends Cell
     
     public void setVelocityY(final double dy)
     {
-        this.dy = (int)dy;
+        setVelocityY((int)dy);
     }
     
     public void setVelocityY(final int dy)
@@ -346,24 +448,39 @@ public class Sprite extends Cell
     /**
      * Update the x,y location based on the current x,y velocity.
      */
-    public void update() throws Exception
+    public void update()
     {
         //update x,y
         move();
     }
     
-    public Graphics draw(final Graphics g, final Image img)
+    /**
+     * Draw the sprite with the parameter image
+     * @param g Graphics object to draw to
+     * @param image specified Image to draw
+     * @return Graphics
+     */
+    public Graphics draw(final Graphics g, final Image image)
     {
         if (spriteSheet.hasAnimations())
         {
-            return draw(g, img, spriteSheet.getLocation());
+            return draw(g, image, spriteSheet.getLocation());
         }
         else
         {
-            return draw(g, img, null);
+            return draw(g, image, null);
         }
     }
     
+    /**
+     * Draw our sprite object with the specified 
+     * parameter image and draw a specified portion 
+     * of that image.
+     * @param g Graphics object to draw to
+     * @param image Image to be drawn
+     * @param location Portion of Image we want to draw
+     * @return Graphics
+     */
     public Graphics draw(final Graphics g, final Image image, final Rectangle location)
     {
         int dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2;
@@ -427,6 +544,11 @@ public class Sprite extends Cell
         return g;
     }
     
+    /**
+     * Draw our sprite object
+     * @param g Graphics object to draw to
+     * @return Graphics 
+     */
     public Graphics draw(final Graphics g)
     {
         if (spriteSheet != null && spriteSheet.hasAnimations())
@@ -442,6 +564,14 @@ public class Sprite extends Cell
         }
     }
     
+    /**
+     * Draw our sprite image with the specified parameter
+     * that will indicate which part of the image is to be drawn.
+     * 
+     * @param g Graphics object we want to draw to
+     * @param location Rectangle area of image that we want to draw
+     * @return Graphics
+     */
     public Graphics draw(final Graphics g, final Rectangle location)
     {
         //verify image exists before drawing
@@ -482,9 +612,24 @@ public class Sprite extends Cell
         return g;
     }
     
-    public Graphics draw(final Graphics g, Image tmp, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2)
+    /**
+     * Draw our sprite with the provided image at the provided location
+     * 
+     * @param g Graphics object to draw to
+     * @param image Image to draw
+     * @param dx1 Destination x1
+     * @param dy1 Destination y1
+     * @param dx2 Destination x2
+     * @param dy2 Destination y2
+     * @param sx1 Source x1
+     * @param sy1 Source y1
+     * @param sx2 Source x2
+     * @param sy2 Source y2
+     * @return 
+     */
+    public Graphics draw(final Graphics g, final Image image, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2)
     {
-        g.drawImage(tmp, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, null);
+        g.drawImage(image, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, null);
         return g;
     }
 }

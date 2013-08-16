@@ -427,8 +427,9 @@ public class Layer
         {
             timer.update(timeDeduction);
 
+            //if time has passed we will reset time or start next layer
             if (timer.hasTimePassed()) 
-            {   //if time has passed reset time or start next layer
+            {   
                 if (timer.getReset() > -1 && !getPause())
                 {
                     menu.setLayer(getNextLayerKey());
