@@ -1,17 +1,25 @@
 package com.gamesbykevin.framework.display;
 
 import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
 
 public class FullScreen 
 {
+    //the container for our full screen
     private JFrame frame = new JFrame(); 
+    
+    //original container
     private Container parent;
-    private boolean fullscreen = false;
+    
+    //has full screen been enabled
+    private boolean enabled = false;
+    
+    //width-height of the full screen
+    private Dimension dimension;
     
     public FullScreen()
     {
+        
     }
     
     public void dispose()
@@ -27,14 +35,19 @@ public class FullScreen
         parent = null;
     }
     
-    public boolean isFullScreen()
+    /**
+     * Is full screen enabled
+     * 
+     * @return boolean
+     */
+    public boolean isEnabled()
     {
-        return this.fullscreen;
+        return this.enabled;
     }
     
     public void switchFullScreen(JApplet applet, JPanel panel)
     {
-        if (!fullscreen)
+        if (!enabled)
         {
             if (parent == null)
             {
@@ -48,7 +61,7 @@ public class FullScreen
                 }
             }
 
-            Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
+            dimension = Toolkit.getDefaultToolkit().getScreenSize();
             
             frame.setUndecorated(true);
             
@@ -62,13 +75,13 @@ public class FullScreen
             }
             
             frame.setVisible(true);
-            frame.setSize(dimension.width, dimension.height);
+            frame.setSize(dimension);
             
-            GraphicsEnvironment graphicsenvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
-            GraphicsDevice agraphicsdevice[] = graphicsenvironment.getScreenDevices();
-            agraphicsdevice[0].setFullScreenWindow(frame);            
+            GraphicsEnvironment environment = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            GraphicsDevice[] device = environment.getScreenDevices();
+            device[0].setFullScreenWindow(frame);            
             
-            fullscreen = true;      
+            enabled = true;      
         }
         else
         {
@@ -82,7 +95,7 @@ public class FullScreen
             }
             
             frame.dispose();
-            fullscreen = false;
+            enabled = false;
         }
         
         if (applet != null)

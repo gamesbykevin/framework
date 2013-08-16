@@ -29,6 +29,9 @@ public class Sprite extends Cell
     //the rectangle representing the sprites x,y width,height coordinates
     private Rectangle rectangle;
     
+    //the Point in the upper left corner and Center in the middle
+    private Point point, center;
+    
     public Sprite()
     {
         this(0,0,0,0,0,0,null);
@@ -75,6 +78,10 @@ public class Sprite extends Cell
         return spriteSheet;
     }
     
+    /**
+     * Get the cell for this sprite
+     * @return 
+     */
     public Cell getCell()
     {
         return new Cell(getCol(), getRow());
@@ -86,7 +93,13 @@ public class Sprite extends Cell
      */
     public Point getCenter()
     {
-        return new Point(getX() + (getWidth() / 2), getY() + (getHeight() / 2));
+        if (center == null)
+            center = new Point();
+        
+        center.x = getX() + (getWidth()  / 2);
+        center.y = getY() + (getHeight() / 2);
+        
+        return center;
     }
     
     /**
@@ -95,7 +108,13 @@ public class Sprite extends Cell
      */
     public Point getPoint()
     {
-        return new Point(getX(), getY());
+        if (point == null)
+            point = new Point();
+        
+        point.x = getX();
+        point.y = getY();
+        
+        return point;
     }
     
     public void setImage(final Image image)
@@ -325,10 +344,7 @@ public class Sprite extends Cell
     }
     
     /**
-     * If auto size is enabled set width and height 
-     * according to the current animation dimensions 
-     * in our sprite sheet if it exists. Also update
-     * the x,y location based on the current x,y velocity.
+     * Update the x,y location based on the current x,y velocity.
      */
     public void update() throws Exception
     {

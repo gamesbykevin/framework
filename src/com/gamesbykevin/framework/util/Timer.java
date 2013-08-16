@@ -33,21 +33,39 @@ public class Timer
             setRemaining(getRemaining() - timeDeduction);
     }
     
+    /**
+     * Pause the timer, so even when update 
+     * is called the timer will not update.
+     * 
+     * @param boolean
+     */
     public void setPause(final boolean pause)
     {
         this.pause = pause;
     }
     
+    /**
+     * Is this timer paused
+     * @return boolean
+     */
     private boolean hasPause()
     {
         return this.pause;
     }
     
+    /**
+     * Is the remaining time less than or equal to 0
+     * 
+     * @return boolean
+     */
     public boolean hasTimePassed()
     {
         return (getRemaining() <= 0);
     }
     
+    /**
+     * Set the time remaining back to what was set for reset
+     */
     public void resetRemaining()
     {
         setRemaining(getReset());

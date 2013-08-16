@@ -40,6 +40,9 @@ public class Audio implements Runnable
     //class located in the same directory as main resources folder
     private Class source;
     
+    //thread that we will play sounds on (maybe only for mp3 in future)
+    private Thread thread;
+    
     public Audio(Class source, String fileName) throws Exception
     {
         //store the file name in case we need it later
@@ -48,29 +51,8 @@ public class Audio implements Runnable
         //assign the file type so we know how to load/play audio
         this.type = getType();
         
-        try
-        {
-            switch(type)
-            {
-                case MP3:
-                    this.source = source;
-                    break;
-
-                case MID:
-                    sequence = MidiSystem.getSequence(source.getResource(fileName));
-                    break;
-                    
-                case WAV:
-                case OTHER:
-                default:
-                    this.ac = JApplet.newAudioClip(source.getResource(fileName));
-                    break;
-            }
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-        }
+        //store class since it lies in same directory as resources 
+        this.source = source;
     }
     
     /**
@@ -143,7 +125,7 @@ public class Audio implements Runnable
         this.loop = loop;
         
         //every time the sound is to be played, create a new thread
-        Thread thread = new Thread(this);
+        thread = new Thread(this);
         thread.start();
     }
     
@@ -166,6 +148,8 @@ public class Audio implements Runnable
             switch(getType())
             {
                 case MID:
+                    
+                    sequence = MidiSystem.getSequence(source.getResource(fileName));
                     
                     //create a sequencer for the sequence
                     sequencer = MidiSystem.getSequencer();
@@ -191,6 +175,8 @@ public class Audio implements Runnable
                 case WAV:
                 case OTHER:
 
+                    this.ac = JApplet.newAudioClip(source.getResource(fileName));
+                    
                     //are we looping sound
                     if (loop)
                     {
@@ -264,6 +250,8 @@ public class Audio implements Runnable
                             sequencer.stop();
                     }
                     
+                    sequencer = null;
+                    sequence = null;
                     break;
 
                 case WAV:
@@ -271,8 +259,7 @@ public class Audio implements Runnable
 
                     if (ac != null)
                         ac.stop();
-                    
-                    break;     
+                    break;
 
                 case MP3:
                     
@@ -280,9 +267,11 @@ public class Audio implements Runnable
                         player.close();
 
                     player = null;
-                    
                     break;
             }
+            
+            if (thread != null)
+                thread.interrupt();
         }
         catch (Exception e)
         {
