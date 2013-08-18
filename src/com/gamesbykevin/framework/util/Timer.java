@@ -64,23 +64,35 @@ public class Timer
     }
     
     /**
-     * Set the time remaining back to what was set for reset
+     * Set the time remaining back to the value that was set for reset
      */
-    public void resetRemaining()
+    public void reset()
     {
         setRemaining(getReset());
     }
     
+    /**
+     * Change the reset time
+     * @param reset 
+     */
     public void setReset(final long reset)
     {
         this.reset = reset;
     }
     
+    /**
+     * Set the time remaining for this Timer
+     * @param remaining 
+     */
     public void setRemaining(final long remaining)
     {
         this.remaining = remaining;
     }
     
+    /**
+     * How much time is remaining for this Timer
+     * @return long
+     */
     public long getRemaining()
     {
         return this.remaining;

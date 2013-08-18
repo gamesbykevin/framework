@@ -409,9 +409,29 @@ public class Sprite extends Cell
      */
     public boolean hasVelocity()
     {
-        return (getVelocityX() != 0 || getVelocityY() != 0);
+        return (hasVelocityX() || hasVelocityY());
     }
     
+    /**
+     * Is the x velocity not equal to 0? 
+     * If so then there is velocity x
+     * @return boolean
+     */
+    public boolean hasVelocityX()
+    {
+        return (getVelocityX() != 0);
+    }
+    
+    /**
+     * Is the y velocity not equal to 0? 
+     * If so then there is velocity y
+     * @return boolean
+     */
+    public boolean hasVelocityY()
+    {
+        return (getVelocityY() != 0);
+    }
+
     /**
      * Adjust the (x,y) based on the current velocity
      */

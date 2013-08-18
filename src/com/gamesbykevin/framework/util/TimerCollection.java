@@ -176,7 +176,7 @@ public class TimerCollection
     {
         for (Object key : timers.keySet().toArray())
         {
-            resetRemaining(key);
+            reset(key);
         }
     }
 
@@ -184,9 +184,9 @@ public class TimerCollection
      * Reset the remaining time for the specific timer
      * @param key Unique key to identify the timer we want to reset
      */
-    public void resetRemaining(final Object key)
+    public void reset(final Object key)
     {
-        getTimer(key).resetRemaining();
+        getTimer(key).reset();
     }
     
     public void setReset(final Object key, final long reset)

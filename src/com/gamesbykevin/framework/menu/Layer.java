@@ -163,7 +163,7 @@ public class Layer
     private void resetTimer()
     {
         if (timer != null)
-            timer.resetRemaining();
+            timer.reset();
     }
     
     public void setTimer(Timer timer)
@@ -436,7 +436,7 @@ public class Layer
                 }
                 else
                 {
-                    timer.resetRemaining();
+                    timer.reset();
                 }
             }
         }

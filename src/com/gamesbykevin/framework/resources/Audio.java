@@ -23,12 +23,15 @@ public class Audio implements Runnable
     //object will assist playing midi
     private Sequencer sequencer;
     
-    //file name of the audio
-    private String fileName;
+    //file path-name of the audio
+    private String relativePath;
     
     //does the audio loop
     private boolean loop = false;
     
+    /**
+     * What type of audio selections are there
+     */
     private enum Type
     {
         MP3, WAV, MID, OTHER
@@ -43,10 +46,10 @@ public class Audio implements Runnable
     //thread that we will play sounds on (maybe only for mp3 in future)
     private Thread thread;
     
-    public Audio(Class source, String fileName) throws Exception
+    public Audio(Class source, String relativePath) throws Exception
     {
         //store the file name in case we need it later
-        this.fileName = fileName;
+        this.relativePath = relativePath;
 
         //assign the file type so we know how to load/play audio
         this.type = getType();
@@ -62,28 +65,29 @@ public class Audio implements Runnable
      */
     private Type getType() throws Exception
     {
-        //if we already have the type so return it
+        //we already have the type so return it
         if (this.type != null)
             return this.type;
         
-        if (fileName == null)
-            throw new Exception("File name must be set first before getType() is called");
+        //if the realative path is not set throw exception
+        if (relativePath == null)
+            throw new Exception("The relative file path must be set first before getType() is called");
         
         //extract the file extension from the file name
-        String extension = fileName.substring(fileName.lastIndexOf(".") + 1).trim();
+        String extension = relativePath.substring(relativePath.lastIndexOf(".") + 1).trim();
         
-        Type type = Type.OTHER;
+        Type tmpType = Type.OTHER;
 
         if (extension.toLowerCase().equals("mp3"))
-            type = Type.MP3;
+            tmpType = Type.MP3;
 
         if (extension.toLowerCase().equals("wav"))
-            type = Type.WAV;
+            tmpType = Type.WAV;
 
         if (extension.toLowerCase().equals("mid"))
-            type = Type.MID;
+            tmpType = Type.MID;
         
-        return type;
+        return tmpType;
     }
     
     /**
@@ -149,7 +153,8 @@ public class Audio implements Runnable
             {
                 case MID:
                     
-                    sequence = MidiSystem.getSequence(source.getResource(fileName));
+                    //get the midi sequence from the stream
+                    sequence = MidiSystem.getSequence(source.getResource(relativePath));
                     
                     //create a sequencer for the sequence
                     sequencer = MidiSystem.getSequencer();
@@ -169,13 +174,13 @@ public class Audio implements Runnable
 
                     //start playing sound
                     sequencer.start();
-
+                    
                     break;
 
                 case WAV:
                 case OTHER:
 
-                    this.ac = JApplet.newAudioClip(source.getResource(fileName));
+                    this.ac = JApplet.newAudioClip(source.getResource(relativePath));
                     
                     //are we looping sound
                     if (loop)
@@ -194,7 +199,7 @@ public class Audio implements Runnable
                 case MP3:
                     
                     //create a new player with the assigned file name
-                    player = new Player(source.getResourceAsStream(fileName));
+                    player = new Player(source.getResourceAsStream(relativePath));
 
                     //are we looping sound
                     if (loop)
@@ -208,7 +213,7 @@ public class Audio implements Runnable
                             if (player.isComplete())
                             {
                                 //create new instance so mp3 source can restart and the loop will continue
-                                player = new Player(source.getResourceAsStream(fileName));
+                                player = new Player(source.getResourceAsStream(relativePath));
                             }
                         }
                     }
@@ -240,6 +245,9 @@ public class Audio implements Runnable
     {
         try
         {
+            if (thread != null && thread.isAlive())
+                thread.interrupt();
+            
             switch (getType())
             {
                 case MID:
@@ -270,10 +278,10 @@ public class Audio implements Runnable
                     break;
             }
             
-            if (thread != null)
-                thread.interrupt();
+            
+            super.finalize();
         }
-        catch (Exception e)
+        catch (Throwable e)
         {
             System.out.println(e);
         }
