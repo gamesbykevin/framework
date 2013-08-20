@@ -2,14 +2,11 @@ package com.gamesbykevin.framework.menu;
 
 import com.gamesbykevin.framework.resources.Audio;
 
-import java.util.*;
-import java.awt.*;
-
 /**
  * Each menu layer can contain a number of Options and each Option can have a number of option selections
  * @author GOD
  */
-public class OptionSelection 
+public class Selection 
 {
     //play sound when specific selection is selected
     private Audio sound;    
@@ -17,7 +14,7 @@ public class OptionSelection
     //text to display for selection
     private String description;
     
-    public OptionSelection(String description, Audio sound)
+    public Selection(String description, Audio sound)
     {
         this.description = description;
         this.sound = sound;
@@ -53,6 +50,9 @@ public class OptionSelection
     
     /**
      * Play sound associated to this option selection
+     * Loop the sound as well if specified.
+     * 
+     * @param loop
      */
     public void play(boolean loop)
     {   

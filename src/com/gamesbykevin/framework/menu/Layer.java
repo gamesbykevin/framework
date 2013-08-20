@@ -14,8 +14,8 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.Stroke;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
 import java.util.LinkedHashMap;
 
 /**
@@ -24,8 +24,8 @@ import java.util.LinkedHashMap;
  * 
  * @author GOD
  */
-public class Layer 
-{  
+public abstract class Layer 
+{
     public enum Type
     {
         NONE, 
@@ -48,10 +48,9 @@ public class Layer
     //the transition for this layer
     private Type type;
     
-    //which option is the current one selected
+    //current selected option, default 0
     private int index = 0;
     
-    //I used LinkedHashMap because it maintains order of items in map unlike HashMap
     //options assigned to this layer
     private LinkedHashMap<Object, Option> options;
     
@@ -60,6 +59,9 @@ public class Layer
     
     //window in which layer will be drawn
     private Rectangle location;
+    
+    //window of the full screen
+    private Rectangle screen;
     
     //transparency of layer
     private float visibility = 1;
@@ -79,26 +81,42 @@ public class Layer
     //after layer complete which is next
     private Object nextLayerKey;
     
-    //if this layer has options a title will need to be set
+    //if this layer has options a title will be rendered
     private String title;
     
     //does this layer have background sound to play
     private Audio sound;
 
-    //border color
-    private Color menuColor1 = Color.WHITE; 
+    //option container border color
+    private Color OPTION_BORDER_COLOR = Color.WHITE; 
     
-    //text color
-    private Color menuColor2 = Color.BLACK;
+    //text color for the options
+    private static final Color OPTION_TEXT_COLOR = Color.BLACK;
     
-    //menu background color
-    private Color menuColor3 = Color.BLUE;
+    //option container background color
+    private static final Color OPTION_BACKGROUND_COLOR = Color.BLUE;
+    
+    //the area all options will be drawn within
+    private Rectangle optionContainerArea;
+    
+    //store the background of the container
+    private BufferedImage optionContainerImage;
+    
+    //y-coordinate to start drawing the options
+    private int startOptionsY;
+    
+    //the original composite that determines transparency when rendering our Layer
+    private Composite original;
     
     public Layer(Type type, Rectangle screen)
     {
+        this.screen = screen;
+        
         options = new LinkedHashMap<>();
         
         this.type = type;
+        
+        this.setHighlighted();
         
         switch (type)
         {
@@ -145,43 +163,62 @@ public class Layer
         return this.force;
     }
     
-    public void setPause(boolean pause)
+    /**
+     * Once the layer finishes, do we pause this Layer
+     * @param pause 
+     */
+    protected void setPause(final boolean pause)
     {
         this.pause = pause;
     }
     
-    public void setForce(boolean force)
+    /**
+     * Do we force the user to watch this Layer until finish
+     * @param force 
+     */
+    protected void setForce(final boolean force)
     {
         this.force = force;
     }
     
+    /**
+     * Reset Timer
+     */
     public void reset()
-    {
-        resetTimer();
-    }
-    
-    private void resetTimer()
     {
         if (timer != null)
             timer.reset();
     }
     
-    public void setTimer(Timer timer)
+    protected void setTimer(final Timer timer)
     {
         this.timer = timer;
     }
     
-    public void setSound(Audio sound)
+    /**
+     * Does this Layer contain a sound we should be playing
+     * @param sound 
+     */
+    protected void setSound(final Audio sound)
     {
         this.sound = sound;
     }
     
-    public void setImage(Image image)
+    /**
+     * Does this layer contain a background image
+     * @param image 
+     */
+    protected void setImage(final Image image)
     {
         this.image = image;
     }
     
-    public void setNextLayerKey(Object nextLayerKey)
+    /**
+     * After this layer is complete is 
+     * there another layer we need to move to.
+     * @param nextLayerKey 
+     */
+    protected void setNextLayerKey(final Object nextLayerKey)
     {
         this.nextLayerKey = nextLayerKey;
     }
@@ -191,18 +228,23 @@ public class Layer
         return this.nextLayerKey;
     }
     
-    public void setTitle(String title)
+    protected void setTitle(final String title)
     {
         this.title = title;
     }
     
-    public void setVisibility(float visibility)
+    private void setVisibility(final float visibility)
     {
         this.visibility = visibility;
     }
     
-    //adds Option to hashMap
-    public void add(Object key, Option option)
+    /**
+     * Add option to Layer
+     * 
+     * @param key Unique identifier for the Option parameter
+     * @param option The option we want to add to the Layer
+     */
+    protected void add(Object key, Option option)
     {
         options.put(key, option);
     }
@@ -217,27 +259,36 @@ public class Layer
         {
             Option tmp = getOption(getKey(i));
             
-            if (tmp.hasLocation(location))
+            if (tmp.hasBoundary(location))
             {
+                tmp.setHighlighted(true);
+                
                 this.index = i;
-                break;
+            }
+            else
+            {
+                tmp.setHighlighted(false);
             }
         }
     }
     
-    public Option getOption(Point mouseLocation)
+    public Option getOption(final Point location)
     {
         for (int i=0; i < options.size(); i++)
         {
             Option tmp = getOption(getKey(i));
             
-            if (tmp.hasLocation(mouseLocation))
+            if (tmp.hasBoundary(location))
                 return tmp;
         }
         
         return null;
     }
     
+    /**
+     * Does this Layer contain options
+     * @return boolean
+     */
     public boolean hasOptions()
     {
         return (options.size() > 0);
@@ -272,7 +323,7 @@ public class Layer
      * @param index
      * @return Object
      */
-    private Object getKey(int index)
+    private Object getKey(final int index)
     {
         if (!hasOptions())
             return null;
@@ -280,15 +331,24 @@ public class Layer
         return options.keySet().toArray()[index];
     }
     
-    public void update(Menu menu, Mouse mi, Keyboard ki, Rectangle screen, long timeDeduction) 
+    /**
+     * Update the layer. 
+     * 
+     * @param menu Our Menu that contains this layer
+     * @param mouse Mouse Input
+     * @param keyboard Keyboard Input
+     * @param screen Window Layer is contained within
+     * @param timeDeduction Time to deduct from timer
+     */
+    public void update(final Menu menu, final Mouse mouse, final Keyboard keyboard, final Rectangle screen, final long time) 
     {
         //make sure we aren't forced to view this layer
         if (!getForce())
         {
             //check for input to skip to the next layer
-            if (ki.isKeyPressed() || mi.isMousePressed())
+            if (keyboard.isKeyPressed() || mouse.isMousePressed())
             {
-                //if we have no options and we have the next layer set
+                //if we have no options and we have the next layer
                 if (getNextLayerKey() != null && !hasOptions())
                 {
                     menu.setLayer(getNextLayerKey());
@@ -297,24 +357,24 @@ public class Layer
                 {
                     Option option;
 
-                    //if the mouse was pressed or the mouse was moved
-                    if (mi.isMousePressed() || mi.hasMouseMoved())
+                    //if the mouse was pressed
+                    if (mouse.isMousePressed())
                     {
-                        option = getOption(mi.getLocation());
+                        option = getOption(mouse.getLocation());
 
                         //does the option exist
                         if (option != null)
                         {
-                            if (mi.isMousePressed())
+                            if (mouse.isMousePressed())
                             {   
                                 //move to next option selection in this option or possibly change layer
-                                if (option.getNextLayerKey() == null)
+                                if (option.getKeyLayer()== null)
                                 {
                                     option.next();
                                 }
                                 else
                                 {
-                                    menu.setLayer(option.getNextLayerKey());
+                                    menu.setLayer(option.getKeyLayer());
                                     
                                     //since we are possibly re-selecting a layer reset the time
                                     menu.resetLayer();
@@ -323,99 +383,101 @@ public class Layer
                         }
                     }
 
-                    if (ki.hasKeyPressed(KeyEvent.VK_ENTER) && hasOptions())
+                    if (keyboard.hasKeyPressed(KeyEvent.VK_ENTER) && hasOptions())
                     {
                         option = getOption();
 
-                        if (option.getNextLayerKey() == null)
+                        if (option.getKeyLayer() == null)
                         {
                             option.next();
                         }
                         else
                         {
-                            menu.setLayer(option.getNextLayerKey());
+                            menu.setLayer(option.getKeyLayer());
                             
                             //since we are possibly re-selecting a layer reset the time
                             menu.resetLayer();
                         }
                     }
 
-                    if (ki.hasKeyPressed(KeyEvent.VK_UP))
+                    if (keyboard.hasKeyPressed(KeyEvent.VK_UP))
                         index--;
-
-                    if (ki.hasKeyPressed(KeyEvent.VK_DOWN))
+                    
+                    if (keyboard.hasKeyPressed(KeyEvent.VK_DOWN))
                         index++;
 
                     if (index < 0)
                         index = options.size() - 1;
                     if (index >= options.size())
                         index = 0;
+                    
+                    setHighlighted();
                 }
 
-                ki.reset();
-                mi.reset();
+                keyboard.reset();
+                mouse.reset();
             }
             else
             {
-                if (mi.hasMouseMoved() && hasOptions())
-                {   
+                if (mouse.hasMouseMoved() && hasOptions())
+                {
                     //highlight the current Option
-                    setIndex(mi.getLocation());
+                    setIndex(mouse.getLocation());
                 }
             }
         }
         
-        float percentComplete = 1;
+        float tmpPercentComplete = 1;
         
         if (timer != null)
-            percentComplete = timer.getProgress();
+            tmpPercentComplete = timer.getProgress();
         
-        if (percentComplete > 1)
-            percentComplete = 1;
-        if (percentComplete < 0)
-            percentComplete = 0;
+        if (tmpPercentComplete > 1)
+            tmpPercentComplete = 1;
+        if (tmpPercentComplete < 0)
+            tmpPercentComplete = 0;
         
         switch (type)
         {
             case FADE_IN:
-                setVisibility(percentComplete);
+                setVisibility(tmpPercentComplete);
                 break;
 
             case FADE_OUT:
-                setVisibility(1 - percentComplete);
+                setVisibility(1 - tmpPercentComplete);
                 break;
 
             case SCROLL_HORIZONTAL_EAST:
             case SCROLL_HORIZONTAL_EAST_REPEAT:
-                location.x = screen.x - (int)((1 - percentComplete) * screen.width);
+                location.x = screen.x - (int)((1 - tmpPercentComplete) * screen.width);
                 break;
 
             case SCROLL_HORIZONTAL_WEST:
             case SCROLL_HORIZONTAL_WEST_REPEAT:
-                location.x = screen.x + screen.width - (int)(percentComplete * screen.width);
+                location.x = screen.x + screen.width - (int)(tmpPercentComplete * screen.width);
                 break;
 
             case SCROLL_VERTICAL_NORTH:
             case SCROLL_VERTICAL_NORTH_REPEAT:
-                location.y = screen.y + screen.height - (int)(percentComplete * screen.height);
+                location.y = screen.y + screen.height - (int)(tmpPercentComplete * screen.height);
                 break;
 
             case SCROLL_VERTICAL_SOUTH:
             case SCROLL_VERTICAL_SOUTH_REPEAT:
-                location.y = screen.y - (int)((1 - percentComplete) * screen.height);
+                location.y = screen.y - (int)((1 - tmpPercentComplete) * screen.height);
                 break;
                 
             case CURTAIN_CLOSE_HORIZONTAL:
             case CURTAIN_OPEN_HORIZONTAL:
             case CURTAIN_CLOSE_VERTICAL:
             case CURTAIN_OPEN_VERTICAL:
-                this.percentComplete = percentComplete;
+                this.percentComplete = tmpPercentComplete;
                 break;
         }
         
         //make sure timer is setup here
         switch(type)
-        {   
+        {
             case SCROLL_HORIZONTAL_EAST_REPEAT:
             case SCROLL_HORIZONTAL_WEST_REPEAT:
             case SCROLL_VERTICAL_NORTH_REPEAT:
@@ -425,11 +487,11 @@ public class Layer
         
         if (timer != null)
         {
-            timer.update(timeDeduction);
+            timer.update(time);
 
             //if time has passed we will reset time or start next layer
             if (timer.hasTimePassed()) 
-            {   
+            {
                 if (timer.getReset() > -1 && !getPause())
                 {
                     menu.setLayer(getNextLayerKey());
@@ -442,10 +504,25 @@ public class Layer
         }
     }
     
-    public Graphics render(Graphics g, Rectangle screen) 
+    private void setHighlighted()
     {
-        Graphics2D g2d = (Graphics2D)g;
-        Composite originalComposite = g2d.getComposite();
+        for (int i=0; i < options.size(); i++)
+        {
+            if (getKey(index) == getKey(i))
+            {
+                getOption(getKey(i)).setHighlighted(true);
+            }
+            else
+            {
+                getOption(getKey(i)).setHighlighted(false);
+            }
+        }
+    }
+    
+    public Graphics render(Graphics2D g2d, Rectangle screen) throws Exception 
+    {
+        if (original == null)
+            original = g2d.getComposite();
         
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, visibility));
         
@@ -469,121 +546,150 @@ public class Layer
             }
         }
         
-        //make sure there are options first
+        //do we have options for this Layer
         if (hasOptions())
         {
-            int middleX = screen.x + (screen.width  / 2);
-            int middleY = screen.y + (screen.height / 2);
-
-            double coverWindowRatio = .85;
-
-            int menuAreaW = (int)(screen.width  * coverWindowRatio);
-            int menuAreaH = (int)(screen.height * coverWindowRatio);
-
-            Rectangle menuArea = new Rectangle(middleX - (menuAreaW/2), middleY - (menuAreaH/2), menuAreaW, menuAreaH);
-
-            double optionAreaSpaceRatio = .20;
-
-            int optionAreaY = (int)(menuArea.y + (menuArea.height * optionAreaSpaceRatio));
-            int optionAreaH = (int)(menuArea.height - ((menuArea.height * optionAreaSpaceRatio) * 2));
-            Rectangle optionArea = new Rectangle(menuArea.x, optionAreaY, menuArea.width, optionAreaH);
-
-            int maxFontSize = 48;
-            int minFontSize = 8;
-
-            int eachOptionHeight = (int)((double)optionArea.height / (double)options.size());
-
-            Font cachedFont = g2d.getFont();
-            Stroke cachedStroke = g2d.getStroke();
-
-            for (int fontSize = maxFontSize; fontSize >= minFontSize; fontSize--)
-            {
-                g2d.setFont(g2d.getFont().deriveFont(Font.BOLD, fontSize));
-
-                if (g2d.getFontMetrics().getHeight() < eachOptionHeight)
-                    break;
-            }
-
-            Font adjustedFont = g2d.getFont();
-
-            int menuBorderW = (int)(menuArea.width  * .1);
-            int menuBorderH = (int)(menuArea.height * .1);
-
-            BasicStroke stroke = new BasicStroke(8.0f);
-            g2d.setStroke(stroke);
-
-            if (menuColor3 != null)
-            {
-                g2d.setColor(menuColor3);
-                g2d.fillRoundRect(menuArea.x, menuArea.y, menuArea.width, menuArea.height, menuBorderW, menuBorderH);
-            }
-
-            g2d.setColor(menuColor1);
-            g2d.drawRoundRect(menuArea.x, menuArea.y, menuArea.width, menuArea.height, menuBorderW, menuBorderH);
-
-            if (title != null && title.length() > 0)
-            {
-                int titleHeightArea = optionArea.y - menuArea.y;
-                int titleWidth = g2d.getFontMetrics().stringWidth(title);
-
-                if (titleHeightArea > g2d.getFontMetrics().getHeight())
-                    titleHeightArea = g2d.getFontMetrics().getHeight();
-
-                g2d.drawString(title, middleX - (titleWidth/2), menuArea.y + titleHeightArea);
-            }
-
-            for (int i=0; i < options.size(); i++)
-            {
-                g2d.setFont(adjustedFont);
-                Rectangle r = new Rectangle(optionArea.x, optionArea.y + (i * eachOptionHeight), optionArea.width, eachOptionHeight);
-                
-                getOption(getKey(i)).draw(g, r, (i == index), menuColor1, menuColor2);
-            }
-
-            //return original stoke and font when done
-            g2d.setStroke(cachedStroke);
-            g2d.setFont(cachedFont);
+            drawOptionContainer(g2d);
             
-            cachedStroke = null;
-            cachedFont = null;
+            int count = 0;
+            
+            //draw each option in this Layer
+            for (Option option : options.values())
+            {
+                //if the boundary is not set yet we need to set it before drawing option
+                if (option.getBoundary() == null)
+                    option.setBoundary(new Rectangle(optionContainerArea.x, startOptionsY + (g2d.getFontMetrics().getHeight() * count), optionContainerArea.width, g2d.getFontMetrics().getHeight()));
+                
+                option.render(g2d, OPTION_BORDER_COLOR, OPTION_TEXT_COLOR);
+                
+                count++;
+            }
         }
         
-        g2d.setComposite(originalComposite);
+        //set the original composite back
+        g2d.setComposite(original);
         
-        originalComposite = null;
+        int width, height;
         
-        g2d.setColor(Color.BLACK);
-        
-        switch (type)   //draw curtain here
+        //draw curtain(s) here
+        switch (type)
         {
             case CURTAIN_CLOSE_HORIZONTAL:
-                int fillX1 = (int)( (screen.width/2) * this.percentComplete);
-                g2d.fillRect(screen.x, screen.y, fillX1, screen.height);
-                g2d.fillRect(screen.x + screen.width - fillX1, screen.y, fillX1, screen.height);
+                width = (int)( (screen.width/2) * this.percentComplete);
+                g2d.setColor(Color.BLACK);
+                g2d.fillRect(screen.x, screen.y, width, screen.height);
+                g2d.fillRect(screen.x + screen.width - width, screen.y, width, screen.height);
                 break;
                 
             case CURTAIN_OPEN_HORIZONTAL:
-                int fillX2 = (int)( (screen.width/2) * this.percentComplete);
-                g2d.fillRect(screen.x, screen.y, (screen.width/2) - fillX2, screen.height);
-                g2d.fillRect(screen.x + (screen.width/2) + fillX2, screen.y, (screen.width/2), screen.height);
+                width = (int)( (screen.width/2) * this.percentComplete);
+                g2d.setColor(Color.BLACK);
+                g2d.fillRect(screen.x, screen.y, (screen.width/2) - width, screen.height);
+                g2d.fillRect(screen.x + (screen.width/2) + width, screen.y, (screen.width/2), screen.height);
                 break;
                 
             case CURTAIN_CLOSE_VERTICAL:
-                int fillY1 = (int)( (screen.width/2) * this.percentComplete);
-                g2d.fillRect(screen.x, screen.y, screen.width, fillY1);
-                g2d.fillRect(screen.x, screen.y + screen.height - fillY1, screen.width, fillY1);
+                height = (int)( (screen.width/2) * this.percentComplete);
+                g2d.setColor(Color.BLACK);
+                g2d.fillRect(screen.x, screen.y, screen.width, height);
+                g2d.fillRect(screen.x, screen.y + screen.height - height, screen.width, height);
                 break;
                 
             case CURTAIN_OPEN_VERTICAL:
-                int fillY2 = (int)( (screen.width/2) * this.percentComplete);
-                g2d.fillRect(screen.x, screen.y, screen.width, (screen.height/2) - fillY2);
-                g2d.fillRect(screen.x, screen.y + (screen.height/2) + fillY2, screen.width, (screen.height/2));
+                height = (int)( (screen.width/2) * this.percentComplete);
+                g2d.setColor(Color.BLACK);
+                g2d.fillRect(screen.x, screen.y, screen.width, (screen.height/2) - height);
+                g2d.fillRect(screen.x, screen.y + (screen.height/2) + height, screen.width, (screen.height/2));
                 break;
         }
         
         return (Graphics)g2d;
     }
     
+    /**
+     * Draws the background for the options (if they exist) including the title as well.
+     * 
+     * @param g2d Graphics2D we want to render to
+     * @return Graphics 
+     */
+    private Graphics drawOptionContainer(Graphics2D g2d)
+    {
+        //if we haven't created our option container background
+        if (optionContainerImage == null)
+        {
+            //center of screen
+            int middleX = screen.x + (screen.width  / 2);
+            int middleY = screen.y + (screen.height / 2);
+
+            //option container will cover 85% of window
+            double coverWindowRatio = .85;
+
+            //the width and height of this container will be 85% of its parent
+            int menuAreaW = (int)(screen.width  * coverWindowRatio);
+            int menuAreaH = (int)(screen.height * coverWindowRatio);
+
+            //store coordinates for option container
+            optionContainerArea = new Rectangle(middleX - (menuAreaW/2), middleY - (menuAreaH/2), menuAreaW, menuAreaH);
+
+            //create transparent image
+            optionContainerImage = new BufferedImage(optionContainerArea.width, optionContainerArea.height, BufferedImage.TYPE_INT_ARGB);
+            
+            //get our graphics object for this image that we will draw to
+            Graphics2D tmpG2D = optionContainerImage.createGraphics();
+
+            // the width of the rounded corners will be 15% of the container dimensions
+            final int arcWidth  = (int)(optionContainerImage.getWidth()  * .15);
+            final int arcHeight = (int)(optionContainerImage.getHeight() * .15);
+            
+            //set stroke so outline drawn is thick
+            tmpG2D.setStroke(new BasicStroke(8.0f));
+
+            //if back ground color exists
+            if (OPTION_BACKGROUND_COLOR != null)
+            {
+                //fill background of our container with specified color
+                tmpG2D.setColor(OPTION_BACKGROUND_COLOR);
+                tmpG2D.fillRoundRect(0, 0, optionContainerImage.getWidth(), optionContainerImage.getHeight(), arcWidth, arcHeight);
+            }
+
+            //draw outline around container
+            tmpG2D.setColor(OPTION_BORDER_COLOR);
+            tmpG2D.drawRoundRect(0, 0, optionContainerImage.getWidth() - 1, optionContainerImage.getHeight() - 1, arcWidth, arcHeight);
+
+            //if the title exists
+            if (title != null && title.length() > 0)
+            {
+                //the appropriate font
+                float fontSize = Menu.getFontSize(title, optionContainerImage.getWidth(), g2d);
+                
+                //now that the appropriate font size has been found set it
+                tmpG2D.setFont(g2d.getFont().deriveFont(Font.BOLD, fontSize));
+                
+                //middle x coordinate of this image
+                middleX = (optionContainerImage.getWidth() / 2);
+                
+                //get the pixel width of the text so we can calculate the appropriate x coordinate
+                final int textWidth = tmpG2D.getFontMetrics().stringWidth(title);
+
+                //draw the title in its appropriate place
+                tmpG2D.drawString(title, middleX - (textWidth/2), tmpG2D.getFontMetrics().getHeight());
+            }
+            
+            //store the starting y position of the options
+            startOptionsY = optionContainerArea.y + (int)(tmpG2D.getFontMetrics().getHeight() * 1.25);
+        }
+        else
+        {
+            //the image has already been created so we just need to draw it
+            g2d.drawImage(optionContainerImage, optionContainerArea.x, optionContainerArea.y, null);
+        }
+        
+        return g2d;
+    }
+    
+    /**
+     * Free up resources
+     */
     public void dispose()
     {
         if (sound != null)
@@ -610,5 +716,10 @@ public class Layer
         options = null;
         
         location = null;
+        
+        if (optionContainerImage != null)
+            optionContainerImage.flush();
+        
+        optionContainerImage = null;
     }
 }

@@ -1,7 +1,5 @@
 package com.gamesbykevin.framework.util;
 
-import java.text.*;
-import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 public class Timer 
@@ -26,11 +24,16 @@ public class Timer
         setRemaining(reset);
     }
     
-    public void update(final long timeDeduction)
+    /**
+     * Update this timer by subtracting the deduction from the remaining time
+     * 
+     * @param deduction 
+     */
+    public void update(final long deduction)
     {
         //if this timer is not paused deduct time from remaining time
         if (!hasPause())
-            setRemaining(getRemaining() - timeDeduction);
+            setRemaining(getRemaining() - deduction);
     }
     
     /**

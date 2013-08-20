@@ -8,65 +8,145 @@ import java.util.*;
 public class Option 
 {
     //all possible selections for this option, LinkedHashMap retains order when selections are added
-    private LinkedHashMap<Object, OptionSelection> selections;
+    private LinkedHashMap<Object, Selection> selections;
     
-    //does this option "when selected" determine the next layer
-    private Object nextLayerKey = null;
+    //this option "when selected" determines the next layer if value exists
+    private Object keyLayer = null;
     
     //what is the current selection displayed
     private int index = 0;
     
-    //where is this option located
-    private Rectangle location;
+    //where is this option located so we can detect if the mouse is located within
+    private Rectangle boundary;
     
     //title of the options
     private String title = "";
     
-    public Option(Object nextLayerKey)
+    //actual font size
+    private float fontSize = 0.0f;
+    
+    //the x, y coordinates to draw the option selection
+    private int drawX, drawY;
+    
+    private boolean highlight = false;
+    
+    /**
+     * Create new Option with the next layer set by parameter key
+     * Note: since this object will determine the next layer
+     * there will only be 1 option selection for this option.
+     * 
+     * @param keyLayer 
+     */
+    public Option(Object keyLayer)
     {
-        this.nextLayerKey = nextLayerKey;
+        this.keyLayer = keyLayer;
         
         selections = new LinkedHashMap<>(); 
     }
     
+    /**
+     * Set the title for this option. When the option is rendered the 
+     * title will be displayed next to the option selection. Example if 
+     * title is "Sound: " then the option will render "Sound: On" "Sound: off"
+     * depending on the selection.
+     * 
+     * @param title 
+     */
     public Option(String title)
     {
         this.title = title;
     }
     
-    public Option()
+    /**
+     * Free up resources
+     */
+    public void dispose()
     {
-        
-    }
+        if (selections != null)
+        {
+            for (Object key : selections.keySet().toArray())
+            {
+                getSelection(key).dispose();
+                selections.put(key, null);
+            }
             
-    public void setLocation(Rectangle location)
-    {
-        this.location = location;
+            selections.clear();
+            selections = null;
+        }
+        
+        keyLayer = null;
+        boundary = null;
+        title = null;
     }
     
-    public Rectangle getLocation()
+    /**
+     * Set this option highlighted
+     * @param highlight 
+     */
+    public void setHighlighted(final boolean highlight)
     {
-        return this.location;
+        this.highlight = highlight;
     }
     
-    public boolean hasLocation(Point mouseLocation)
-    {   //check if mouse hit this option
-        if (location == null)
+    public boolean hasHighlight()
+    {
+        return this.highlight;
+    }
+    
+    /**
+     * Set the container this option will be contained within
+     * 
+     * @param location 
+     */
+    public void setBoundary(final Rectangle boundary)
+    {
+        this.boundary = boundary;
+    }
+    
+    /**
+     * Get the boundary that this option is contained within.
+     * @return Rectangle
+     */
+    public Rectangle getBoundary()
+    {
+        return this.boundary;
+    }
+    
+    /**
+     * Check if the point is inside the boundary.
+     * This is so we can determine if the mouse
+     * is inside this Option
+     * 
+     * @param location
+     * @return boolean
+     */
+    public boolean hasBoundary(Point location)
+    {
+        if (boundary == null)
             return false;
         
-        return location.contains(mouseLocation);
+        return boundary.contains(location);
     }
     
+    /**
+     * Add option selection to this option.
+     * When this specific option selection
+     * is current play the specified sound.
+     * 
+     * @param description Text to display
+     * @param sound Sound to play when this option selection is current
+     */
     public void add(String description, Audio sound) 
     {
         if (selections == null)
             selections = new LinkedHashMap<>(); 
         
+        //as the hash map grows the key will change
         int key = selections.size();
         
-        OptionSelection optionSelection = new OptionSelection(description, sound);
+        Selection selection = new Selection(description, sound);
         
-        selections.put(key, optionSelection);
+        selections.put(key, selection);
     }
     
     /**
@@ -84,25 +164,32 @@ public class Option
             this.index = 0;
     }
     
+    /**
+     * Get the current index of the option selected
+     * @return int
+     */
     public int getIndex()
     {
         return index;
     }
     
     /**
-     * Get the next layer for the menu to navigate to
+     * Get the key for the next layer.
+     * If the key is not specified null 
+     * is returned.
+     * 
      * @return Object
      */
-    public Object getNextLayerKey()
+    public Object getKeyLayer()
     {
-        return this.nextLayerKey;
+        return this.keyLayer;
     }
     
     /**
      * Checks if there are option selections for this Option
      * @return boolean
      */
-    public boolean hasOptionSelection()
+    public boolean hasSelection()
     {
         return (selections.size() > 0);
     }
@@ -113,26 +200,25 @@ public class Option
     public void next()
     {
         //stop audio of current selection if applicable
-        getOptionSelection().stopSound();
+        getSelection().stopSound();
         
-        //change index of current selection
-        index++;
-        
-        //make sure index does not go out of bounds
-        if (index >= selections.size()) 
-            index = 0;
+        //increment the index to move to the next selection
+        setIndex(getIndex() + 1);
         
         //play audio of current selection if exists
-        getOptionSelection().play();
+        getSelection().play();
+        
+        //reset font size so we can ensure the next selection fits inside the container
+        fontSize = 0.0f;
     }
     
     /**
      * Get the current option selection
      * @return OptionSelection 
      */
-    private OptionSelection getOptionSelection()
+    private Selection getSelection()
     {
-        return getpOptionSelection(getKey());
+        return getSelection(getKey());
     }
     
     /**
@@ -140,9 +226,9 @@ public class Option
      * @param key
      * @return OptionSelection
      */
-    private OptionSelection getpOptionSelection(Object key)
+    private Selection getSelection(Object key)
     {
-        return (OptionSelection)selections.get(key);
+        return (Selection)selections.get(key);
     }
     
     /**
@@ -154,119 +240,59 @@ public class Option
         return selections.keySet().toArray()[index];
     }
     
-    public Graphics draw(Graphics g, Rectangle drawArea, boolean highlighted, Color menuColor1, Color menuColor2)
+    /**
+     * Get the Text to draw for the current option selection.
+     * This will concatenate the title (if exists) and the 
+     * description of the current option selection.
+     * 
+     * @return String
+     */
+    private String getDescription()
     {
-        if (getLocation() == null)
-            setLocation(drawArea);
-        
-        String phrase = title + getOptionSelection().getDescription();
-        
-        int textWidth = g.getFontMetrics().stringWidth(phrase);
-        
-        //if words expand the width then draw on multiple lines
-        if (textWidth > drawArea.width)
-        {
-            String[] eachWord = phrase.split(" ");
-            String currentSentence = "";
-            
-            int startY = drawArea.y + g.getFontMetrics().getHeight();
-            
-            int maxFontSize = 48;
-            int minFontSize = 8;
-
-            for (int fontSize = maxFontSize; fontSize >= minFontSize; fontSize--)
-            {
-                g.setFont(g.getFont().deriveFont(Font.BOLD, fontSize));
-
-                startY = drawArea.y + g.getFontMetrics().getHeight();
-                
-                for (int i=0; i < eachWord.length; i++)
-                {
-                    if (g.getFontMetrics().stringWidth(currentSentence) + 1 + g.getFontMetrics().stringWidth(eachWord[i]) >= drawArea.width)
-                    {
-                        startY += g.getFontMetrics().getHeight();
-                        currentSentence = eachWord[i];
-                    }
-                    else
-                    {
-                        if (currentSentence.length() < 1)
-                            currentSentence = eachWord[i];
-                        else
-                            currentSentence = currentSentence + " " + eachWord[i];
-                    }
-                }
-            
-                if (startY < drawArea.y + drawArea.height)
-                    break;
-            }
-        
-            startY = drawArea.y + g.getFontMetrics().getHeight();
-            currentSentence = title;
-            
-            for (int i=0; i < eachWord.length; i++)
-            {
-                if (g.getFontMetrics().stringWidth(currentSentence) + 1 + g.getFontMetrics().stringWidth(eachWord[i]) >= drawArea.width)
-                {
-                    g.drawString(currentSentence, drawArea.x, startY);
-                    startY += g.getFontMetrics().getHeight();
-                    currentSentence = eachWord[i];
-                    
-                    if (i == eachWord.length - 1)
-                        g.drawString(currentSentence, drawArea.x, startY);
-                }
-                else
-                {
-                    if (currentSentence.length() < 1)
-                        currentSentence = eachWord[i];
-                    else
-                        currentSentence = currentSentence + " " + eachWord[i];
-                    
-                    if (i == eachWord.length - 1)
-                        g.drawString(currentSentence, drawArea.x, startY);
-                }
-            }
-        }
-        else
-        {
-            int drawX = drawArea.x + (int)(drawArea.width * .03);
-            int drawY = drawArea.y + (drawArea.height / 2) + (g.getFontMetrics().getHeight() / 2);
-
-            if (highlighted)
-            {
-                g.setColor(menuColor1);
-                g.fillRect(drawArea.x, drawArea.y, drawArea.width, drawArea.height);
-                g.setColor(menuColor2);
-                g.drawString(phrase, drawX, drawY);
-            }
-            else
-            {
-                g.setColor(menuColor1);
-                g.drawString(phrase, drawX, drawY);
-            }
-        }
-        
-        return g;
+        return title + getSelection().getDescription();
     }
     
     /**
-     * Free up resources
+     * Draw current option selection
+     * 
+     * @param graphics Graphics object we will write to
+     * @param color1 The background color if this Option is highlighted, if not then it is the text color
+     * @param color2 The text color if this Option is highlighted
+     * @return Graphics
+     * @throws Exception
      */
-    public void dispose()
+    public Graphics render(Graphics graphics, Color color1, Color color2) throws Exception
     {
-        if (selections != null)
+        if (getBoundary() == null)
+            throw new Exception("The boundary needs to be set before this option can be drawn");
+        
+        //if the font size isn't set
+        if (fontSize == 0)
         {
-            for (Object key : selections.keySet().toArray())
-            {
-                getpOptionSelection(key).dispose();
-                selections.put(key, null);
-            }
+            fontSize = Menu.getFontSize(getDescription(), getBoundary().width, graphics);
             
-            selections.clear();
-            selections = null;
+            //set the x, y coordinates where our description will be drawn
+            drawX = getBoundary().x + (int)(getBoundary().width * .03);
+            drawY = getBoundary().y + graphics.getFontMetrics().getHeight();
         }
         
-        nextLayerKey = null;
-        location = null;
-        title = null;
+        //set the appropriate font size
+        graphics.getFont().deriveFont(fontSize);
+
+        if (hasHighlight())
+        {
+            graphics.setColor(color1);
+            graphics.fillRect(getBoundary().x, getBoundary().y, getBoundary().width, getBoundary().height);
+            
+            graphics.setColor(color2);
+            graphics.drawString(getDescription(), drawX, drawY);
+        }
+        else
+        {
+            graphics.setColor(color1);
+            graphics.drawString(getDescription(), drawX, drawY);
+        }
+        
+        return graphics;
     }
 }
