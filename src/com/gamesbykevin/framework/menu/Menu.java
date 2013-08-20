@@ -83,8 +83,11 @@ public class Menu
         return this.current;
     }
     
-    public void resetLayer()
-    {   //gets the current layer and resets the timer
+    /**
+     * Reset the timer of the current Layer
+     */
+    public void reset()
+    {
         getLayer().reset();
     }
     
@@ -104,12 +107,14 @@ public class Menu
     }
     
     /**
-     * Sets the current Layer
-     * @param key 
+     * Sets the current Layer and resets the Timer for that Layer
+     * @param current 
      */
     public void setLayer(final Object current)
     {
         this.current = current;
+        
+        this.reset();
     }
     
     private Layer getLayer(final Object key)
@@ -132,17 +137,11 @@ public class Menu
         return current;
     }
     
-    //this will set the index of a specific selection for a specific option for a specific layer
-    public void setOptionSelectionIndex(final Object layer, final Object option, final int index) 
-    {
-        getLayer(layer).getOption(option).setIndex(index);
-    }
-    
     //this will get the index of a specific selection for a specific option for a specific layer
     /**
      * 
-     * @param layer  The Layer containing the option
-     * @param option The option containing the current selection
+     * @param layer  The Layer key
+     * @param option The option key 
      * @return 
      */
     public int getOptionSelectionIndex(final Object layer, final Object option)

@@ -101,6 +101,10 @@ public class Timer
         return this.remaining;
     }
     
+    /**
+     * Get the reset time
+     * @return long
+     */
     public long getReset()
     {
         return this.reset;

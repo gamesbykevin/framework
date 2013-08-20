@@ -48,8 +48,8 @@ public abstract class Layer
     //the transition for this layer
     private Type type;
     
-    //current selected option, default 0
-    private int index = 0;
+    //the key representing our current option selected
+    private Object current;
     
     //options assigned to this layer
     private LinkedHashMap<Object, Option> options;
@@ -112,11 +112,9 @@ public abstract class Layer
     {
         this.screen = screen;
         
-        options = new LinkedHashMap<>();
+        this.options = new LinkedHashMap<>();
         
         this.type = type;
-        
-        this.setHighlighted();
         
         switch (type)
         {
@@ -190,6 +188,10 @@ public abstract class Layer
             timer.reset();
     }
     
+    /**
+     * Assign a Timer 
+     * @param timer 
+     */
     protected void setTimer(final Timer timer)
     {
         this.timer = timer;
@@ -214,11 +216,11 @@ public abstract class Layer
     }
     
     /**
-     * After this layer is complete is 
-     * there another layer we need to move to.
+     * After this layer is complete is there another layer we need to move to.
+     * 
      * @param nextLayerKey 
      */
-    protected void setNextLayerKey(final Object nextLayerKey)
+    protected void setNextLayer(final Object nextLayerKey)
     {
         this.nextLayerKey = nextLayerKey;
     }
@@ -243,46 +245,45 @@ public abstract class Layer
      * 
      * @param key Unique identifier for the Option parameter
      * @param option The option we want to add to the Layer
+     * @throws Exception
      */
-    protected void add(Object key, Option option)
+    protected void add(Object key, Option option) throws Exception
     {
+        //if this Layer has the next Layer set then we can't add options
+        if (getNextLayerKey() != null)
+            throw new Exception("This Layer has the next Layer set so we can't add options");
+        
         options.put(key, option);
     }
     
     /**
-     * If the mouse intersects the option set as current option
+     * If the mouse location is within the boundary of any Option
+     * set that as the current Option
+     * 
      * @param location 
      */
-    public void setIndex(final Point location)
+    public void setCurrent(final Point location)
     {
-        for (int i=0; i < options.size(); i++)
+        for (Object key : options.keySet().toArray())
         {
-            Option tmp = getOption(getKey(i));
-            
-            if (tmp.hasBoundary(location))
+            //is the mouse location within the boundary of this option
+            if (options.get(key).hasBoundary(location))
             {
-                tmp.setHighlighted(true);
-                
-                this.index = i;
+                setCurrent(key);
+                break;
             }
-            else
-            {
-                tmp.setHighlighted(false);
-            }
-        }
-    }
-    
-    public Option getOption(final Point location)
-    {
-        for (int i=0; i < options.size(); i++)
-        {
-            Option tmp = getOption(getKey(i));
-            
-            if (tmp.hasBoundary(location))
-                return tmp;
         }
         
-        return null;
+        setHighlighted();
+    }
+    
+    /**
+     * Set the key of the current Option
+     * @param current 
+     */
+    public void setCurrent(final Object current)
+    {
+        this.current = current;
     }
     
     /**
@@ -291,44 +292,30 @@ public abstract class Layer
      */
     public boolean hasOptions()
     {
-        return (options.size() > 0);
+        return (!options.isEmpty());
     }
     
     public Option getOption(Object key)
     {
-        return (Option)options.get(key);
+        return options.get(key);
     }
     
     /**
      * Get the current option
      * @return 
      */
-    public Option getOption()
+    private Option getOption()
     {
-        return getOption(getKey());
+        return getOption(getCurrent());
     }
     
     /**
      * Gets the key of the current index in our hash map
      * @return Object
      */
-    private Object getKey()
+    private Object getCurrent()
     {
-        return getKey(this.index);
-    }
-    
-    /**
-     * Gets the key of a specific index in our hash map
-     * 
-     * @param index
-     * @return Object
-     */
-    private Object getKey(final int index)
-    {
-        if (!hasOptions())
-            return null;
-        
-        return options.keySet().toArray()[index];
+        return this.current;
     }
     
     /**
@@ -345,84 +332,88 @@ public abstract class Layer
         //make sure we aren't forced to view this layer
         if (!getForce())
         {
+            //if options exist and the current option is not set for this Layer
+            if (hasOptions() && getCurrent() == null)
+                setHighlighted();
+            
             //check for input to skip to the next layer
             if (keyboard.isKeyPressed() || mouse.isMousePressed())
             {
-                //if we have no options and we have the next layer
-                if (getNextLayerKey() != null && !hasOptions())
+                //if we have the next Layer set
+                if (getNextLayerKey() != null)
                 {
+                    //set the new Layer
                     menu.setLayer(getNextLayerKey());
                 }
                 else
                 {
-                    Option option;
-
-                    //if the mouse was pressed
-                    if (mouse.isMousePressed())
+                    //if options exist
+                    if (hasOptions())
                     {
-                        option = getOption(mouse.getLocation());
-
-                        //does the option exist
-                        if (option != null)
+                        //get the current option
+                        Option option = getOption();
+                        
+                        //if the mouse was pressed
+                        if (mouse.isMousePressed())
                         {
-                            if (mouse.isMousePressed())
-                            {   
-                                //move to next option selection in this option or possibly change layer
-                                if (option.getKeyLayer()== null)
+                            //does the option exist
+                            if (option != null)
+                            {
+                                //if this option has the next layer set
+                                if (option.getKeyLayer() != null)
                                 {
+                                    //set new Layer
+                                    menu.setLayer(option.getKeyLayer());
+                                }
+                                else
+                                {
+                                    //move to the next selection
+                                    option.next();
+                                }
+                            }
+                        }
+
+                        if (keyboard.isKeyPressed())
+                        {
+                            if (keyboard.hasKeyPressed(KeyEvent.VK_ENTER))
+                            {
+                                //if this option does not contain the next layer
+                                if (option.getKeyLayer() == null)
+                                {
+                                    //change the option to the next selection
                                     option.next();
                                 }
                                 else
                                 {
+                                    //set the new Layer
                                     menu.setLayer(option.getKeyLayer());
-                                    
-                                    //since we are possibly re-selecting a layer reset the time
-                                    menu.resetLayer();
                                 }
                             }
-                        }
-                    }
 
-                    if (keyboard.hasKeyPressed(KeyEvent.VK_ENTER) && hasOptions())
-                    {
-                        option = getOption();
-
-                        if (option.getKeyLayer() == null)
-                        {
-                            option.next();
-                        }
-                        else
-                        {
-                            menu.setLayer(option.getKeyLayer());
+                            if (keyboard.hasKeyPressed(KeyEvent.VK_UP))
+                                setNextOption(true);
                             
-                            //since we are possibly re-selecting a layer reset the time
-                            menu.resetLayer();
+                            if (keyboard.hasKeyPressed(KeyEvent.VK_DOWN))
+                                setNextOption(false);
                         }
+
+                        setHighlighted();
                     }
-
-                    if (keyboard.hasKeyPressed(KeyEvent.VK_UP))
-                        index--;
-                    
-                    if (keyboard.hasKeyPressed(KeyEvent.VK_DOWN))
-                        index++;
-
-                    if (index < 0)
-                        index = options.size() - 1;
-                    if (index >= options.size())
-                        index = 0;
-                    
-                    setHighlighted();
                 }
 
+                //reset keyboard and mouse events
                 keyboard.reset();
                 mouse.reset();
             }
             else
             {
-                if (mouse.hasMouseMoved() && hasOptions())
+                if (hasOptions())
                 {
-                    //highlight the current Option
-                    setIndex(mouse.getLocation());
+                    if (mouse.hasMouseMoved())
+                    {
+                        //mouse has moved so check for new option highlighted
+                        setCurrent(mouse.getLocation());
+                    }
                 }
             }
         }
@@ -475,48 +466,102 @@ public abstract class Layer
                 break;
         }
         
-        //make sure timer is setup here
-        switch(type)
-        {
-            case SCROLL_HORIZONTAL_EAST_REPEAT:
-            case SCROLL_HORIZONTAL_WEST_REPEAT:
-            case SCROLL_VERTICAL_NORTH_REPEAT:
-            case SCROLL_VERTICAL_SOUTH_REPEAT:
-                break;
-        }
-        
+        //is timer setup here
         if (timer != null)
         {
+            //update timer
             timer.update(time);
 
-            //if time has passed we will reset time or start next layer
-            if (timer.hasTimePassed()) 
+            //if time has passed
+            if (timer.hasTimePassed())
             {
-                if (timer.getReset() > -1 && !getPause())
+                //if the Layer does not have pause enabled
+                if (!getPause())
                 {
+                    //set the new layer
                     menu.setLayer(getNextLayerKey());
                 }
                 else
                 {
+                    //reset the timer
                     timer.reset();
                 }
             }
         }
     }
     
-    private void setHighlighted()
+    /**
+     * From the current Option locate the next Option key
+     * If the current Option key is not set default the first
+     * 
+     * @param previous Do we want the previous Option? If not get the next Option
+     */
+    private void setNextOption(final boolean previous)
     {
+        //if the current Option has not been selected yet set the first one
+        if (getCurrent() == null)
+        {
+            setCurrent(options.keySet().toArray()[0]);
+            return;
+        }
+        
         for (int i=0; i < options.size(); i++)
         {
-            if (getKey(index) == getKey(i))
+            //have we located the current position of our key
+            if (options.keySet().toArray()[i] == getCurrent())
             {
-                getOption(getKey(i)).setHighlighted(true);
-            }
-            else
-            {
-                getOption(getKey(i)).setHighlighted(false);
+                //do we want the previous Option key
+                if (previous)
+                {
+                    //make sure we are within the bounds of the array
+                    if (i - 1 >= 0)
+                    {
+                        //get the previous
+                        setCurrent(options.keySet().toArray()[i - 1]);
+                    }
+                    else
+                    {
+                        //get the last
+                        setCurrent(options.keySet().toArray()[options.keySet().toArray().length - 1]);
+                    }
+                }
+                else
+                {
+                    //make sure we are within the bounds of the array
+                    if (i + 1 < options.keySet().toArray().length)
+                    {
+                        //get the next
+                        setCurrent(options.keySet().toArray()[i + 1]);
+                    }
+                    else
+                    {
+                        //get the first
+                        setCurrent(options.keySet().toArray()[0]);
+                    }
+                }
+                
+                //now that we found key exit loop
+                break;
             }
         }
+    }
+    
+    /**
+     * Set all options not highlighted except for the current option
+     */
+    private void setHighlighted()
+    {
+        //mark all options as not highlighted
+        for (Option option : options.values())
+        {
+            option.setHighlighted(false);
+        }
+        
+        if (getCurrent() == null)
+            setNextOption(false);
+        
+        //mark the current option as highlighted
+        getOption(getCurrent()).setHighlighted(true);
     }
     
     public Graphics render(Graphics2D g2d, Rectangle screen) throws Exception 

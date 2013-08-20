@@ -136,7 +136,7 @@ public class Option
      * @param description Text to display
      * @param sound Sound to play when this option selection is current
      */
-    public void add(String description, Audio sound) 
+    public void add(String description, Audio sound)
     {
         if (selections == null)
             selections = new LinkedHashMap<>(); 
@@ -154,7 +154,7 @@ public class Option
      * 
      * @param index the selection you like
      */
-    public void setIndex(final int index)
+    private void setIndex(final int index)
     {
         this.index = index;
         

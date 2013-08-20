@@ -5,7 +5,7 @@ import javax.swing.*;
 
 public class FullScreen 
 {
-    //the container for our full screen
+    //the container for our full screen 
     private JFrame frame = new JFrame(); 
     
     //original container
