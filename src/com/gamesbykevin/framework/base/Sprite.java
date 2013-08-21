@@ -1,6 +1,5 @@
 package com.gamesbykevin.framework.base;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
@@ -9,7 +8,7 @@ import java.awt.Rectangle;
 public class Sprite extends Cell 
 {
     //(x, y) = location (dx, dy) = velocity for x/y coordinates, (w, h) = width and height
-    private int x, y, dx, dy, w, h;
+    private int x = 0, y = 0, dx = 0, dy = 0, w = 0, h = 0;
     
     //switch image east/west
     private boolean horizontalFlip = false;
@@ -34,25 +33,7 @@ public class Sprite extends Cell
     
     public Sprite()
     {
-        this(0,0,0,0,0,0,null);
-    }
-    
-    public Sprite(final Image img)
-    {
-        this(0, 0, 0, 0, 0, 0, img);
-    }
-    
-    public Sprite(final Rectangle r, final Image img)
-    {
-        this(r.x, r.y, r.width, r.height, 0, 0, img);
-    }
-    
-    public Sprite(final int x, final int y, final int w, final int h, final int dx, final int dy, final Image img)
-    {
-        this.setLocation(x, y);
-        this.setVelocity(dx, dy);
-        this.setDimensions(w, h);
-        this.setImage(img);
+        
     }
     
     /**
@@ -647,9 +628,10 @@ public class Sprite extends Cell
      * @param sy2 Source y2
      * @return 
      */
-    public Graphics draw(final Graphics g, final Image image, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2)
+    public Graphics draw(final Graphics graphics, final Image image, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2)
     {
-        g.drawImage(image, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, null);
-        return g;
+        graphics.drawImage(image, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, null);
+        
+        return graphics;
     }
 }

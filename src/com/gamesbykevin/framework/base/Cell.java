@@ -2,7 +2,19 @@ package com.gamesbykevin.framework.base;
 
 public class Cell 
 {
-    private int col = 0, row = 0, minCol = 0, maxCol = 0, minRow = 0, maxRow = 0;
+    //the location of this Cell
+    private int col = 0, row = 0;
+    
+    //the Boundaries of this Cell
+    private int minCol = 0, maxCol = 0, minRow = 0, maxRow = 0;
+    
+    /**
+     * Construct a new Cell instance with a col, row value of 0
+     */
+    public Cell()
+    {
+        this(0,0);
+    }
     
     /**
      * Construct a new Cell instance with the given 
@@ -17,33 +29,34 @@ public class Cell
     }
     
     /**
-     * Construct a new Cell instance with a col, row value of 0
-     */
-    public Cell()
-    {
-        this(0,0);
-    }
-    
-    /**
-     * Construct a new Cell instance setting the
-     * col, row and boundaries according to the cell parameter.
+     * Construct a new Cell instance using the parameter Cell
+     * to assign this new Cell's col, row
+     * 
      * @param cell 
      */
     public Cell(final Cell cell)
     {
         this(cell.getCol(), cell.getRow());
-        this.setBounds(cell.getMinCol(), cell.getMaxCol(), cell.getMinRow(), cell.getMaxRow());
     }
     
     /**
-     * Set the boundaries based on the values from the parameter Cell
-     * @param cell Cell containing the boundaries we want to set
+     * Set the boundary based on the values from the parameter Cell
+     * 
+     * @param cell
      */
     public void setBounds(final Cell cell)
     {
         setBounds(cell.getMinCol(), cell.getMaxCol(), cell.getMinRow(), cell.getMaxRow());
     }
     
+    /**
+     * Set the boundary with the given parameters
+     * 
+     * @param minCol The minimum column
+     * @param maxCol The maximum column
+     * @param minRow The minimum row
+     * @param maxRow The maximum row
+     */
     public void setBounds(final int minCol, final int maxCol, final int minRow, final int maxRow)
     {
         this.minCol = minCol;
@@ -70,26 +83,29 @@ public class Cell
      * @param rowTest
      * @return boolean
      */
-    public boolean equals(final int colTest, final int rowTest)
+    public boolean equals(final int col, final int row)
     {
-        return (colTest == col && rowTest == row);
+        return (col == this.col && row == this.row);
     }
     
     /**
      * Is the cell location within the boundary specified.
-     * If the boundary is not specified the minCol, maxCol, minRow, maxRow will all have a value of 0.
-     * @return boolean True if the cell col, row is within the boundary
+     * @return boolean
      */
     public boolean hasBounds()
     {
         return hasBounds(minCol, maxCol, minRow, maxRow);
     }
     
-    public boolean hasBounds(final Cell cell)
-    {
-        return hasBounds(cell.getMinCol(), cell.getMaxCol(), cell.getMinRow(), cell.getMaxRow());
-    }
-    
+    /**
+     * Is the Cell within the current boundary set.
+     * 
+     * @param minCol Minimum value allowed for the Column
+     * @param maxCol Maximum value allowed for the Column
+     * @param minRow Minimum value allowed for the Row
+     * @param maxRow Maximum value allowed for the Row
+     * @return boolean
+     */
     public boolean hasBounds(final int minCol, final int maxCol, final int minRow, final int maxRow)
     {
         return (getCol() >= minCol && getCol() <= maxCol && getRow() >= minRow && getRow() <= maxRow);
@@ -111,9 +127,7 @@ public class Cell
     }
     
     /**
-     * Decrease the column by 1 column.
-     * Does not alter the boundaries
-     * set in this cell.
+     * Decrease the column by 1
      */
     public void decreaseCol()
     {
@@ -121,9 +135,7 @@ public class Cell
     }
     
     /**
-     * Increase the column by 1 column.
-     * Does not alter the boundaries
-     * set in this cell.
+     * Increase the column by 1
      */
     public void increaseCol()
     {
@@ -146,9 +158,7 @@ public class Cell
     }
     
     /**
-     * Decrease the row by 1 row.
-     * Does not alter the boundaries
-     * set in this cell.
+     * Decrease the row by 1
      */
     public void decreaseRow()
     {
@@ -156,9 +166,7 @@ public class Cell
     }
     
     /**
-     * Increase the row by 1 row.
-     * Does not alter the boundaries
-     * set in this cell.
+     * Increase the row by 1
      */
     public void increaseRow()
     {
