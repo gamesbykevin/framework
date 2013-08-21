@@ -22,7 +22,7 @@ public class Labyrinth
     
     public enum Algorithm
     {
-        DepthFirstSearch, Prims
+        DepthFirstSearch, Prims, Kruskals
     }
     
     public Labyrinth(final int cols, final int rows)
@@ -130,6 +130,13 @@ public class Labyrinth
         return neighbors;
     }
     
+    /**
+     * Get the neighbor that is next to the current Location and separated by the wall
+     * 
+     * @param current The current Location
+     * @param wall The wall that separates the current Location from the neighbor
+     * @return Location
+     */
     private Location getNeighbor(Location current, Wall wall)
     {
         Location neighbor = null;
@@ -316,7 +323,155 @@ public class Labyrinth
                     }
                 }
                 break;
+                
+            case Kruskals:
+                //our starting position
+                current = getLocation(start);
+                
+                //this maze will be done when all Locations are part of same group
+                while (getGroupCount() > 1)
+                {
+                    List<Wall> valid = new ArrayList<>();
+
+                    //add valid walls to list
+                    for (Wall wall : current.getWalls())
+                    {
+                        //make sure neighbor on other side of wall exists and is not part of the same group
+                        if (getNeighbor(current, wall) != null && current.getGroup() != getNeighbor(current, wall).getGroup())
+                            valid.add(wall);
+                    }
+
+                    if (valid.size() > 0)
+                    {
+                        Wall wall = valid.get((int)(Math.random() * valid.size()));
+
+                        Location neighbor = getNeighbor(current, wall);
+
+                        //make all Location(s) that have the same group as the neighbor the same group as part of the current group
+                        changeGroup(neighbor.getGroup(), current.getGroup());
+
+                        //now need to make a passage between the two locations
+                        current.remove(wall);
+
+                        switch(wall)
+                        {
+                            case North:
+                                neighbor.remove(Wall.South);
+                                break;
+
+                            case South:
+                                neighbor.remove(Wall.North);
+                                break;
+
+                            case West:
+                                neighbor.remove(Wall.East);
+                                break;
+
+                            case East:
+                                neighbor.remove(Wall.West);
+                                break;
+                        }
+                    }
+                    
+                    //get the Location with the lowest count that have the same group
+                    current = getLowestWeight();
+                }
+                
+                break;
         }
+    }
+    
+    /**
+     * For Kruskal's algorithm, change all Location(s) of a specific group to another
+     * @param groupStart The current group to search for
+     * @param groupEnd   The group we want it to be
+     */
+    private void changeGroup(final long groupStart, final long groupEnd)
+    {
+        for (Location cell : cells)
+        {
+            //if we found a Location with the group change it accordingly
+            if (cell.getGroup() == groupStart)
+                cell.setGroup(groupEnd);
+            
+        }        
+    }
+    
+    private Location getLowestWeight()
+    {
+        //lowest count
+        int count = 0;
+        
+        //lowest count group
+        long group = 0;
+        
+        for (Location cell : cells)
+        {
+            //if the current group count is less than the lowest count or we haven't set the lowest count yet
+            if (getLocationCount(cell.getGroup()) < count || count == 0)
+            {
+                count = getLocationCount(cell.getGroup());
+                group = cell.getGroup();
+            }
+        }
+        
+        List<Location> locations = getGroupLocations(group);
+        
+        return locations.get((int)(Math.random() * locations.size()));
+    }
+    
+    /**
+     * Gets all the Location(s) for a specific group
+     * @param group
+     * @return List<Location>
+     */
+    private List<Location> getGroupLocations(final long group)
+    {
+        List<Location> locations = new ArrayList<>();
+        
+        for (Location cell : cells)
+        {
+            if (cell.getGroup() == group)
+                locations.add(cell);
+        }
+        
+        return locations;
+    }
+    
+    /**
+     * For Kruskal's algorithm get the count of different unique groups
+     * @return int
+     */
+    private int getGroupCount()
+    {
+        List<Long> eachGroup = new ArrayList<>();
+        
+        for (Location cell : cells)
+        {
+            if (eachGroup.indexOf(cell.getGroup()) < 0)
+                eachGroup.add(cell.getGroup());
+        }
+        
+        return eachGroup.size();
+    }
+    
+    /**
+     * Get the count of Location(s) for the parameter group.
+     * For Kruskal's algorithm
+     * @param group
+     * @return int
+     */
+    private int getLocationCount(final long group)
+    {
+        int count = 0;
+        
+        for (Location cell : cells)
+        {
+            if (cell.getGroup() == group)
+                count++;
+        }
+        
+        return count;
     }
     
     /**

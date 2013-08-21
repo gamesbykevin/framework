@@ -4,6 +4,7 @@ import com.gamesbykevin.framework.base.Cell;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  *  Each location will be a Cell within a Labyrinth
@@ -23,6 +24,9 @@ public class Location extends Cell
     //has this cell been visited
     private boolean visited = false;
     
+    //for Kruskal's algorithm each Location will start out belonging to its own set
+    private long group = System.nanoTime();
+    
     public Location(final int col, final int row)
     {
         super(col, row);
@@ -34,6 +38,27 @@ public class Location extends Cell
         {
             this.walls.add(wall);
         }
+    }
+    
+    //
+    /**
+     * For Kruskal's algorithm as each Location will begin with its own unique group
+     * @return long
+     */
+    public long getGroup()
+    {
+        return group;
+    }
+    
+    /**
+     * For Kruskal's algorithm as each Location will begin with its own unique group.
+     * As the maze is generated Locations are given the same group until all Locations match
+     * 
+     * @param group 
+     */
+    public void setGroup(final long group)
+    {
+        this.group = group;
     }
     
     /**
