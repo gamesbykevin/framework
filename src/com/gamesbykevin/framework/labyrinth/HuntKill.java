@@ -54,16 +54,8 @@ public final class HuntKill extends LabyrinthHelper implements LabyrinthRules
         //continue until all Locations have been visited
         if (!this.hasVisitedAll())
         {
-            List<Location.Wall> valid = new ArrayList<>();
+            List<Location.Wall> valid = getValidWalls(current);
 
-            //add valid walls to list
-            for (Location.Wall wall : current.getWalls())
-            {
-                //make sure neighbor exists and has not been visited
-                if (getNeighbor(current, wall) != null && !getNeighbor(current, wall).hasVisited())
-                    valid.add(wall);
-            }
-            
             //is there at least one valid wall
             if (!valid.isEmpty())
             {
@@ -137,7 +129,10 @@ public final class HuntKill extends LabyrinthHelper implements LabyrinthRules
                 {
                     //make sure neighbor exists and has not been visited
                     if (getNeighbor(cell, wall) != null && !getNeighbor(cell, wall).hasVisited())
+                    {
                         unvisited.add(cell);
+                        break;
+                    }
                 }
             }
         }

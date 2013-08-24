@@ -145,19 +145,4 @@ public final class Prims extends LabyrinthHelper implements LabyrinthRules
             super.getProgress().setComplete();
         }
     }
-    
-    private List<Wall> getValidWalls(final Location location)
-    {
-        List<Wall> valid = new ArrayList<>();
-
-        //add valid walls to list as long as they are valid
-        for (Wall wall : location.getWalls())
-        {
-            //if the neighbor exists and we have not visited yet
-            if (getNeighbor(location, wall) != null && !getNeighbor(location, wall).hasVisited())
-                valid.add(wall);
-        }
-        
-        return valid;
-    }
 }

@@ -73,7 +73,7 @@ public final class DepthFirstSearch extends LabyrinthHelper implements Labyrinth
         //continue until every cell has been visited
         if (!hasVisitedAll())
         {
-            List<Wall> valid = getValidWalls();
+            List<Wall> valid = getValidWalls(current);
 
             //is there at least one valid wall
             if (!valid.isEmpty())
@@ -85,7 +85,7 @@ public final class DepthFirstSearch extends LabyrinthHelper implements Labyrinth
                 final int index = (int)(Math.random() * valid.size());
                 
                 //get random wall
-                Location.Wall wall = valid.get(index);
+                Wall wall = valid.get(index);
                 
                 //get random neighbor
                 Location neighbor = getNeighbor(current, wall);
@@ -140,7 +140,7 @@ public final class DepthFirstSearch extends LabyrinthHelper implements Labyrinth
                         stack.remove(index);
 
                         //if the new current Location has at least 1 valid wall we can continue
-                        if (getValidWalls().size() > 0)
+                        if (getValidWalls(current).size() > 0)
                             break;
                     }
                 }
@@ -156,28 +156,6 @@ public final class DepthFirstSearch extends LabyrinthHelper implements Labyrinth
         {
             super.getProgress().setComplete();
         }
-    }
-    
-    /**
-     * Get a List of Wall. The logic is to make 
-     * sure the neighbor exists and the neighbor 
-     * hasn't been visited yet.
-     * 
-     * @return List<Wall>
-     */
-    private List<Wall> getValidWalls()
-    {
-        List<Wall> valid = new ArrayList<>();
-
-        //add valid walls to list
-        for (Wall wall : current.getWalls())
-        {
-            //make sure neighbor exists and has not been visited
-            if (getNeighbor(current, wall) != null && !getNeighbor(current, wall).hasVisited())
-                valid.add(wall);
-        }
-        
-        return valid;
     }
     
     /**

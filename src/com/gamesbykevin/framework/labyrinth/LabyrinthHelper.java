@@ -265,6 +265,28 @@ public class LabyrinthHelper
     }
     
     /**
+     * Get a List of Wall. The logic is to make 
+     * sure the neighbor exists and the neighbor 
+     * hasn't been visited yet.
+     * 
+     * @return List<Wall>
+     */
+    protected List<Wall> getValidWalls(final Location location)
+    {
+        List<Wall> valid = new ArrayList<>();
+
+        //add valid walls to list as long as they are valid
+        for (Wall wall : location.getWalls())
+        {
+            //if the neighbor exists and we have not visited yet
+            if (getNeighbor(location, wall) != null && !getNeighbor(location, wall).hasVisited())
+                valid.add(wall);
+        }
+        
+        return valid;
+    }
+    
+    /**
      * Verify the if the appropriate values are set.
      * 
      * @throws Exception 
