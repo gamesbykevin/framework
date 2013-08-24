@@ -1,14 +1,11 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.gamesbykevin.framework.labyrinth;
 
-import com.gamesbykevin.framework.base.Cell;
 import static com.gamesbykevin.framework.labyrinth.Location.Wall.East;
 import static com.gamesbykevin.framework.labyrinth.Location.Wall.North;
 import static com.gamesbykevin.framework.labyrinth.Location.Wall.South;
 import static com.gamesbykevin.framework.labyrinth.Location.Wall.West;
+import com.gamesbykevin.framework.resources.Progress;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
@@ -29,6 +26,12 @@ public class LabyrinthHelper
     
     //the total number of cols and rows in this labyrinth
     private int cols, rows;
+    
+    //our progress tracker
+    private Progress progress;
+    
+    //has check() been called yet
+    private boolean checked = false;
     
     /**
      * Constructor that creates a maze with the parameter cols/rows
@@ -51,6 +54,72 @@ public class LabyrinthHelper
                 this.cells.add(new Location(col, row));
             }
         }
+    }
+    
+    public void dispose()
+    {
+        progress = null;
+        
+        start.dispose();
+        start = null;
+        
+        finish.dispose();
+        finish = null;
+        
+        for (Location cell : cells)
+        {
+            cell.dispose();
+            cell = null;
+        }
+        
+        cells.clear();
+        cells = null;
+    }
+    
+    /**
+     * Has the maze been created.
+     * 
+     * @return boolean
+     */
+    public boolean isComplete()
+    {
+        return this.progress.isComplete();
+    }
+    
+    /**
+     * Get our progress tracking object
+     * @return Progress
+     */
+    public Progress getProgress()
+    {
+        return this.progress;
+    }
+    
+    /**
+     * Set the goal so we know when the maze is complete
+     * @param goal 
+     */
+    protected void setProgressGoal(final int goal)
+    {
+        progress = new Progress(goal);
+    }
+    
+    /**
+     * Get the total number of rows in the maze
+     * @return int
+     */
+    public int getRowCount()
+    {
+        return this.rows;
+    }
+    
+    /**
+     * Get the total number of columns in the maze
+     * @return int
+     */
+    public int getColumnCount()
+    {
+        return this.cols;
     }
     
     public List<Location> getCells()
@@ -146,6 +215,32 @@ public class LabyrinthHelper
         return getLocation(neighbor);
     }
     
+    /**
+     * Get the Location from the given parameters.
+     * If the Location is not found null is returned
+     * 
+     * @param col
+     * @param row
+     * @return Location
+     */
+    protected Location getLocation(final int col, final int row)
+    {
+        for (Location cell : cells)
+        {
+            if (cell.getCol() == col && cell.getRow() == row)
+                return cell;
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Get the Location from the given parameters.
+     * If the Location is not found null is returned
+     * 
+     * @param current
+     * @return Location
+     */
     protected Location getLocation(final Location current)
     {
         for (Location cell : cells)
@@ -158,10 +253,26 @@ public class LabyrinthHelper
     }
     
     /**
-     * For now this create method only checks if the appropriate values are set
+     * Change all Location(s) of a specific group to another
+     * @param groupSearch The current group we want to change
+     * @param groupChange The group we want it to be
+     */
+    protected void changeGroup(final long groupSearch, final long groupChange)
+    {
+        for (Location cell : getCells())
+        {
+            //if we found a Location with the group change it accordingly
+            if (cell.getGroup() == groupSearch)
+                cell.setGroup(groupChange);
+        }
+    }
+    
+    /**
+     * Verify the if the appropriate values are set.
+     * 
      * @throws Exception 
      */
-    protected void create() throws Exception
+    protected void check() throws Exception
     {
         //start position must be set
         if (getStart() == null)
@@ -170,6 +281,18 @@ public class LabyrinthHelper
         //finish position must be set
         if (getFinish() == null)
             throw new Exception("Finish location needs to be set in order to create maze");
+        
+        checked = true;
+    }
+    
+    /**
+     * Has check() been called yet
+     * 
+     * @return boolean
+     */
+    protected boolean hasChecked()
+    {
+        return this.checked;
     }
     
     /**
@@ -223,5 +346,16 @@ public class LabyrinthHelper
         }
         
         return graphics;
+    }
+    
+    /**
+     * Draw the progress for the user to see
+     * @param graphics
+     * @param screen
+     * @return Graphics
+     */
+    public Graphics renderProgress(final Graphics graphics, final Rectangle screen)
+    {
+        return this.progress.render(graphics, screen);
     }
 }

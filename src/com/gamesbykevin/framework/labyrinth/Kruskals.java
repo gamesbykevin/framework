@@ -1,13 +1,6 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.gamesbykevin.framework.labyrinth;
 
-import static com.gamesbykevin.framework.labyrinth.Location.Wall.East;
-import static com.gamesbykevin.framework.labyrinth.Location.Wall.North;
-import static com.gamesbykevin.framework.labyrinth.Location.Wall.South;
-import static com.gamesbykevin.framework.labyrinth.Location.Wall.West;
+import com.gamesbykevin.framework.labyrinth.Location.Wall;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,61 +8,89 @@ import java.util.List;
  * Generate a Labyrinth using Kruskals algorithm
  * @author GOD
  */
-public final class Kruskals extends LabyrinthHelper
+public final class Kruskals extends LabyrinthHelper implements LabyrinthRules
 {
+    private Location current;
+    
     public Kruskals(final int cols, final int rows)
     {
         super(cols, rows);
     }
     
-    public void create() throws Exception
+    @Override
+    public void dispose()
     {
-        super.create();
+        super.dispose();
+        
+        if (current != null)
+            current.dispose();
+        
+        current = null;
+    }
+    
+    @Override
+    public void initialize() throws Exception
+    {
+        //verify initial variables are set
+        super.check();
         
         //our starting position
-        Location current = getLocation(getStart());
-
+        current = getLocation(getStart());
+        
+        super.setProgressGoal(getGroupCount() - 1);
+    }
+    
+    @Override
+    public void update() throws Exception
+    {
+        //initialize() has not been called yet
+        if (!super.hasChecked())
+            throw new Exception("initialize() must be called first before update()");
+        
         //this maze will be done when all Locations are part of same group
-        while (getGroupCount() > 1)
+        if (getGroupCount() > 1)
         {
-            List<Location.Wall> valid = new ArrayList<>();
+            List<Wall> valid = new ArrayList<>();
 
             //add valid walls to list
-            for (Location.Wall wall : current.getWalls())
+            for (Wall wall : current.getWalls())
             {
                 //make sure neighbor on other side of wall exists and is not part of the same group
                 if (getNeighbor(current, wall) != null && current.getGroup() != getNeighbor(current, wall).getGroup())
                     valid.add(wall);
             }
 
-            if (valid.size() > 0)
+            if (!valid.isEmpty())
             {
-                Location.Wall wall = valid.get((int)(Math.random() * valid.size()));
+                Wall wall = valid.get((int)(Math.random() * valid.size()));
 
                 Location neighbor = getNeighbor(current, wall);
 
                 //make all Location(s) that have the same group as the neighbor the same group as part of the current group
                 changeGroup(neighbor.getGroup(), current.getGroup());
 
+                //update progress
+                super.getProgress().setCount(super.getProgress().getGoal() - getGroupCount());
+                
                 //now need to make a passage between the two locations
                 current.remove(wall);
 
                 switch(wall)
                 {
                     case North:
-                        neighbor.remove(Location.Wall.South);
+                        neighbor.remove(Wall.South);
                         break;
 
                     case South:
-                        neighbor.remove(Location.Wall.North);
+                        neighbor.remove(Wall.North);
                         break;
 
                     case West:
-                        neighbor.remove(Location.Wall.East);
+                        neighbor.remove(Wall.East);
                         break;
 
                     case East:
-                        neighbor.remove(Location.Wall.West);
+                        neighbor.remove(Wall.West);
                         break;
                 }
             }
@@ -77,22 +98,10 @@ public final class Kruskals extends LabyrinthHelper
             //get the Location with the lowest count that have the same group
             current = getLowestWeight();
         }
-    }
-    
-    /**
-     * Change all Location(s) of a specific group to another
-     * @param groupStart The current group to search for
-     * @param groupEnd   The group we want it to be
-     */
-    private void changeGroup(final long groupStart, final long groupEnd)
-    {
-        for (Location cell : getCells())
+        else
         {
-            //if we found a Location with the group change it accordingly
-            if (cell.getGroup() == groupStart)
-                cell.setGroup(groupEnd);
-            
-        }        
+            super.getProgress().setComplete();
+        }
     }
     
     /**
@@ -141,23 +150,6 @@ public final class Kruskals extends LabyrinthHelper
     }
     
     /**
-     * For Kruskal's algorithm get the count of different unique groups
-     * @return int
-     */
-    private int getGroupCount()
-    {
-        List<Long> eachGroup = new ArrayList<>();
-        
-        for (Location cell : getCells())
-        {
-            if (eachGroup.indexOf(cell.getGroup()) < 0)
-                eachGroup.add(cell.getGroup());
-        }
-        
-        return eachGroup.size();
-    }
-    
-    /**
      * Get the count of Location(s) for the parameter group.
      * For Kruskal's algorithm
      * @param group
@@ -174,5 +166,22 @@ public final class Kruskals extends LabyrinthHelper
         }
         
         return count;
+    }
+    
+    /**
+     * For Kruskal's algorithm get the count of different unique groups
+     * @return int
+     */
+    private int getGroupCount()
+    {
+        List<Long> eachGroup = new ArrayList<>();
+        
+        for (Location cell : getCells())
+        {
+            if (eachGroup.indexOf(cell.getGroup()) < 0)
+                eachGroup.add(cell.getGroup());
+        }
+        
+        return eachGroup.size();
     }
 }

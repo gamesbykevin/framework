@@ -1,5 +1,7 @@
 package com.gamesbykevin.framework.resources;
 
+import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.util.LinkedHashMap;
 
 /**
@@ -129,7 +131,7 @@ public class Manager extends Progress
                             break;
                     }
 
-                    increaseProgress();
+                    increase();
 
                     if (loadMethod == LoadMethod.OnePerFrame)
                         return;
@@ -151,11 +153,6 @@ public class Manager extends Progress
         //resources are now loaded so we dont need these objects
         locations = null;
         keys = null;
-    }
-    
-    public int getCount()
-    {
-        return resources.size();
     }
     
     public void playAudio(final Object key)
@@ -219,5 +216,19 @@ public class Manager extends Progress
     private Object getResource(final Object key)
     {
         return resources.get(key);
+    }
+    
+    /**
+     * Display the Progress of loading the Resources
+     * @param graphics
+     * @param screen
+     * @return Graphics
+     */
+    @Override
+    public Graphics render(final Graphics graphics, final Rectangle screen)
+    {
+        super.render(graphics, screen);
+        
+        return graphics;
     }
 }

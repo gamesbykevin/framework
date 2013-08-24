@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.gamesbykevin.framework.labyrinth;
 
 import static com.gamesbykevin.framework.labyrinth.Location.Wall.East;
@@ -15,29 +11,70 @@ import java.util.List;
  * Generate a Labyrinth using Prim's algorithm
  * @author GOD
  */
-public final class Prims extends LabyrinthHelper
+public final class Prims extends LabyrinthHelper implements LabyrinthRules
 {
+    private Location current;
+    
+    private List<Location> checkWalls;
+    
     public Prims(final int cols, final int rows)
     {
         super(cols, rows);
     }
     
+    @Override
+    public void dispose()
+    {
+        super.dispose();
+        
+        if (current != null)
+            current.dispose();
+        
+        current = null;
+        
+        if (checkWalls != null)
+        {
+            for (Location cell : checkWalls)
+            {
+                cell.dispose();
+                cell = null;
+            }
+            
+            checkWalls.clear();
+            checkWalls = null;
+        }
+    }
+    
+    @Override
+    public void initialize() throws Exception
+    {
+        //verify initial variables are set
+        super.check();
+        
+        //List
+        checkWalls = new ArrayList<>();
+        
+        //our starting position
+        current = getLocation(getStart());
+        
+        //set Location as part of maze
+        current.markVisited();
+        
+        //update progress
+        super.setProgressGoal(super.getCells().size() - 1);
+    }
+    
     /**
      * Creates the maze
      */
-    public void create() throws Exception
+    @Override
+    public void update() throws Exception
     {
-        super.create();
+        //initialize() has not been called yet
+        if (!super.hasChecked())
+            throw new Exception("initialize() must be called first before update()");
         
-        //our starting position
-        Location current = getLocation(getStart());
-
-        //set Location as part of maze
-        current.markVisited();
-
-        List<Location> checkWalls = new ArrayList<>();
-
-        while(!hasVisitedAll())
+        if(!hasVisitedAll())
         {
             List<Location.Wall> valid = new ArrayList<>();
 
@@ -48,10 +85,10 @@ public final class Prims extends LabyrinthHelper
                     valid.add(wall);
             }
 
-            if (valid.size() > 0)
+            if (!valid.isEmpty())
             {
                 //while we have valid walls to check
-                while (valid.size() > 0)
+                while (!valid.isEmpty())
                 {
                     final int index = (int)(Math.random() * valid.size());
 
@@ -63,6 +100,9 @@ public final class Prims extends LabyrinthHelper
                     
                     //mark the neighbor as visited
                     neighbor.markVisited();
+                    
+                    //update progress
+                    super.getProgress().increase();
                     
                     //remove wall to create passage to neighbor
                     current.remove(wall);
@@ -99,5 +139,9 @@ public final class Prims extends LabyrinthHelper
                 current = checkWalls.get((int)(Math.random() * checkWalls.size()));
             }
         }
-    }    
+        else
+        {
+            super.getProgress().setComplete();
+        }
+    }
 }

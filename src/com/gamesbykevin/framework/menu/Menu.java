@@ -2,6 +2,7 @@ package com.gamesbykevin.framework.menu;
 
 import com.gamesbykevin.framework.input.Keyboard;
 import com.gamesbykevin.framework.input.Mouse;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 
@@ -187,8 +188,8 @@ public class Menu
     
     /**
      * Get the appropriate font size with the given text and limited container width.
-     * Use this method if you have a container and you want the text to fit
-     * inside the width of the container.
+     * Use this method if you have a container and you want the text to fit inside 
+     * the width of the container.
      * 
      * @param text The text we want to fit inside the container
      * @param containerWidth The max width for the text to fit
@@ -197,6 +198,9 @@ public class Menu
      */
     public static float getFontSize(final String text, final int containerWidth, final Graphics graphics)
     {
+        //store the temporary font while adjustments are made
+        Font tmp = graphics.getFont();
+        
         //fontSize for the title text
         float fontSize;
         
@@ -222,6 +226,9 @@ public class Menu
         {
             fontSize = MAX_FONT_SIZE;
         }
+        
+        //set the font back to the original
+        graphics.setFont(tmp);
         
         return fontSize;
     }

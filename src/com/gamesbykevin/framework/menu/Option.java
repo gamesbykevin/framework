@@ -28,6 +28,7 @@ public class Option
     //the x, y coordinates to draw the option selection
     private int drawX, drawY;
     
+    //is this option the current one selected
     private boolean highlight = false;
     
     /**
@@ -88,6 +89,10 @@ public class Option
         this.highlight = highlight;
     }
     
+    /**
+     * Is this option currently highlighted
+     * @return boolean
+     */
     public boolean hasHighlight()
     {
         return this.highlight;

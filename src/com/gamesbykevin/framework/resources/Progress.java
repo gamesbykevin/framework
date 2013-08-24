@@ -1,47 +1,110 @@
 package com.gamesbykevin.framework.resources;
 
+import com.gamesbykevin.framework.menu.Menu;
 import java.awt.Color;
+import java.awt.image.BufferedImage;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.Rectangle;
 
 public class Progress 
 {
+    //we will draw an image to reduce load on machine
+    private BufferedImage image;
+    
+    //the decimal representing our progress
     private double progress;
     
-    private int total = 0;
-    private int current = 0;
+    //the goal will be the logic used to determine Progress isComplete()
+    private int goal  = 0;
     
-    private String desc = "";
+    //the count will be the logic used to track how close we are to goal
+    private int count = 0;
     
-    public Progress(int total)
+    //text to be displayed to the user
+    private String description;
+    
+    //the location where the dynamic progress will be displayed
+    private Point progressTextLocation;
+    
+    //the dimensions the progress bar will be contained within
+    private Rectangle progressBarDimension;
+    
+    //the text width will be 75% of the container width
+    private static final double TEXT_CONTAINER_WIDTH_RATIO = .75;
+    
+    //store the font in this object so when the progress is rendered everything is consistent
+    private Font font;
+    
+    /**
+     * Create new Progress tracker with the goal set
+     * 
+     * @param goal 
+     */
+    public Progress(final int goal)
     {
-        this.total = total;
+        this.goal = goal;
     }
     
-    public void setDesc(String desc)
+    /**
+     * Set Text to display when render is called, can be null
+     * Note: You can only set the description once or else an 
+     * Exception will be thrown
+     * 
+     * @param description 
+     * @throws Exception
+     */
+    public void setDescription(final String description) throws Exception
     {
-        this.desc = desc;
+        if (this.description != null)
+            throw new Exception("Description has already been set and can't be set again.");
+        
+        this.description = description;
     }
     
-    public String getDesc()
+    /**
+     * Get the description that will be displayed when Progress is rendered
+     * @return String
+     */
+    public String getDescription()
     {
-        return desc;
+        return description;
     }
     
-    public int getTotal()
+    /**
+     * Get the goal we have set
+     * @return int
+     */
+    public int getGoal()
     {
-        return total;
+        return goal;
     }
     
-    public int getCurrentCount()
+    /**
+     * Where are we currently at
+     * @return int
+     */
+    public int getCount()
     {
-        return current;
+        return count;
     }
     
-    public void increaseProgress()
+    /**
+     * Increase the progress towards our goal by 1
+     */
+    public void increase()
     {
-        current++;
+        setCount(getCount() + 1);
+    }
+    
+    /**
+     * Set the progress towards our goal
+     * @param count 
+     */
+    public void setCount(final int count)
+    {
+        this.count = count;
     }
     
     /**
@@ -49,79 +112,118 @@ public class Progress
      */
     public void setComplete()
     {
-        current = total;
+        count = goal;
     }
     
+    /**
+     * Get the progress towards reaching the goal in the form of a decimal ranging from 0.0 to 1.0
+     * @return double
+     */
     public double getProgress()
     {
-        progress = ((double)getCurrentCount() / (double)getTotal());
+        progress = ((double)getCount() / (double)getGoal());
         
         return progress;
     }
     
-    public boolean isLoadingComplete()
+    /**
+     * Has the count reached the goal
+     * @return boolean
+     */
+    public boolean isComplete()
     {
-        return (getProgress() >= 1);
+        return (getCount() >= getGoal());
     }
     
-    public static Graphics draw(Graphics g, Rectangle screen, double progress, String desc) //draw progress bar within Rectangle r
+    /**
+     * Draw the progress within Rectangle container
+     * @param graphics
+     * @param screen
+     * @return Graphics
+     */
+    public Graphics render(Graphics graphics, Rectangle screen)
     {
-        g.setColor(Color.BLACK);
-        g.fillRect(screen.x, screen.y, screen.width, screen.height);
+        //create image of Progress information as all information will be static exception getProgress()
+        if (image == null)
+        {
+            //create an image of the same size as Rectangle screen
+            image = new BufferedImage(screen.width, screen.height, BufferedImage.TYPE_INT_ARGB);
+            
+            //get Graphics object so we can write to image
+            Graphics imageGraphics = image.createGraphics();
+            
+            //set the font style the same
+            imageGraphics.setFont(graphics.getFont());
+            
+            //make the background the size of our Rectangle and fill it with Black Color
+            imageGraphics.setColor(Color.BLACK);
+            imageGraphics.fillRect(screen.x, screen.y, screen.width, screen.height);
 
-        int middleX = screen.x + (screen.width/2);
-        int middleY = screen.y + (screen.height/2);
+            //we will display the information in the middle
+            int middleX = screen.x + (screen.width /2);
+            int middleY = screen.y + (screen.height/2);
+
+            //default description
+            String loadingDesc = "Loading ";
+
+            //if a description exists we will use it
+            if (getDescription() != null && getDescription().length() > 0)
+                loadingDesc = getDescription() + " ";
+
+            //add extra text to loadingDesc so the overall result will appear centered
+            float fontSize = Menu.getFontSize(loadingDesc + "100%", (int)(screen.width * TEXT_CONTAINER_WIDTH_RATIO), imageGraphics);
+            
+            //correct font size has been found, so we set it
+            imageGraphics.setFont(graphics.getFont().deriveFont(fontSize));
+
+            //store the font for consistency sake
+            font = imageGraphics.getFont();
+            
+            //get the pixel width of our description
+            int textWidth = imageGraphics.getFontMetrics().stringWidth(loadingDesc);
+
+            //make the appropriate calculations do the display text will appear in the center
+            int drawX = middleX - (textWidth / 2);
+            int drawY = middleY + ((imageGraphics.getFontMetrics().getHeight() / 2));
+
+            //write the loading description to image as this information will not change
+            imageGraphics.setColor(Color.WHITE);
+            imageGraphics.drawString(loadingDesc, drawX, drawY);
+
+            //the location where we will draw the dynamic Progress
+            progressTextLocation = new Point(drawX + textWidth, drawY);
+            
+            //the starting point where we will draw the progress bar
+            progressBarDimension = new Rectangle(drawX, drawY + (imageGraphics.getFontMetrics().getHeight() * 2), textWidth, imageGraphics.getFontMetrics().getHeight());
+        }
         
-        int percentComplete = (int)(progress * 100);
+        //draw background loading image
+        graphics.drawImage(image, screen.x, screen.y, screen.width, screen.height, null);
+        
+        //set same font and color to match background image
+        graphics.setColor(Color.WHITE);
+        graphics.setFont(font);
+        
+        //these display values need to be calculated on the fly as they will dynamically change
+        graphics.drawString(getPercentComplete() + "%", progressTextLocation.x, progressTextLocation.y);
+        graphics.fillRect(progressBarDimension.x, progressBarDimension.y, (int)(progressBarDimension.width * getProgress()), progressBarDimension.height);
+        
+        return graphics;
+    }
+    
+    /**
+     * Calculate the percentage complete as an integer.
+     * Return value will be a number 0 - 100
+     * 
+     * @return int 
+     */
+    private int getPercentComplete()
+    {
+        int percentComplete = (int)(getProgress() * 100);
         
         if (percentComplete >= 100)
             percentComplete = 100;
         
-        String loadingDesc = "";
-        
-        if (desc != null && desc.length() > 0)
-        {
-            loadingDesc = desc + " " + percentComplete + "%";
-        }
-        else
-        {
-            loadingDesc = "Loading " + percentComplete + "%";
-        }
-        
-        int fontSize = 18;
-        g.setFont(g.getFont().deriveFont(Font.PLAIN, fontSize));
-        
-        while(true)
-        {
-            if (g.getFontMetrics().stringWidth(loadingDesc) > screen.width)
-            {
-                fontSize--;
-                g.setFont(g.getFont().deriveFont(Font.PLAIN, fontSize));
-                
-                if (fontSize <= 1)
-                    break;
-            }
-            else
-            {
-                break;
-            }
-        }
-        
-        int textWidth = g.getFontMetrics().stringWidth(loadingDesc);
-        int fillWidth = (int)(textWidth * progress);
-        
-        if (percentComplete >= 100)
-            fillWidth = textWidth;
-        
-        int drawX = middleX - (textWidth / 2);
-        int drawY = middleY + (g.getFontMetrics().getHeight());
-        
-        g.setColor(Color.WHITE);
-        
-        g.drawString(loadingDesc, drawX, drawY);
-        
-        g.fillRect(drawX, drawY + (g.getFontMetrics().getHeight() * 2), fillWidth, g.getFontMetrics().getHeight());
-        
-        return g;
+        return percentComplete;
     }
 }

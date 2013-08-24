@@ -4,10 +4,9 @@ import com.gamesbykevin.framework.base.Cell;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 /**
- *  Each location will be a Cell within a Labyrinth
+ *  Each Cell inside a Labyrinth is a Location
  * 
  * @author GOD
  */
@@ -24,9 +23,14 @@ public class Location extends Cell
     //has this cell been visited
     private boolean visited = false;
     
-    //for Kruskal's algorithm each Location will start out belonging to its own set
+    //for different algorithms Location(s) may belong to a group
     private long group = System.nanoTime();
     
+    /**
+     * Create a new Location with the specified Location
+     * @param col
+     * @param row 
+     */
     public Location(final int col, final int row)
     {
         super(col, row);
@@ -40,9 +44,20 @@ public class Location extends Cell
         }
     }
     
+    /**
+     * Free up resources
+     */
+    public void dispose()
+    {
+        if (walls != null)
+            walls.clear();
+        
+        walls = null;
+    }
+    
     //
     /**
-     * For Kruskal's algorithm as each Location will begin with its own unique group
+     * For certain algorithms each Location will have an assigned group
      * @return long
      */
     public long getGroup()
@@ -65,7 +80,7 @@ public class Location extends Cell
      * Remove the Wall from the List
      * @param wall 
      */
-    public void remove(Wall wall)
+    public void remove(final Wall wall)
     {
         final int index = walls.indexOf(wall);
         
@@ -78,8 +93,24 @@ public class Location extends Cell
     }
     
     /**
+     * Add the Wall to the List
+     * @param wall 
+     */
+    public void add(final Wall wall)
+    {
+        final int index = walls.indexOf(wall);
+        
+        //if the wall exists
+        if (index < 0)
+        {
+            //add it from the List
+            walls.add(wall);
+        }
+    }
+    
+    /**
      * Get a List of all the walls in this Location
-     * @return 
+     * @return List<Wall>
      */
     public List<Wall> getWalls()
     {
@@ -87,8 +118,8 @@ public class Location extends Cell
     }
     
     /**
-     * Does this
-     * @return 
+     * Does this Location have walls
+     * @return boolean
      */
     public boolean hasWalls()
     {

@@ -79,8 +79,8 @@ public class Cell
     /**
      * Does the cell equal the given col, row. 
      * Does not check if the boundaries are equal.
-     * @param colTest
-     * @param rowTest
+     * @param col
+     * @param row
      * @return boolean
      */
     public boolean equals(final int col, final int row)
