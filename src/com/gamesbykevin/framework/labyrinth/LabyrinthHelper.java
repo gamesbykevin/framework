@@ -1,9 +1,6 @@
 package com.gamesbykevin.framework.labyrinth;
 
-import static com.gamesbykevin.framework.labyrinth.Location.Wall.East;
-import static com.gamesbykevin.framework.labyrinth.Location.Wall.North;
-import static com.gamesbykevin.framework.labyrinth.Location.Wall.South;
-import static com.gamesbykevin.framework.labyrinth.Location.Wall.West;
+import com.gamesbykevin.framework.labyrinth.Location.Wall;
 import com.gamesbykevin.framework.resources.Progress;
 
 import java.awt.Color;
@@ -322,7 +319,7 @@ public class LabyrinthHelper
             graphics.setColor(Color.RED);
             
             //draw the walls for the current Location
-            for (Location.Wall wall : cell.getWalls())
+            for (Wall wall : cell.getWalls())
             {
                 switch (wall)
                 {

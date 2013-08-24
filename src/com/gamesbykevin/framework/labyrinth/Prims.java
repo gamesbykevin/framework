@@ -1,9 +1,7 @@
 package com.gamesbykevin.framework.labyrinth;
 
-import static com.gamesbykevin.framework.labyrinth.Location.Wall.East;
-import static com.gamesbykevin.framework.labyrinth.Location.Wall.North;
-import static com.gamesbykevin.framework.labyrinth.Location.Wall.South;
-import static com.gamesbykevin.framework.labyrinth.Location.Wall.West;
+import com.gamesbykevin.framework.labyrinth.Location.Wall;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -76,15 +74,10 @@ public final class Prims extends LabyrinthHelper implements LabyrinthRules
         
         if(!hasVisitedAll())
         {
-            List<Location.Wall> valid = new ArrayList<>();
+            //get a List of valid walls for the current Location
+            List<Wall> valid = getValidWalls(current);
 
-            //add valid walls to list
-            for (Location.Wall wall : current.getWalls())
-            {
-                if (getNeighbor(current, wall) != null && !getNeighbor(current, wall).hasVisited())
-                    valid.add(wall);
-            }
-
+            //make sure we have walls to check
             if (!valid.isEmpty())
             {
                 //while we have valid walls to check
@@ -111,37 +104,60 @@ public final class Prims extends LabyrinthHelper implements LabyrinthRules
                     switch(wall)
                     {
                        case South:
-                           neighbor.remove(Location.Wall.North);
+                           neighbor.remove(Wall.North);
                            break;
 
                        case North:
-                           neighbor.remove(Location.Wall.South);
+                           neighbor.remove(Wall.South);
                            break;
 
                        case West:
-                           neighbor.remove(Location.Wall.East);
+                           neighbor.remove(Wall.East);
                            break;
 
                        case East:
-                           neighbor.remove(Location.Wall.West);
+                           neighbor.remove(Wall.West);
                            break;
                     }
 
                     //remove the wall from list
                     valid.remove(index);
 
-                    //add neighbor as another spot to check
-                    checkWalls.add(getNeighbor(current, wall));
+                    //add neighbor as another spot to check as long as it has valid walls
+                    if (getValidWalls(neighbor).size() > 0)
+                        checkWalls.add(neighbor);
                 }
             }
             else
             {
-                current = checkWalls.get((int)(Math.random() * checkWalls.size()));
+                //get new random Location
+                final int index = (int)(Math.random() * checkWalls.size());
+                
+                //get Location and set as current
+                current = checkWalls.get(index);
+                
+                //remove from List
+                checkWalls.remove(index);
             }
         }
         else
         {
             super.getProgress().setComplete();
         }
+    }
+    
+    private List<Wall> getValidWalls(final Location location)
+    {
+        List<Wall> valid = new ArrayList<>();
+
+        //add valid walls to list as long as they are valid
+        for (Wall wall : location.getWalls())
+        {
+            //if the neighbor exists and we have not visited yet
+            if (getNeighbor(location, wall) != null && !getNeighbor(location, wall).hasVisited())
+                valid.add(wall);
+        }
+        
+        return valid;
     }
 }
