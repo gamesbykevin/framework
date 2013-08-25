@@ -220,7 +220,7 @@ public class LabyrinthHelper
      * @param row
      * @return Location
      */
-    protected Location getLocation(final int col, final int row)
+    public Location getLocation(final int col, final int row)
     {
         for (Location cell : cells)
         {

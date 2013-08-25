@@ -201,6 +201,40 @@ public class Labyrinth
         }
     }
     
+    /**
+     * Get Location at column/row
+     * @param col
+     * @param row
+     * @return Location
+     * @throws Exception 
+     */
+    public Location getLocation(int col, int row) throws Exception
+    {
+        switch(algorithm)
+        {
+            case DepthFirstSearch:
+                return depthFirstSearch.getLocation(col, row);
+                
+            case Prims:
+                return prims.getLocation(col, row);
+                
+            case Kruskals:
+                 return kruskals.getLocation(col, row);
+                
+             case Ellers:
+                return ellers.getLocation(col, row);
+                 
+            case HuntKill:
+                return huntKill.getLocation(col, row);
+                 
+            case Sidewinder:
+                return sidewinder.getLocation(col, row);
+                
+           default:
+                throw new Exception("Algorithm not setup here");
+        }
+    }
+    
     public Progress getProgress() throws Exception
     {
         Progress tmp = null;
