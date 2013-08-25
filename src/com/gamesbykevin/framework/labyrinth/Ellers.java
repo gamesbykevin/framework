@@ -227,7 +227,7 @@ public final class Ellers extends LabyrinthHelper implements LabyrinthRules
     {
         List<Location> orderedLocations = new ArrayList<>();
         
-        for (Location cell : super.getCells())
+        for (Location cell : super.getLocations())
         {
             //if the current Location(s) row is the same as the one we are looking for
             if (cell.getRow() == row)

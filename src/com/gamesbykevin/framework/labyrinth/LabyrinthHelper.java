@@ -119,7 +119,7 @@ public class LabyrinthHelper
         return this.cols;
     }
     
-    public List<Location> getCells()
+    public List<Location> getLocations()
     {
         return this.cells;
     }
@@ -256,7 +256,7 @@ public class LabyrinthHelper
      */
     protected void changeGroup(final long groupSearch, final long groupChange)
     {
-        for (Location cell : getCells())
+        for (Location cell : getLocations())
         {
             //if we found a Location with the group change it accordingly
             if (cell.getGroup() == groupSearch)

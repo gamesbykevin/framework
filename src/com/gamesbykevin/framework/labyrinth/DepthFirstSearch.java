@@ -57,7 +57,7 @@ public final class DepthFirstSearch extends LabyrinthHelper implements Labyrinth
 
         stack = new ArrayList<>();
         
-        super.setProgressGoal(super.getCells().size() - 1);
+        super.setProgressGoal(super.getLocations().size() - 1);
     }
     
     /**
@@ -185,7 +185,7 @@ public final class DepthFirstSearch extends LabyrinthHelper implements Labyrinth
     {
         List<Location> unvisited = new ArrayList<>();
         
-        for (Location cell : getCells())
+        for (Location cell : getLocations())
         {
             if (!cell.hasVisited())
                 unvisited.add(cell);

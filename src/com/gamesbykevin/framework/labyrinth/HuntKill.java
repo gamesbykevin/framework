@@ -24,7 +24,7 @@ public final class HuntKill extends LabyrinthHelper implements LabyrinthRules
         super.check();
         
         //set the goal
-        super.setProgressGoal(super.getCells().size() - 1);
+        super.setProgressGoal(super.getLocations().size() - 1);
         
         //start position
         current = super.getLocation(super.getStart());
@@ -119,7 +119,7 @@ public final class HuntKill extends LabyrinthHelper implements LabyrinthRules
     {
         List<Location> unvisited = new ArrayList<>();
         
-        for (Location cell : getCells())
+        for (Location cell : getLocations())
         {
             //good we found one that's been visited so now we need to look for neighbor that hasn't been visited
             if (cell.hasVisited())

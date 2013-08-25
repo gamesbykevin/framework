@@ -127,6 +127,22 @@ public class Location extends Cell
     }
     
     /**
+     * Does this Location have the specified wall
+     * @param wall
+     * @return boolean
+     */
+    public boolean hasWall(Wall wall)
+    {
+        for (Wall w : walls)
+        {
+            if (w == wall)
+                return true;
+        }
+        
+        return false;
+    }
+    
+    /**
      * Has this Cell been visited
      * @return boolean
      */

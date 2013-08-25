@@ -116,7 +116,7 @@ public final class Kruskals extends LabyrinthHelper implements LabyrinthRules
         //lowest count group
         long group = 0;
         
-        for (Location cell : getCells())
+        for (Location cell : getLocations())
         {
             //if the current group count is less than the lowest count or we haven't set the lowest count yet
             if (getLocationCount(cell.getGroup()) < count || count == 0)
@@ -140,7 +140,7 @@ public final class Kruskals extends LabyrinthHelper implements LabyrinthRules
     {
         List<Location> locations = new ArrayList<>();
         
-        for (Location cell : getCells())
+        for (Location cell : getLocations())
         {
             if (cell.getGroup() == group)
                 locations.add(cell);
@@ -159,7 +159,7 @@ public final class Kruskals extends LabyrinthHelper implements LabyrinthRules
     {
         int count = 0;
         
-        for (Location cell : getCells())
+        for (Location cell : getLocations())
         {
             if (cell.getGroup() == group)
                 count++;
@@ -176,7 +176,7 @@ public final class Kruskals extends LabyrinthHelper implements LabyrinthRules
     {
         List<Long> eachGroup = new ArrayList<>();
         
-        for (Location cell : getCells())
+        for (Location cell : getLocations())
         {
             if (eachGroup.indexOf(cell.getGroup()) < 0)
                 eachGroup.add(cell.getGroup());

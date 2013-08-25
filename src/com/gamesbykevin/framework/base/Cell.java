@@ -9,7 +9,7 @@ public class Cell
     private int minCol = 0, maxCol = 0, minRow = 0, maxRow = 0;
     
     /**
-     * Construct a new Cell instance with a col, row value of 0
+     * Construct a new Cell instance with a column, row value of 0
      */
     public Cell()
     {

@@ -59,7 +59,7 @@ public final class Prims extends LabyrinthHelper implements LabyrinthRules
         current.markVisited();
         
         //update progress
-        super.setProgressGoal(super.getCells().size() - 1);
+        super.setProgressGoal(super.getLocations().size() - 1);
     }
     
     /**

@@ -174,27 +174,27 @@ public class Labyrinth
      * @return List<Location>
      * @throws Exception 
      */
-    public List<Location> getCells() throws Exception
+    public List<Location> getLocations() throws Exception
     {
         switch(algorithm)
         {
             case DepthFirstSearch:
-                return depthFirstSearch.getCells();
+                return depthFirstSearch.getLocations();
                 
             case Prims:
-                return prims.getCells();
+                return prims.getLocations();
                 
             case Kruskals:
-                 return kruskals.getCells();
+                 return kruskals.getLocations();
                 
              case Ellers:
-                return ellers.getCells();
+                return ellers.getLocations();
                  
             case HuntKill:
-                return huntKill.getCells();
+                return huntKill.getLocations();
                  
             case Sidewinder:
-                return sidewinder.getCells();
+                return sidewinder.getLocations();
                 
            default:
                 throw new Exception("Algorithm not setup here");
@@ -389,7 +389,7 @@ public class Labyrinth
     }
     
     /**
-     * Render basic top down 2d visual of maze. 
+     * Render basic top down 2d visual of maze. <br>
      * NOTE: Should only be used for debugging
      * 
      * @param graphics
