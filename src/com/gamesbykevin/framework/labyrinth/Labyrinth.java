@@ -1,5 +1,6 @@
 package com.gamesbykevin.framework.labyrinth;
 
+import com.gamesbykevin.framework.base.Cell;
 import com.gamesbykevin.framework.resources.Progress;
 
 import java.awt.Graphics;
@@ -199,6 +200,17 @@ public class Labyrinth
            default:
                 throw new Exception("Algorithm not setup here");
         }
+    }
+    
+    /**
+     * Get Location at Cell column/row
+     * @param cell
+     * @return Location
+     * @throws Exception 
+     */
+    public Location getLocation(Cell cell) throws Exception
+    {
+        return getLocation(cell.getCol(), cell.getRow());
     }
     
     /**
