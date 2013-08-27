@@ -159,7 +159,7 @@ public class Option
      * 
      * @param index the selection you like
      */
-    private void setIndex(final int index)
+    public void setIndex(final int index)
     {
         this.index = index;
         
