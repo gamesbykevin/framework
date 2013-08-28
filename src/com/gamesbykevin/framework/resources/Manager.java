@@ -155,11 +155,20 @@ public class Manager extends Progress
         keys = null;
     }
     
+    /**
+     * Play the audio once with no looping
+     * @param key 
+     */
     public void playAudio(final Object key)
     {
         playAudio(key, false);
     }
     
+    /**
+     * Play the audio and loop if parameter is true
+     * @param key The unique key used to identify which audio to play
+     * @param loop Do we want to loop the audio
+     */
     public void playAudio(final Object key, final boolean loop)
     {
         try

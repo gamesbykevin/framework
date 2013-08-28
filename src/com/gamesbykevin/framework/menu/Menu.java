@@ -150,14 +150,22 @@ public class Menu
     }
     
     /**
-     * This will set the index of a specific selection for a specific option for a specific layer
-     * @param layer The Layer key
+     * This will set the selection of all Options with the assigned Option key
+     * 
      * @param option The option key 
      * @param index The value we want set
      */
-    public void setOptionSelectionIndex(final Object layer, final Object option, final int index)
-    {   
-        getLayer(layer).getOption(option).setIndex(index);
+    public void setOptionSelectionIndex(final Object option, final int index)
+    {
+        for (Object key : layers.keySet().toArray())
+        {
+            //if Option exists for the current Layer
+            if (getLayer(key).getOption(option) != null)
+            {
+                //set the value
+                getLayer(key).getOption(option).setIndex(index);
+            }
+        }
     }
     
     //if no layers have been added the menu is not setup
