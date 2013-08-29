@@ -368,6 +368,38 @@ public class Labyrinth
     }
     
     /**
+     * Get the Finish Location
+     * @return Location
+     * @throws Exception 
+     */
+    public Location getFinish() throws Exception
+    {
+        switch(algorithm)
+        {
+            case DepthFirstSearch:
+                return depthFirstSearch.getFinish();
+                
+            case Prims:
+                return prims.getFinish();
+                
+            case Kruskals:
+                return kruskals.getFinish();
+                
+            case Ellers:
+                return ellers.getFinish();
+
+            case HuntKill:
+                return huntKill.getFinish();
+                
+            case Sidewinder:
+                return sidewinder.getFinish();
+                
+            default:
+                throw new Exception("Algorithm not setup here");
+        }
+    }
+    
+    /**
      * Has the maze been created
      * 
      * @return boolean
