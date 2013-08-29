@@ -297,10 +297,6 @@ public class LabyrinthHelper
         if (getStart() == null)
             throw new Exception("Start location needs to be set in order to create maze");
         
-        //finish position must be set
-        if (getFinish() == null)
-            throw new Exception("Finish location needs to be set in order to create maze");
-        
         checked = true;
     }
     
