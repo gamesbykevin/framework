@@ -26,6 +26,9 @@ public class Location extends Cell
     //for different algorithms Location(s) may belong to a group
     private long group = System.nanoTime();
     
+    //the cost will be used to calculate the minimum number of moves to get to the start Location
+    private int cost;
+    
     /**
      * Create a new Location with the specified Location
      * @param col
@@ -53,6 +56,24 @@ public class Location extends Cell
             walls.clear();
         
         walls = null;
+    }
+    
+    /**
+     * Set the minimum amount of moves to reach the starting point
+     * @param cost 
+     */
+    public void setCost(final int cost)
+    {
+        this.cost = cost;
+    }
+    
+    /**
+     * Get the minimum number of moves to reach the starting point
+     * @return int
+     */
+    public int getCost()
+    {
+        return this.cost;
     }
     
     //

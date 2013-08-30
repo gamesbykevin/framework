@@ -167,6 +167,43 @@ public class Labyrinth
             default:
                 throw new Exception("Algorithm not setup here");
         }
+        
+        //if the maze is complete now after update, calculate the cost of each Location
+        if (isComplete())
+            setCost();
+    }
+    
+    private void setCost() throws Exception
+    {
+        switch(algorithm)
+        {
+            case DepthFirstSearch:
+                depthFirstSearch.setCost();
+                break;
+                
+            case Prims:
+                prims.setCost();
+                break;
+                
+            case Kruskals:
+                kruskals.setCost();
+                break;
+                
+            case Ellers:
+                ellers.setCost();
+                break;
+
+            case HuntKill:
+                huntKill.setCost();
+                break;
+                
+            case Sidewinder:
+                sidewinder.setCost();
+                break;
+                
+            default:
+                throw new Exception("Algorithm not setup here");
+        }
     }
     
     /**
@@ -328,6 +365,38 @@ public class Labyrinth
     }
     
     /**
+     * Get the Start Location
+     * @return Location
+     * @throws Exception 
+     */
+    public Cell getStart() throws Exception
+    {
+        switch(algorithm)
+        {
+            case DepthFirstSearch:
+                return depthFirstSearch.getStart();
+                
+            case Prims:
+                return prims.getStart();
+                
+            case Kruskals:
+                return kruskals.getStart();
+                
+            case Ellers:
+                return ellers.getStart();
+
+            case HuntKill:
+                return huntKill.getStart();
+                
+            case Sidewinder:
+                return sidewinder.getStart();
+                
+            default:
+                throw new Exception("Algorithm not setup here");
+        }
+    }
+    
+    /**
      * Set the finish position.
      * 
      * @param col
@@ -369,10 +438,10 @@ public class Labyrinth
     
     /**
      * Get the Finish Location
-     * @return Location
+     * @return Cell
      * @throws Exception 
      */
-    public Location getFinish() throws Exception
+    public Cell getFinish() throws Exception
     {
         switch(algorithm)
         {

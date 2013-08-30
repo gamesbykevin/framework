@@ -37,7 +37,7 @@ public final class Kruskals extends LabyrinthHelper implements LabyrinthRules
         //our starting position
         current = getLocation(getStart());
         
-        super.setProgressGoal(getGroupCount() - 1);
+        super.setProgressGoal(getLocations().size() - 1);
     }
     
     @Override

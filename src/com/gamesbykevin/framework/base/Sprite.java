@@ -8,7 +8,7 @@ import java.awt.Rectangle;
 public class Sprite extends Cell 
 {
     //(x, y) = location (dx, dy) = velocity for x/y coordinates, (w, h) = width and height
-    private int x = 0, y = 0, dx = 0, dy = 0, w = 0, h = 0;
+    private double x = 0, y = 0, dx = 0, dy = 0, w = 0, h = 0;
     
     //switch image east/west
     private boolean horizontalFlip = false;
@@ -77,8 +77,8 @@ public class Sprite extends Cell
         if (center == null)
             center = new Point();
         
-        center.x = getX() + (getWidth()  / 2);
-        center.y = getY() + (getHeight() / 2);
+        center.x = (int)getX() + (int)(getWidth()  / 2);
+        center.y = (int)getY() + (int)(getHeight() / 2);
         
         return center;
     }
@@ -92,8 +92,8 @@ public class Sprite extends Cell
         if (point == null)
             point = new Point();
         
-        point.x = getX();
-        point.y = getY();
+        point.x = (int)getX();
+        point.y = (int)getY();
         
         return point;
     }
@@ -152,7 +152,8 @@ public class Sprite extends Cell
      */
     public void setLocation(final double x, final double y)
     {
-        setLocation((int)x, (int)y);
+        setX(x);
+        setY(y);
     }
     
     /**
@@ -163,8 +164,7 @@ public class Sprite extends Cell
      */
     public void setLocation(final int x, final int y)
     {
-        setX(x);
-        setY(y);
+        setLocation((double)x, (double)y);
     }
     
     /**
@@ -174,7 +174,7 @@ public class Sprite extends Cell
      */
     public void setX(final double x)
     {
-        setX((int)x);
+        this.x = x;
     }
     
     /**
@@ -184,7 +184,7 @@ public class Sprite extends Cell
      */
     public void setX(final int x)
     {
-        this.x = x;
+        setX((double)x);
     }
     
     /**
@@ -192,7 +192,7 @@ public class Sprite extends Cell
      * 
      * @return int
      */
-    public int getX()
+    public double getX()
     {
         return this.x;
     }
@@ -204,7 +204,7 @@ public class Sprite extends Cell
      */
     public void setY(final double y)
     {
-        setY((int)y);
+        this.y = y;
     }
     
     
@@ -215,7 +215,7 @@ public class Sprite extends Cell
      */
     public void setY(final int y)
     {
-        this.y = y;
+        setY((double)y);
     }
     
     /**
@@ -223,7 +223,7 @@ public class Sprite extends Cell
      * 
      * @return int
      */
-    public int getY()
+    public double getY()
     {
         return this.y;
     }
@@ -246,6 +246,17 @@ public class Sprite extends Cell
      */
     public void setDimensions(final int w, final int h)
     {
+        setDimensions((double)w, (double)h);
+    }
+    
+    /**
+     * Set the width and height based on parameters passed.
+     * 
+     * @param w Width
+     * @param h Height
+     */
+    public void setDimensions(final double w, final double h)
+    {
         setWidth(w);
         setHeight(h);
     }
@@ -256,7 +267,7 @@ public class Sprite extends Cell
      */
     public void setWidth(final double w)
     {
-        setWidth((int)w);
+        this.w = w;
     }
     
     /**
@@ -265,14 +276,14 @@ public class Sprite extends Cell
      */
     public void setWidth(final int w)
     {
-        this.w = w;
+        setWidth((double)w);
     }
     
     /**
      * Get the width dimension of this sprite
      * @return int
      */
-    public int getWidth()
+    public double getWidth()
     {
         return this.w;
     }
@@ -283,7 +294,7 @@ public class Sprite extends Cell
      */
     public void setHeight(final double h)
     {
-        setHeight((int)h);
+        this.h = h;
     }
     
     /**
@@ -292,16 +303,24 @@ public class Sprite extends Cell
      */
     public void setHeight(final int h)
     {
-        this.h = h;
+        setHeight((double)h);
     }
     
     /**
      * Get the height dimension of this sprite
      * @return int
      */
-    public int getHeight()
+    public double getHeight()
     {
         return this.h;
+    }
+    
+    /**
+     * Set the x, y velocity to 0
+     */
+    public void resetVelocity()
+    {
+        setVelocity(0,0);
     }
     
     /**
@@ -313,7 +332,7 @@ public class Sprite extends Cell
      */
     public void setVelocity(final double dx, final double dy)
     {
-        setVelocity((int)dx, (int)dy);
+        setVelocity(dx, dy);
     }
     
     /**
@@ -325,8 +344,8 @@ public class Sprite extends Cell
      */
     public void setVelocity(final int dx, final int dy)
     {
-        this.setVelocityX(dx);
-        this.setVelocityY(dy);
+        setVelocityX(dx);
+        setVelocityY(dy);
     }
     
     /**
@@ -348,7 +367,7 @@ public class Sprite extends Cell
      */
     public void setVelocityX(final double dx)
     {
-        setVelocityX((int)dx);
+        this.dx = dx;
     }
     
     /**
@@ -359,25 +378,25 @@ public class Sprite extends Cell
      */
     public void setVelocityX(final int dx)
     {
-        this.dx = dx;
+        setVelocityX((double)dx);
     }
     
-    public int getVelocityX()
+    public double getVelocityX()
     {
         return this.dx;
     }
     
     public void setVelocityY(final double dy)
     {
-        setVelocityY((int)dy);
+        this.dy = dy;
     }
     
     public void setVelocityY(final int dy)
     {
-        this.dy = dy;
+        setVelocityY((double)dy);
     }
     
-    public int getVelocityY()
+    public double getVelocityY()
     {
         return this.dy;
     }
@@ -426,7 +445,7 @@ public class Sprite extends Cell
      */
     public void setDimensions()
     {   
-        setDimensions(spriteSheet.getLocation().width, spriteSheet.getLocation().height);
+        setDimensions(spriteSheet.getLocation().getWidth(), spriteSheet.getLocation().getHeight());
     }
     
     /**
@@ -436,12 +455,12 @@ public class Sprite extends Cell
     public Rectangle getRectangle()
     {
         if (rectangle == null)
-            rectangle = new Rectangle(getX(), getY(), getWidth(), getHeight());
+            rectangle = new Rectangle((int)getX(), (int)getY(), (int)getWidth(), (int)getHeight());
         
-        rectangle.x = getX();
-        rectangle.y = getY();
-        rectangle.width = getWidth();
-        rectangle.height = getHeight();
+        rectangle.x = (int)getX();
+        rectangle.y = (int)getY();
+        rectangle.width = (int)getWidth();
+        rectangle.height = (int)getHeight();
         
         return rectangle;
     }
@@ -461,15 +480,15 @@ public class Sprite extends Cell
      * @param image specified Image to draw
      * @return Graphics
      */
-    public Graphics draw(final Graphics g, final Image image)
+    public void draw(final Graphics g, final Image image)
     {
         if (spriteSheet.hasAnimations())
         {
-            return draw(g, image, spriteSheet.getLocation());
+            draw(g, image, spriteSheet.getLocation());
         }
         else
         {
-            return draw(g, image, null);
+            draw(g, image, null);
         }
     }
     
@@ -482,14 +501,14 @@ public class Sprite extends Cell
      * @param location Portion of Image we want to draw
      * @return Graphics
      */
-    public Graphics draw(final Graphics g, final Image image, final Rectangle location)
+    public void draw(final Graphics g, final Image image, final Rectangle location)
     {
         int dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2;
             
-        dx1 = getX();
-        dy1 = getY();
-        dx2 = dx1 + getWidth();
-        dy2 = dy1 + getHeight();
+        dx1 = (int)getX();
+        dy1 = (int)getY();
+        dx2 = dx1 + (int)getWidth();
+        dy2 = dy1 + (int)getHeight();
 
         if (location != null)
         {
@@ -541,8 +560,6 @@ public class Sprite extends Cell
         }
         
         draw(g, image, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2);
-        
-        return g;
     }
     
     /**
@@ -550,18 +567,18 @@ public class Sprite extends Cell
      * @param g Graphics object to draw to
      * @return Graphics 
      */
-    public Graphics draw(final Graphics g)
+    public void draw(final Graphics g)
     {
         if (spriteSheet != null && spriteSheet.hasAnimations())
         {
-            return draw(g, spriteSheet.getLocation());
+            draw(g, spriteSheet.getLocation());
         }
         else
         {
             if (imageDimensions == null || imageDimensions.width != image.getWidth(null) || imageDimensions.height != image.getHeight(null))
                 imageDimensions = new Rectangle(0, 0, image.getWidth(null), image.getHeight(null));
             
-            return draw(g, imageDimensions);
+            draw(g, imageDimensions);
         }
     }
     
@@ -573,17 +590,17 @@ public class Sprite extends Cell
      * @param location Rectangle area of image that we want to draw
      * @return Graphics
      */
-    public Graphics draw(final Graphics g, final Rectangle location)
+    public void draw(final Graphics g, final Rectangle location)
     {
         //verify image exists before drawing
         if (getImage() != null)
         {
             int dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2;
             
-            dx1 = getX();
-            dy1 = getY();
-            dx2 = dx1 + getWidth();
-            dy2 = dy1 + getHeight();
+            dx1 = (int)getX();
+            dy1 = (int)getY();
+            dx2 = dx1 + (int)getWidth();
+            dy2 = dy1 + (int)getHeight();
             
             if (!hasHorizontalFlip())
             {
@@ -609,8 +626,6 @@ public class Sprite extends Cell
             
             draw(g, getImage(), dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2);
         }
-        
-        return g;
     }
     
     /**
@@ -628,10 +643,8 @@ public class Sprite extends Cell
      * @param sy2 Source y2
      * @return 
      */
-    public Graphics draw(final Graphics graphics, final Image image, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2)
+    public void draw(final Graphics graphics, final Image image, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2)
     {
         graphics.drawImage(image, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, null);
-        
-        return graphics;
     }
 }

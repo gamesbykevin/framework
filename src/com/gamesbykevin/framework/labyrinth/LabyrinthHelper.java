@@ -1,5 +1,6 @@
 package com.gamesbykevin.framework.labyrinth;
 
+import com.gamesbykevin.framework.base.Cell;
 import com.gamesbykevin.framework.labyrinth.Location.Wall;
 import com.gamesbykevin.framework.resources.Progress;
 
@@ -19,7 +20,7 @@ public class LabyrinthHelper
     private List<Location> cells;
     
     //the Cells that are the start and finish of the maze
-    private Location start, finish;
+    private Cell start, finish;
     
     //the total number of cols and rows in this labyrinth
     private int cols, rows;
@@ -57,10 +58,8 @@ public class LabyrinthHelper
     {
         progress = null;
         
-        start.dispose();
         start = null;
         
-        finish.dispose();
         finish = null;
         
         for (Location cell : cells)
@@ -102,6 +101,15 @@ public class LabyrinthHelper
     }
     
     /**
+     * Get the total number of Locations within the Maze
+     * @return int
+     */
+    public int getCount()
+    {
+        return cells.size();
+    }
+    
+    /**
      * Get the total number of rows in the maze
      * @return int
      */
@@ -134,7 +142,7 @@ public class LabyrinthHelper
         this.start = start;
     }
     
-    public void setFinish(final int col, final int row)
+    protected void setFinish(final int col, final int row)
     {
         setFinish(new Location(col, row));
     }
@@ -147,9 +155,9 @@ public class LabyrinthHelper
     /**
      * Get the Finish Cell indication the Labyrinth has been solved.
      * 
-     * @return Location containing the col, row of the finish
+     * @return Cell containing the col, row of the finish
      */
-    public Location getFinish()
+    public Cell getFinish()
     {
         return this.finish;
     }
@@ -158,7 +166,7 @@ public class LabyrinthHelper
      * Get the start Location where the maze begins
      * @return Location containing the col, row of the start
      */
-    public Location getStart()
+    public Cell getStart()
     {
         return this.start;
     }
@@ -240,13 +248,19 @@ public class LabyrinthHelper
      */
     protected Location getLocation(final Location current)
     {
-        for (Location cell : cells)
-        {
-            if (cell.equals(current))
-                return cell;
-        }
-        
-        return null;
+        return getLocation(current.getCol(), current.getRow());
+    }
+    
+    /**
+     * Get the Location from the given parameters.
+     * If the Location is not found null is returned
+     * 
+     * @param cell
+     * @return Location
+     */
+    protected Location getLocation(final Cell cell)
+    {
+        return getLocation(cell.getCol(), cell.getRow());
     }
     
     /**
@@ -308,6 +322,73 @@ public class LabyrinthHelper
     protected boolean hasChecked()
     {
         return this.checked;
+    }
+    
+    /**
+     * Begin at the Start Location and assign the cost to each Location in the maze
+     */
+    protected void setCost()
+    {
+        //begin by marking all Locations as not visited
+        for (Location location : getLocations())
+        {
+            location.setVisited(false);
+        }
+        
+        //current Locations we would like to check
+        List<Location> checkList = new ArrayList<>();
+        
+        //add start location to check List
+        addCheckList(checkList, getLocation(getStart()), 0);
+        
+        //continue until the checkList equals the size of the total Locations in the maze
+        while (checkList.size() > 0)
+        {
+            //get the first element to check
+            Location current = getLocation(checkList.get(0));
+            
+            if (!current.hasWall(Wall.East))
+                addCheckList(checkList, getLocation(current.getCol() + 1, current.getRow()), current.getCost());
+            
+            if (!current.hasWall(Wall.West))
+                addCheckList(checkList, getLocation(current.getCol() - 1, current.getRow()), current.getCost());
+            
+            if (!current.hasWall(Wall.North))
+                addCheckList(checkList, getLocation(current.getCol(), current.getRow() - 1), current.getCost());
+            
+            if (!current.hasWall(Wall.South))
+                addCheckList(checkList, getLocation(current.getCol(), current.getRow() + 1), current.getCost());
+            
+            //now that we have checked the current location remove it from our check List
+            checkList.remove(0);
+        }
+    }
+    
+    /**
+     * Check if the Location has not been visited yet.
+     * If no visit then we will mark it as visited and
+     * set the cost based on the cost of the current Location.
+     * Finally the Location will be added to the check List
+     * so we can check for its neighbors later.
+     * 
+     * @param checkList List of Locations to check to calculate cost
+     * @param location New Location we need to check if valid
+     * @param currentCost If the new Location is valid, we need to set the cost accordingly
+     */
+    private void addCheckList(final List<Location> checkList, final Location location, final int currentCost)
+    {
+        //make sure we haven't visited this neighbor yet
+        if (location != null && !getLocation(location).hasVisited())
+        {
+            //mark new Location as visited and set the cost
+            getLocation(location).markVisited();
+            
+            //since this Location is next to the neighbor the cost will be the current Location cost + 1
+            getLocation(location).setCost(currentCost + 1);
+
+            //add to List to check for additional Neighbors
+            checkList.add(getLocation(location));
+        }
     }
     
     /**
