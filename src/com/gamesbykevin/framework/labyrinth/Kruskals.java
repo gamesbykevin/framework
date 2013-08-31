@@ -12,6 +12,9 @@ public final class Kruskals extends LabyrinthHelper implements LabyrinthRules
 {
     private Location current;
     
+    //has the maze been created
+    private boolean created = false;
+    
     public Kruskals(final int cols, final int rows)
     {
         super(cols, rows);
@@ -33,11 +36,12 @@ public final class Kruskals extends LabyrinthHelper implements LabyrinthRules
     {
         //verify initial variables are set
         super.check();
-        
+
         //our starting position
         current = getLocation(getStart());
         
-        super.setProgressGoal(getLocations().size() - 1);
+        //the goal will be the maze size
+        super.setProgressGoal(getLocations().size());
     }
     
     @Override
@@ -48,7 +52,7 @@ public final class Kruskals extends LabyrinthHelper implements LabyrinthRules
             throw new Exception("initialize() must be called first before update()");
         
         //this maze will be done when all Locations are part of same group
-        if (getGroupCount() > 1)
+        if (!created)
         {
             List<Wall> valid = new ArrayList<>();
 
@@ -70,7 +74,7 @@ public final class Kruskals extends LabyrinthHelper implements LabyrinthRules
                 changeGroup(neighbor.getGroup(), current.getGroup());
 
                 //update progress
-                super.getProgress().setCount(super.getProgress().getGoal() - getGroupCount());
+                super.getProgress().increase();
                 
                 //now need to make a passage between the two locations
                 current.remove(wall);
@@ -105,8 +109,10 @@ public final class Kruskals extends LabyrinthHelper implements LabyrinthRules
     }
     
     /**
-     * Get a random Location of the group that has the lowest count of Location(s)
-     * @return 
+     * Get a random Location of a group that has the lowest total count of Location(s).
+     * Also, check if there is only one group remaining so we know puzzle is complete.
+     * 
+     * @return Location
      */
     private Location getLowestWeight()
     {
@@ -118,17 +124,28 @@ public final class Kruskals extends LabyrinthHelper implements LabyrinthRules
         
         for (Location cell : getLocations())
         {
+            int currentLocationCount = getLocationCount(cell.getGroup());
+            
             //if the current group count is less than the lowest count or we haven't set the lowest count yet
-            if (getLocationCount(cell.getGroup()) < count || count == 0)
+            if (currentLocationCount < count || count == 0)
             {
-                count = getLocationCount(cell.getGroup());
+                count = currentLocationCount;
                 group = cell.getGroup();
             }
         }
         
-        List<Location> locations = getGroupLocations(group);
-        
-        return locations.get((int)(Math.random() * locations.size()));
+        //we have created maze
+        if (count == getLocations().size())
+        {
+            created = true;
+            return null;
+        }
+        else
+        {
+            List<Location> locations = getGroupLocations(group);
+
+            return locations.get((int)(Math.random() * locations.size()));
+        }
     }
     
     /**
@@ -166,22 +183,5 @@ public final class Kruskals extends LabyrinthHelper implements LabyrinthRules
         }
         
         return count;
-    }
-    
-    /**
-     * For Kruskal's algorithm get the count of different unique groups
-     * @return int
-     */
-    private int getGroupCount()
-    {
-        List<Long> eachGroup = new ArrayList<>();
-        
-        for (Location cell : getLocations())
-        {
-            if (eachGroup.indexOf(cell.getGroup()) < 0)
-                eachGroup.add(cell.getGroup());
-        }
-        
-        return eachGroup.size();
     }
 }
