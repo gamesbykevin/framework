@@ -320,7 +320,24 @@ public class Sprite extends Cell
      */
     public void resetVelocity()
     {
-        setVelocity(0,0);
+        resetVelocityX();
+        resetVelocityY();
+    }
+    
+    /**
+     * Set velocity to 0
+     */
+    public void resetVelocityY()
+    {
+        setVelocityY(0);
+    }
+    
+    /**
+     * Set velocity to 0
+     */
+    public void resetVelocityX()
+    {
+        setVelocityX(0);
     }
     
     /**
