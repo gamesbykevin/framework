@@ -349,7 +349,8 @@ public class Sprite extends Cell
      */
     public void setVelocity(final double dx, final double dy)
     {
-        setVelocity(dx, dy);
+        setVelocityX(dx);
+        setVelocityY(dy);
     }
     
     /**
