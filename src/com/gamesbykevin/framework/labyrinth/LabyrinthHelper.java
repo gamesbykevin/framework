@@ -45,9 +45,10 @@ public class LabyrinthHelper
         
         this.cells = new ArrayList<>();
         
-        for (int col = 0; col < cols; col++)
+        //add the Location(s) in this order so we can retrieve them easily
+        for (int row = 0; row < rows; row++)
         {
-            for (int row = 0; row < rows; row++)
+            for (int col = 0; col < cols; col++)
             {
                 this.cells.add(new Location(col, row));
             }
@@ -64,7 +65,9 @@ public class LabyrinthHelper
         
         for (Location cell : cells)
         {
-            cell.dispose();
+            if (cell != null)
+                cell.dispose();
+            
             cell = null;
         }
         
@@ -221,22 +224,45 @@ public class LabyrinthHelper
     }
     
     /**
+     * Returns true if the Column,Row specified are located inside the maze.
+     * 
+     * @param col Column
+     * @param row Row
+     * @return boolean
+     */
+    protected boolean hasLocation(final int col, final int row)
+    {
+        return (col >=0 && col < getColumnCount() && row >=0 && row < getRowCount());
+    }
+    
+    /**
+     * Returns true if the Cell(Column,Row) specified are located inside the maze.
+     * @param cell
+     * @return boolean
+     */
+    protected boolean hasLocation(final Cell cell)
+    {
+        return hasLocation(cell.getCol(), cell.getRow());
+    }
+    
+    /**
      * Get the Location from the given parameters.
      * If the Location is not found null is returned
      * 
-     * @param col
-     * @param row
+     * @param col Column
+     * @param row Row
      * @return Location
      */
     public Location getLocation(final int col, final int row)
     {
-        for (Location cell : cells)
-        {
-            if (cell.getCol() == col && cell.getRow() == row)
-                return cell;
-        }
+        //if the Location is out of bounds return null
+        if (!hasLocation(col, row))
+            return null;
         
-        return null;
+        //all object in ArrayList are in order so we can mathimatically calculate the index
+        final int index = (row * cols) + col;
+        
+        return cells.get(index);
     }
     
     /**

@@ -284,6 +284,51 @@ public class Labyrinth
         }
     }
     
+    /**
+     * Returns true if the Cell(Column,Row) specified are located inside the maze.
+     * @param Cell cell
+     * @return boolean
+     * @throws Exception 
+     */
+    public boolean hasLocation(final Cell cell) throws Exception
+    {
+        return hasLocation(cell.getCol(), cell.getRow());
+    }
+    
+    /**
+     * Returns true if the (Column,Row) specified are located inside the maze.
+     * @param col Column
+     * @param row Row
+     * @return boolean
+     * @throws Exception 
+     */
+    public boolean hasLocation(int col, int row) throws Exception
+    {
+        switch(algorithm)
+        {
+            case DepthFirstSearch:
+                return depthFirstSearch.hasLocation(col, row);
+                
+            case Prims:
+                return prims.hasLocation(col, row);
+                
+            case Kruskals:
+                 return kruskals.hasLocation(col, row);
+                
+             case Ellers:
+                return ellers.hasLocation(col, row);
+                 
+            case HuntKill:
+                return huntKill.hasLocation(col, row);
+                 
+            case Sidewinder:
+                return sidewinder.hasLocation(col, row);
+                
+           default:
+                throw new Exception("Algorithm not setup here");
+        }
+    }
+    
     public Progress getProgress() throws Exception
     {
         Progress tmp = null;
