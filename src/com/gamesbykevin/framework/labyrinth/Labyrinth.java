@@ -66,6 +66,15 @@ public class Labyrinth
         }
     }
     
+    /**
+     * Get the algorithm used in this maze
+     * @return Algorithm
+     */
+    public Algorithm getAlgorithm()
+    {
+        return algorithm;
+    }
+    
     public void dispose()
     {
         algorithm = null;
