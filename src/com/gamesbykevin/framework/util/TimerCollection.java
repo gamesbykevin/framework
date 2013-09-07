@@ -172,7 +172,7 @@ public class TimerCollection
     /**
      * Resets the remaining time for all of the timers
      */
-    public void resetRemaining()
+    public void reset()
     {
         for (Object key : timers.keySet().toArray())
         {
