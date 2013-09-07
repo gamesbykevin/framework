@@ -34,6 +34,11 @@ public class TimerCollection
      */
     public static final String FORMAT_6 = "mm:ss.SSS";
     
+    /**
+     * ss.SSS
+     */
+    public static final String FORMAT_7 = "ss.SSS";
+    
     //how many nano seconds per .......
     public static final long NANO_SECONDS_PER_SECOND      = 1000000000;
     public static final long NANO_SECONDS_PER_MILLISECOND = 1000000;

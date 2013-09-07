@@ -564,29 +564,29 @@ public abstract class Layer
         getOption(getCurrent()).setHighlighted(true);
     }
     
-    public Graphics render(Graphics2D g2d, Rectangle screen) throws Exception 
+    public void render(Graphics2D graphics, Rectangle screen) throws Exception 
     {
         if (original == null)
-            original = g2d.getComposite();
+            original = graphics.getComposite();
         
-        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, visibility));
+        graphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, visibility));
         
         if (image != null)
         {
-            g2d.drawImage(image, location.x, location.y, location.width, location.height, null);
+            graphics.drawImage(image, location.x, location.y, location.width, location.height, null);
             
             switch(type)
             {
                 case SCROLL_HORIZONTAL_EAST_REPEAT:
                 case SCROLL_HORIZONTAL_WEST_REPEAT:
-                    g2d.drawImage(image, location.x - location.width, location.y, location.width, location.height, null);
-                    g2d.drawImage(image, location.x + location.width, location.y, location.width, location.height, null);
+                    graphics.drawImage(image, location.x - location.width, location.y, location.width, location.height, null);
+                    graphics.drawImage(image, location.x + location.width, location.y, location.width, location.height, null);
                     break;
                 
                 case SCROLL_VERTICAL_NORTH_REPEAT:
                 case SCROLL_VERTICAL_SOUTH_REPEAT:
-                    g2d.drawImage(image, location.x, location.y - location.height, location.width, location.height, null);
-                    g2d.drawImage(image, location.x, location.y + location.height, location.width, location.height, null);
+                    graphics.drawImage(image, location.x, location.y - location.height, location.width, location.height, null);
+                    graphics.drawImage(image, location.x, location.y + location.height, location.width, location.height, null);
                     break;
             }
         }
@@ -594,7 +594,7 @@ public abstract class Layer
         //do we have options for this Layer
         if (hasOptions())
         {
-            drawOptionContainer(g2d);
+            drawOptionContainer(graphics);
             
             int count = 0;
             
@@ -603,16 +603,16 @@ public abstract class Layer
             {
                 //if the boundary is not set yet we need to set it before drawing option
                 if (option.getBoundary() == null)
-                    option.setBoundary(new Rectangle(optionContainerArea.x, startOptionsY + (g2d.getFontMetrics().getHeight() * count), optionContainerArea.width, g2d.getFontMetrics().getHeight()));
+                    option.setBoundary(new Rectangle(optionContainerArea.x, startOptionsY + (graphics.getFontMetrics().getHeight() * count), optionContainerArea.width, graphics.getFontMetrics().getHeight()));
                 
-                option.render(g2d, OPTION_BORDER_COLOR, OPTION_TEXT_COLOR);
+                option.render(graphics, OPTION_BORDER_COLOR, OPTION_TEXT_COLOR);
                 
                 count++;
             }
         }
         
         //set the original composite back
-        g2d.setComposite(original);
+        graphics.setComposite(original);
         
         int width, height;
         
@@ -621,43 +621,41 @@ public abstract class Layer
         {
             case CURTAIN_CLOSE_HORIZONTAL:
                 width = (int)( (screen.width/2) * this.percentComplete);
-                g2d.setColor(Color.BLACK);
-                g2d.fillRect(screen.x, screen.y, width, screen.height);
-                g2d.fillRect(screen.x + screen.width - width, screen.y, width, screen.height);
+                graphics.setColor(Color.BLACK);
+                graphics.fillRect(screen.x, screen.y, width, screen.height);
+                graphics.fillRect(screen.x + screen.width - width, screen.y, width, screen.height);
                 break;
                 
             case CURTAIN_OPEN_HORIZONTAL:
                 width = (int)( (screen.width/2) * this.percentComplete);
-                g2d.setColor(Color.BLACK);
-                g2d.fillRect(screen.x, screen.y, (screen.width/2) - width, screen.height);
-                g2d.fillRect(screen.x + (screen.width/2) + width, screen.y, (screen.width/2), screen.height);
+                graphics.setColor(Color.BLACK);
+                graphics.fillRect(screen.x, screen.y, (screen.width/2) - width, screen.height);
+                graphics.fillRect(screen.x + (screen.width/2) + width, screen.y, (screen.width/2), screen.height);
                 break;
                 
             case CURTAIN_CLOSE_VERTICAL:
                 height = (int)( (screen.width/2) * this.percentComplete);
-                g2d.setColor(Color.BLACK);
-                g2d.fillRect(screen.x, screen.y, screen.width, height);
-                g2d.fillRect(screen.x, screen.y + screen.height - height, screen.width, height);
+                graphics.setColor(Color.BLACK);
+                graphics.fillRect(screen.x, screen.y, screen.width, height);
+                graphics.fillRect(screen.x, screen.y + screen.height - height, screen.width, height);
                 break;
                 
             case CURTAIN_OPEN_VERTICAL:
                 height = (int)( (screen.width/2) * this.percentComplete);
-                g2d.setColor(Color.BLACK);
-                g2d.fillRect(screen.x, screen.y, screen.width, (screen.height/2) - height);
-                g2d.fillRect(screen.x, screen.y + (screen.height/2) + height, screen.width, (screen.height/2));
+                graphics.setColor(Color.BLACK);
+                graphics.fillRect(screen.x, screen.y, screen.width, (screen.height/2) - height);
+                graphics.fillRect(screen.x, screen.y + (screen.height/2) + height, screen.width, (screen.height/2));
                 break;
         }
-        
-        return (Graphics)g2d;
     }
     
     /**
      * Draws the background for the options (if they exist) including the title as well.
      * 
-     * @param g2d Graphics2D we want to render to
+     * @param graphics Graphics2D we want to render to
      * @return Graphics 
      */
-    private Graphics drawOptionContainer(Graphics2D g2d)
+    private void drawOptionContainer(Graphics2D graphics)
     {
         //if we haven't created our option container background
         if (optionContainerImage == null)
@@ -704,11 +702,11 @@ public abstract class Layer
             //if the title exists
             if (title != null && title.length() > 0)
             {
-                //the appropriate font
-                float fontSize = Menu.getFontSize(title, optionContainerImage.getWidth(), g2d);
+                //the appropriate font size
+                float fontSize = Menu.getFontSize(title, optionContainerImage.getWidth(), graphics) - 2;
                 
                 //now that the appropriate font size has been found set it
-                tmpG2D.setFont(g2d.getFont().deriveFont(Font.BOLD, fontSize));
+                tmpG2D.setFont(graphics.getFont().deriveFont(Font.BOLD, fontSize));
                 
                 //middle x coordinate of this image
                 middleX = (optionContainerImage.getWidth() / 2);
@@ -726,10 +724,8 @@ public abstract class Layer
         else
         {
             //the image has already been created so we just need to draw it
-            g2d.drawImage(optionContainerImage, optionContainerArea.x, optionContainerArea.y, null);
+            graphics.drawImage(optionContainerImage, optionContainerArea.x, optionContainerArea.y, null);
         }
-        
-        return g2d;
     }
     
     /**
