@@ -51,21 +51,17 @@ public final class Ellers extends LabyrinthHelper implements LabyrinthRules
             if (locations == null || locations.isEmpty())
                 locations = getLocations(currentRow);
 
-            //do we randomly create a passage to the west
-            if (Math.random() > .5)
+            //do we randomly create a passage to the west, and make sure we are in bounds
+            if (Math.random() > .5 && index > 0)
             {
-                //make sure that our index is in bounds so we can check
-                if (index > 0)
+                if (locations.get(index).getGroup() != locations.get(index - 1).getGroup())
                 {
-                    if (locations.get(index).getGroup() != locations.get(index - 1).getGroup())
-                    {
-                        //create a passage between the two Locations
-                        locations.get(index).remove(Wall.West);
-                        locations.get(index - 1).remove(Wall.East);
+                    //create a passage between the two Locations
+                    locations.get(index).remove(Wall.West);
+                    locations.get(index - 1).remove(Wall.East);
 
-                        //change all Locations of the same group to another
-                        super.changeGroup(locations.get(index - 1).getGroup(), locations.get(index).getGroup());
-                    }
+                    //change all Locations of the same group to another
+                    super.changeGroup(locations.get(index - 1).getGroup(), locations.get(index).getGroup());
                 }
             }
             else
@@ -227,30 +223,10 @@ public final class Ellers extends LabyrinthHelper implements LabyrinthRules
     {
         List<Location> orderedLocations = new ArrayList<>();
         
-        for (Location cell : super.getLocations())
+        //loop through all the Locations in the current row
+        for (int col=0; col < super.getColumnCount(); col++)
         {
-            //if the current Location(s) row is the same as the one we are looking for
-            if (cell.getRow() == row)
-                orderedLocations.add(cell);
-        }
-        
-        //now that we have the locations we need to sort them in ascending order by column
-        for (int i=0; i < orderedLocations.size(); i++)
-        {
-            for (int x=0; x < orderedLocations.size(); x++)
-            {
-                if (i == x)
-                    continue;
-                
-                if (orderedLocations.get(i).getCol() < orderedLocations.get(x).getCol())
-                {
-                    Location temp = orderedLocations.get(i);
-                    
-                    //switch positions
-                    orderedLocations.set(i, orderedLocations.get(x));
-                    orderedLocations.set(x, temp);
-                }
-            }
+            orderedLocations.add(getLocation(col, row));
         }
         
         return orderedLocations;
