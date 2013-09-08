@@ -476,8 +476,8 @@ public class LabyrinthHelper
      * @param screen
      * @return Graphics
      */
-    public Graphics renderProgress(final Graphics graphics, final Rectangle screen)
+    public void renderProgress(final Graphics graphics, final Rectangle screen)
     {
-        return this.progress.render(graphics, screen);
+        progress.render(graphics, screen);
     }
 }

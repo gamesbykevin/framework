@@ -234,10 +234,8 @@ public class Manager extends Progress
      * @return Graphics
      */
     @Override
-    public Graphics render(final Graphics graphics, final Rectangle screen)
+    public void render(final Graphics graphics, final Rectangle screen)
     {
         super.render(graphics, screen);
-        
-        return graphics;
     }
 }

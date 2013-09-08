@@ -263,10 +263,9 @@ public class Option
      * @param graphics Graphics object we will write to
      * @param color1 The background color if this Option is highlighted, if not then it is the text color
      * @param color2 The text color if this Option is highlighted
-     * @return Graphics
      * @throws Exception
      */
-    public Graphics render(Graphics graphics, Color color1, Color color2) throws Exception
+    public void render(Graphics graphics, Color color1, Color color2) throws Exception
     {
         if (getBoundary() == null)
             throw new Exception("The boundary needs to be set before this option can be drawn");
@@ -297,7 +296,5 @@ public class Option
             graphics.setColor(color1);
             graphics.drawString(getDescription(), drawX, drawY);
         }
-        
-        return graphics;
     }
 }

@@ -562,27 +562,33 @@ public class Labyrinth
      * @return Graphics
      * @throws Exception 
      */
-    public Graphics renderProgress(final Graphics graphics, final Rectangle screen) throws Exception
+    public void renderProgress(final Graphics graphics, final Rectangle screen) throws Exception
     {
         switch(algorithm)
         {
             case DepthFirstSearch:
-                return depthFirstSearch.renderProgress(graphics, screen);
+                depthFirstSearch.renderProgress(graphics, screen);
+                break;
 
             case Prims:
-                return prims.renderProgress(graphics, screen);
+                prims.renderProgress(graphics, screen);
+                break;
 
             case Kruskals:
-                return kruskals.renderProgress(graphics, screen);
+                kruskals.renderProgress(graphics, screen);
+                break;
 
             case Ellers:
-                return ellers.renderProgress(graphics, screen);
+                ellers.renderProgress(graphics, screen);
+                break;
 
             case HuntKill:
-                return huntKill.renderProgress(graphics, screen);
-
+                huntKill.renderProgress(graphics, screen);
+                break;
+                
             case Sidewinder:
-                return sidewinder.renderProgress(graphics, screen);
+                sidewinder.renderProgress(graphics, screen);
+                break;
 
             default:
                 throw new Exception("Algorithm not setup here");
@@ -598,34 +604,40 @@ public class Labyrinth
      * @return Graphics
      * @throws Exception 
      */
-    public Graphics render(final Graphics graphics, final Rectangle screen) throws Exception
+    public void render(final Graphics graphics, final Rectangle screen) throws Exception
     {
         if (!isComplete())
         {
-            return renderProgress(graphics, screen);
+            renderProgress(graphics, screen);
         }
         else
         {
             switch(algorithm)
             {
                 case DepthFirstSearch:
-                    return depthFirstSearch.render(graphics, screen);
+                    depthFirstSearch.render(graphics, screen);
+                    break;
 
                 case Prims:
-                    return prims.render(graphics, screen);
+                    prims.render(graphics, screen);
+                    break;
 
                 case Kruskals:
-                    return kruskals.render(graphics, screen);
+                    kruskals.render(graphics, screen);
+                    break;
 
                 case Ellers:
-                    return ellers.render(graphics, screen);
+                    ellers.render(graphics, screen);
+                    break;
 
                 case HuntKill:
-                    return huntKill.render(graphics, screen);
+                    huntKill.render(graphics, screen);
+                    break;
 
                 case Sidewinder:
-                    return sidewinder.render(graphics, screen);
-
+                    sidewinder.render(graphics, screen);
+                    break;
+                    
                 default:
                     throw new Exception("Algorithm not setup here");
             }

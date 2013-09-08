@@ -139,9 +139,8 @@ public class Progress
      * Draw the progress within Rectangle container
      * @param graphics
      * @param screen
-     * @return Graphics
      */
-    public Graphics render(Graphics graphics, Rectangle screen)
+    public void render(Graphics graphics, Rectangle screen)
     {
         //create image of Progress information as all information will be static exception getProgress()
         if (image == null)
@@ -207,8 +206,6 @@ public class Progress
         //these display values need to be calculated on the fly as they will dynamically change
         graphics.drawString(getPercentComplete() + "%", progressTextLocation.x, progressTextLocation.y);
         graphics.fillRect(progressBarDimension.x, progressBarDimension.y, (int)(progressBarDimension.width * getProgress()), progressBarDimension.height);
-        
-        return graphics;
     }
     
     /**
