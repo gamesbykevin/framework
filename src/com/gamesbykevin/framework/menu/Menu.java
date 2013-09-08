@@ -257,14 +257,12 @@ public class Menu
      * @return Graphics 
      * @throws Exception 
      */
-    public Graphics render(Graphics graphics) throws Exception
+    public void render(Graphics graphics) throws Exception
     {
         //if the menu has finished we will not draw it
         if (hasFinished())
-            return graphics;
+            return;
         
         getLayer().render((Graphics2D)graphics, screen);
-        
-        return graphics;
     }
 }
