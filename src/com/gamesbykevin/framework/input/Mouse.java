@@ -144,5 +144,7 @@ public class Mouse
         this.mouseMoved    = false;
         this.mousePressed  = false;
         this.mouseReleased = false;
+        
+        this.button = -1;
     }
 }
