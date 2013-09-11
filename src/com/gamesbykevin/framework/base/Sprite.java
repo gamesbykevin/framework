@@ -36,6 +36,19 @@ public class Sprite extends Cell
         
     }
     
+    public Sprite(final Sprite sprite)
+    {
+        setDimensions(sprite.getWidth(), sprite.getHeight());
+        setLocation(sprite.getPoint());
+        setImage(sprite.getImage());
+        setVelocityX(sprite.getVelocityX());
+        setVelocityY(sprite.getVelocityY());
+        setHorizontalFlip(sprite.hasHorizontalFlip());
+        setVerticalFlip(sprite.hasVerticalFlip());
+        super.setCol(sprite.getCol());
+        super.setRow(sprite.getRow());
+    }
+    
     /**
      * Create a Sprite Sheet for this Sprite so we can add animations
      */
