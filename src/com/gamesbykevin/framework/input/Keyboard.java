@@ -48,7 +48,7 @@ public class Keyboard
     {
         final int index = keysTyped.indexOf(keyChar);
         
-        if (index > -1 && keysTyped.size() > 0)
+        if (index > -1 && !keysTyped.isEmpty())
             keysTyped.remove(index);
     }
     
@@ -58,7 +58,7 @@ public class Keyboard
      */
     public boolean isKeyTyped()
     {
-        return keysTyped.size() > 0;
+        return (!keysTyped.isEmpty());
     }
     
     /**
@@ -82,9 +82,6 @@ public class Keyboard
     {
         if (keysReleased.indexOf(keyCode) < 0)
             keysReleased.add(keyCode);
-        
-        //cant have key released and pressed so remove from other list
-        removeKeyPressed(keyCode);
     }
     
     /**
@@ -96,7 +93,7 @@ public class Keyboard
     {
         final int index = keysReleased.indexOf(keyCode);
         
-        if (index > -1 && keysReleased.size() > 0)
+        if (index > -1 && !keysReleased.isEmpty())
             keysReleased.remove(index);
     }
     
@@ -107,7 +104,7 @@ public class Keyboard
      */
     public boolean isKeyReleased()
     {
-        return keysReleased.size() > 0;
+        return (!keysReleased.isEmpty());
     }
     
     /**
@@ -128,9 +125,6 @@ public class Keyboard
     {
         if (keysPressed.indexOf(keyCode) < 0)
             keysPressed.add(keyCode);
-        
-        //cant have key released and pressed so remove from other list
-        removeKeyReleased(keyCode);
     }
     
     /**
@@ -141,7 +135,7 @@ public class Keyboard
     {
         final int index = keysPressed.indexOf(keyCode);
         
-        if (index > -1 && keysPressed.size() > 0)
+        if (index > -1 && !keysPressed.isEmpty())
             keysPressed.remove(index);
     }
     
@@ -151,7 +145,7 @@ public class Keyboard
      */
     public boolean isKeyPressed()
     {
-        return keysPressed.size() > 0;
+        return (!keysPressed.isEmpty());
     }
     
     /**
