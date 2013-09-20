@@ -3,12 +3,13 @@ package com.gamesbykevin.framework.labyrinth;
 import com.gamesbykevin.framework.labyrinth.Location.Wall;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Generate a Labyrinth using Kruskals algorithm
  * @author GOD
  */
-public final class Kruskals extends LabyrinthHelper implements LabyrinthRules
+public final class Kruskals extends LabyrinthHelper implements IAlgorithm
 {
     private Location current;
     
@@ -45,7 +46,7 @@ public final class Kruskals extends LabyrinthHelper implements LabyrinthRules
     }
     
     @Override
-    public void update() throws Exception
+    public void update(final Random random) throws Exception
     {
         //initialize() has not been called yet
         if (!super.hasChecked())
@@ -66,7 +67,7 @@ public final class Kruskals extends LabyrinthHelper implements LabyrinthRules
 
             if (!valid.isEmpty())
             {
-                Wall wall = valid.get((int)(Math.random() * valid.size()));
+                Wall wall = valid.get(random.nextInt(valid.size()));
 
                 Location neighbor = getNeighbor(current, wall);
 
@@ -100,7 +101,7 @@ public final class Kruskals extends LabyrinthHelper implements LabyrinthRules
             }
 
             //get the Location with the lowest count that have the same group
-            current = getLowestWeight();
+            current = getLowestWeight(random);
         }
         else
         {
@@ -114,7 +115,7 @@ public final class Kruskals extends LabyrinthHelper implements LabyrinthRules
      * 
      * @return Location
      */
-    private Location getLowestWeight()
+    private Location getLowestWeight(final Random random)
     {
         //lowest count
         int count = 0;
@@ -144,7 +145,7 @@ public final class Kruskals extends LabyrinthHelper implements LabyrinthRules
         {
             List<Location> locations = getGroupLocations(group);
 
-            return locations.get((int)(Math.random() * locations.size()));
+            return locations.get(random.nextInt(locations.size()));
         }
     }
     

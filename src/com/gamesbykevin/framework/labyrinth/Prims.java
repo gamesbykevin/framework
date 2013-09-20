@@ -4,12 +4,13 @@ import com.gamesbykevin.framework.labyrinth.Location.Wall;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Generate a Labyrinth using Prim's algorithm
  * @author GOD
  */
-public final class Prims extends LabyrinthHelper implements LabyrinthRules
+public final class Prims extends LabyrinthHelper implements IAlgorithm
 {
     private Location current;
     
@@ -66,7 +67,7 @@ public final class Prims extends LabyrinthHelper implements LabyrinthRules
      * Creates the maze
      */
     @Override
-    public void update() throws Exception
+    public void update(final Random random) throws Exception
     {
         //initialize() has not been called yet
         if (!super.hasChecked())
@@ -83,7 +84,7 @@ public final class Prims extends LabyrinthHelper implements LabyrinthRules
                 //while we have valid walls to check
                 while (!valid.isEmpty())
                 {
-                    final int index = (int)(Math.random() * valid.size());
+                    final int index = random.nextInt(valid.size());
 
                     //get random wall
                     Location.Wall wall = valid.get(index);
@@ -131,7 +132,7 @@ public final class Prims extends LabyrinthHelper implements LabyrinthRules
             else
             {
                 //get new random Location
-                final int index = (int)(Math.random() * checkWalls.size());
+                final int index = random.nextInt(checkWalls.size());
                 
                 //get Location and set as current
                 current = checkWalls.get(index);

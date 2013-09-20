@@ -4,12 +4,13 @@ import com.gamesbykevin.framework.labyrinth.Location.Wall;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Generate a Labyrinth using the DepthFirstSearch algorithm
  * @author GOD
  */
-public final class DepthFirstSearch extends LabyrinthHelper implements LabyrinthRules
+public final class DepthFirstSearch extends LabyrinthHelper implements IAlgorithm
 {
     private Location current;
     
@@ -64,7 +65,7 @@ public final class DepthFirstSearch extends LabyrinthHelper implements Labyrinth
      * Creates the maze
      */
     @Override
-    public void update() throws Exception
+    public void update(final Random random) throws Exception
     {
         //initialize() has not been called yet
         if (!super.hasChecked())
@@ -82,7 +83,7 @@ public final class DepthFirstSearch extends LabyrinthHelper implements Labyrinth
                 if (valid.size() > 1 && !hasStackLocation(current))
                     stack.add(current);
                 
-                final int index = (int)(Math.random() * valid.size());
+                final int index = random.nextInt(valid.size());
                 
                 //get random wall
                 Wall wall = valid.get(index);
@@ -130,7 +131,7 @@ public final class DepthFirstSearch extends LabyrinthHelper implements Labyrinth
                     while(stack.size() > 0)
                     {
                         //get a random location from the List stack
-                        final int index = (int)(Math.random() * stack.size());
+                        final int index = random.nextInt(stack.size());
 
                         //get a random Location from our List stack and mark visited
                         current = stack.get(index);
@@ -147,7 +148,7 @@ public final class DepthFirstSearch extends LabyrinthHelper implements Labyrinth
                 else
                 {
                     //get a random un-visited Location
-                    current = getRandomUnvisited();
+                    current = getRandomUnvisited(random);
                     current.markVisited();
                 }
             }
@@ -181,7 +182,7 @@ public final class DepthFirstSearch extends LabyrinthHelper implements Labyrinth
      * Of all the Location(s) in the maze get a random one that has not yet been visited
      * @return Location
      */
-    private Location getRandomUnvisited()
+    private Location getRandomUnvisited(final Random random)
     {
         List<Location> unvisited = new ArrayList<>();
         
@@ -191,6 +192,6 @@ public final class DepthFirstSearch extends LabyrinthHelper implements Labyrinth
                 unvisited.add(cell);
         }
         
-        return unvisited.get((int)(Math.random() * unvisited.size()));
+        return unvisited.get(random.nextInt(unvisited.size()));
     }
 }

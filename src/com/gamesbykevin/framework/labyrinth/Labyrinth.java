@@ -6,6 +6,7 @@ import com.gamesbykevin.framework.resources.Progress;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.util.List;
+import java.util.Random;
 
 public class Labyrinth 
 {
@@ -24,6 +25,12 @@ public class Labyrinth
     private HuntKill huntKill;
     private Sidewinder sidewinder;
     
+    //our random number generator
+    private final Random random;
+    
+    //the seed used to generate random numbers
+    private final long seed = System.nanoTime();
+    
     /**
      * Create a new labyrinth using the specified Algorithm and the number of columns/rows
      * 
@@ -33,7 +40,11 @@ public class Labyrinth
      */
     public Labyrinth(final int cols, final int rows, final Algorithm algorithm) throws Exception
     {
+        //set the algorithm we will be using
         this.algorithm = algorithm;
+        
+        //create new random number generator
+        this.random = new Random(seed);
         
         switch(algorithm)
         {
@@ -150,27 +161,27 @@ public class Labyrinth
         switch(algorithm)
         {
             case DepthFirstSearch:
-                depthFirstSearch.update();
+                depthFirstSearch.update(random);
                 break;
                 
             case Prims:
-                prims.update();
+                prims.update(random);
                 break;
                 
             case Kruskals:
-                kruskals.update();
+                kruskals.update(random);
                 break;
                 
             case Ellers:
-                ellers.update();
+                ellers.update(random);
                 break;
 
             case HuntKill:
-                huntKill.update();
+                huntKill.update(random);
                 break;
                 
             case Sidewinder:
-                sidewinder.update();
+                sidewinder.update(random);
                 break;
                 
             default:

@@ -4,12 +4,13 @@ import com.gamesbykevin.framework.labyrinth.Location.Wall;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Generate a Labyrinth using Eller's algorithm
  * @author GOD
  */
-public final class Ellers extends LabyrinthHelper implements LabyrinthRules
+public final class Ellers extends LabyrinthHelper implements IAlgorithm
 {
     //the current row we are looking at
     private int currentRow = 0;
@@ -38,7 +39,7 @@ public final class Ellers extends LabyrinthHelper implements LabyrinthRules
      * Creates the maze
      */
     @Override
-    public void update() throws Exception
+    public void update(final Random random) throws Exception
     {
         //initialize() has not been called yet
         if (!super.hasChecked())
@@ -51,8 +52,11 @@ public final class Ellers extends LabyrinthHelper implements LabyrinthRules
             if (locations == null || locations.isEmpty())
                 locations = getLocations(currentRow);
 
+            //pick random number, 0 or 1
+            boolean randYes = (random.nextInt(2) == 0);
+            
             //do we randomly create a passage to the west, and make sure we are in bounds
-            if (Math.random() > .5 && index > 0)
+            if (randYes && index > 0)
             {
                 if (locations.get(index).getGroup() != locations.get(index - 1).getGroup())
                 {
@@ -112,25 +116,34 @@ public final class Ellers extends LabyrinthHelper implements LabyrinthRules
                         //get list of locations from the current row that are in the same group
                         List<Location> locationGroupRow = getLocationsGroup(currentRow, group);
 
-                        //here we will take a random number (at least 1) Location(s) and make passages with the South Locaitons
-                        int limit = (int)(Math.random() * (locationGroupRow.size() - 1)) + 1;
-
+                        int limit;
+                        
+                        if (locationGroupRow.size() > 1)
+                        {
+                            //here we will take a random number (at least 1) Location(s) and make passages with the South Locations
+                            limit = random.nextInt(locationGroupRow.size() - 1) + 1;
+                        }
+                        else
+                        {
+                            limit = locationGroupRow.size();
+                        }
+                        
                         while (limit > 0)
                         {
-                            final int randomIndex = (int)(Math.random() * locationGroupRow.size());
+                            final int randomIndex = random.nextInt(locationGroupRow.size());
 
                             //get random Location from List
-                            Location random = locationGroupRow.get(randomIndex);
+                            Location randomLocation = locationGroupRow.get(randomIndex);
 
                             //get the Location below the current one
-                            Location southNeighbor = super.getLocation(random.getCol(), random.getRow() + 1);
+                            Location southNeighbor = super.getLocation(randomLocation.getCol(), randomLocation.getRow() + 1);
 
                             //create a passage between Locations
-                            random.remove(Wall.South);
+                            randomLocation.remove(Wall.South);
                             southNeighbor.remove(Wall.North);
 
                             //also change group of new Location so 
-                            super.changeGroup(southNeighbor.getGroup(), random.getGroup());
+                            super.changeGroup(southNeighbor.getGroup(), randomLocation.getGroup());
 
                             //remove from List
                             locationGroupRow.remove(randomIndex);

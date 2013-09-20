@@ -3,12 +3,13 @@ package com.gamesbykevin.framework.labyrinth;
 import static com.gamesbykevin.framework.labyrinth.Location.Wall;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Generate a Labyrinth using the Hunt and Kill algorithm
  * @author GOD
  */
-public final class HuntKill extends LabyrinthHelper implements LabyrinthRules
+public final class HuntKill extends LabyrinthHelper implements IAlgorithm
 {
     private Location current;
     
@@ -45,7 +46,7 @@ public final class HuntKill extends LabyrinthHelper implements LabyrinthRules
     }
     
     @Override
-    public void update() throws Exception
+    public void update(final Random random) throws Exception
     {
         //initialize() has not been called yet
         if (!super.hasChecked())
@@ -59,7 +60,7 @@ public final class HuntKill extends LabyrinthHelper implements LabyrinthRules
             //is there at least one valid wall
             if (!valid.isEmpty())
             {
-                final int index = (int)(Math.random() * valid.size());
+                final int index = random.nextInt(valid.size());
                 
                 //get random wall
                 Location.Wall wall = valid.get(index);
@@ -102,7 +103,7 @@ public final class HuntKill extends LabyrinthHelper implements LabyrinthRules
             else
             {
                 //we go into hunt mode
-                current = getRandomUnvisitedNeighbor();
+                current = getRandomUnvisitedNeighbor(random);
             }
         }
         else
@@ -115,7 +116,7 @@ public final class HuntKill extends LabyrinthHelper implements LabyrinthRules
      * Of all the Location(s) in the maze get a random one that has not yet been visited and is a neighbor to a visited Location
      * @return Location
      */
-    private Location getRandomUnvisitedNeighbor()
+    private Location getRandomUnvisitedNeighbor(final Random random)
     {
         List<Location> unvisited = new ArrayList<>();
         
@@ -137,6 +138,6 @@ public final class HuntKill extends LabyrinthHelper implements LabyrinthRules
             }
         }
         
-        return unvisited.get((int)(Math.random() * unvisited.size()));
+        return unvisited.get(random.nextInt(unvisited.size()));
     }
 }

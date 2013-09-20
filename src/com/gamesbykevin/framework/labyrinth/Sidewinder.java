@@ -4,12 +4,13 @@ import com.gamesbykevin.framework.labyrinth.Location.Wall;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Generate a Labyrinth using the Sidewinder algorithm
  * @author GOD
  */
-public final class Sidewinder extends LabyrinthHelper implements LabyrinthRules
+public final class Sidewinder extends LabyrinthHelper implements IAlgorithm
 {
     private int currentRow = 0;
     
@@ -59,7 +60,7 @@ public final class Sidewinder extends LabyrinthHelper implements LabyrinthRules
     }
     
     @Override
-    public void update() throws Exception
+    public void update(final Random random) throws Exception
     {
         //initialize() has not been called yet
         if (!super.hasChecked())
@@ -71,8 +72,11 @@ public final class Sidewinder extends LabyrinthHelper implements LabyrinthRules
             //add the current position to the run set
             currentSet.add(current);
 
+            //pick random number, 0 or 1
+            boolean randYes = (random.nextInt(2) == 0);
+            
             //if random is true and we can still create a passage east, or if we are in the first row
-            if (Math.random() > .5 && current.getCol() + 1 < super.getColumnCount() || currentRow == 0)
+            if (randYes && current.getCol() + 1 < super.getColumnCount() || currentRow == 0)
             {
                 //if there is another Location to the east create a passage
                 if (getLocationEast(current) != null)
@@ -92,7 +96,7 @@ public final class Sidewinder extends LabyrinthHelper implements LabyrinthRules
             else
             {
                 //a passage was not created east so get a random Location from List set
-                Location tmp = currentSet.get((int)(Math.random() * currentSet.size()));
+                Location tmp = currentSet.get(random.nextInt(currentSet.size()));
                 
                 //make sure current set is populated
                 if (tmp != null)
