@@ -1,5 +1,6 @@
 package com.gamesbykevin.framework.base;
 
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
@@ -274,6 +275,19 @@ public class Sprite extends Cell
         setHeight(h);
     }
     
+    public void setDimensions(final Dimension dimension)
+    {
+        setDimensions(dimension.getWidth(), dimension.getHeight());
+    }
+    
+    /**
+     * Auto set the width/height based on the current spriteSheet animation
+     */
+    public void setDimensions()
+    {   
+        setDimensions(getSpriteSheet().getLocation().getWidth(), getSpriteSheet().getLocation().getHeight());
+    }
+    
     /**
      * Set the width dimension of this sprite
      * @param w 
@@ -472,14 +486,6 @@ public class Sprite extends Cell
     }
     
     /**
-     * Auto set the width/height based on the current spriteSheet animation
-     */
-    public void setDimensions()
-    {   
-        setDimensions(spriteSheet.getLocation().getWidth(), spriteSheet.getLocation().getHeight());
-    }
-    
-    /**
      * Get a Rectangle object based on the current x, y, width, height
      * @return Rectangle
      */
@@ -511,15 +517,15 @@ public class Sprite extends Cell
      * @param image specified Image to draw
      * @return Graphics
      */
-    public void draw(final Graphics g, final Image image)
+    public void draw(final Graphics graphics, final Image image)
     {
-        if (spriteSheet.hasAnimations())
+        if (getSpriteSheet().hasAnimations())
         {
-            draw(g, image, spriteSheet.getLocation());
+            draw(graphics, image, getSpriteSheet().getLocation());
         }
         else
         {
-            draw(g, image, null);
+            draw(graphics, image, null);
         }
     }
     
@@ -600,9 +606,9 @@ public class Sprite extends Cell
      */
     public void draw(final Graphics g)
     {
-        if (spriteSheet != null && spriteSheet.hasAnimations())
+        if (getSpriteSheet() != null && getSpriteSheet().hasAnimations())
         {
-            draw(g, spriteSheet.getLocation());
+            draw(g, getSpriteSheet().getLocation());
         }
         else
         {

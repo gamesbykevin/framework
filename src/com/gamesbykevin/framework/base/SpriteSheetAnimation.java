@@ -5,11 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This class will do the following
- * 1) contain all image locations of a single animation
- * 2) the duration to display each animation
- * 3) whether or not to loop the animation
- * 4) tell is if the animation has started or finished
+ * This class will do the following <br>
+ * 1) contain all image locations of a single animation<br>
+ * 2) the duration to display each animation<br>
+ * 3) whether or not to loop the animation<br>
+ * 4) tell is if the animation has started or finished<br>
  * @author GOD
  */
 public final class SpriteSheetAnimation 

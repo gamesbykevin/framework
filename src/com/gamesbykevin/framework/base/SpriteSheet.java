@@ -3,6 +3,10 @@ package com.gamesbykevin.framework.base;
 import java.awt.Rectangle;
 import java.util.HashMap;
 
+/**
+ * This class contains a List of animations
+ * @author GOD
+ */
 public final class SpriteSheet 
 {
     //pause animations
@@ -105,6 +109,16 @@ public final class SpriteSheet
     }
     
     /**
+     * Checks if a delay has been setup.<br><br>
+     * The delay has been setup if the value is greater than or equal to 0.
+     * @return boolean
+     */
+    public boolean hasDelay()
+    {
+        return (getDelay() >= 0);
+    }
+    
+    /**
      * Returns the delay per each update
      * @return long
      */
@@ -164,7 +178,7 @@ public final class SpriteSheet
             return;
         
         //make sure a delay is set even if it is 0
-        if (getDelay() < 0)
+        if (!hasDelay())
             throw new Exception("Delay is not set for this SpriteSheet");
         
         getSpriteSheetAnimation().update(getDelay());
