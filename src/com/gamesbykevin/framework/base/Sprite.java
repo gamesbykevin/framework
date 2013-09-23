@@ -48,6 +48,10 @@ public class Sprite extends Cell
         setVerticalFlip(sprite.hasVerticalFlip());
         super.setCol(sprite.getCol());
         super.setRow(sprite.getRow());
+        
+        //copy animations as well
+        if (sprite.getSpriteSheet() != null)
+            this.spriteSheet = new SpriteSheet(sprite.getSpriteSheet());
     }
     
     /**
@@ -281,7 +285,9 @@ public class Sprite extends Cell
     }
     
     /**
-     * Auto set the width/height based on the current spriteSheet animation
+     * Auto set the width/height based on the current sprite sheet animation<br><br>
+     * The sprite sheet must have a current animation set before calling this method
+     * or an error will occur.
      */
     public void setDimensions()
     {   
@@ -519,7 +525,7 @@ public class Sprite extends Cell
      */
     public void draw(final Graphics graphics, final Image image)
     {
-        if (getSpriteSheet().hasAnimations())
+        if (getSpriteSheet() != null && getSpriteSheet().hasAnimations())
         {
             draw(graphics, image, getSpriteSheet().getLocation());
         }
@@ -604,18 +610,18 @@ public class Sprite extends Cell
      * @param g Graphics object to draw to
      * @return Graphics 
      */
-    public void draw(final Graphics g)
+    public void draw(final Graphics graphics)
     {
         if (getSpriteSheet() != null && getSpriteSheet().hasAnimations())
         {
-            draw(g, getSpriteSheet().getLocation());
+            draw(graphics, getSpriteSheet().getLocation());
         }
         else
         {
             if (imageDimensions == null || imageDimensions.width != image.getWidth(null) || imageDimensions.height != image.getHeight(null))
                 imageDimensions = new Rectangle(0, 0, image.getWidth(null), image.getHeight(null));
             
-            draw(g, imageDimensions);
+            draw(graphics, imageDimensions);
         }
     }
     
@@ -627,42 +633,38 @@ public class Sprite extends Cell
      * @param location Rectangle area of image that we want to draw
      * @return Graphics
      */
-    public void draw(final Graphics g, final Rectangle location)
+    public void draw(final Graphics graphics, final Rectangle location)
     {
-        //verify image exists before drawing
-        if (getImage() != null)
+        int dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2;
+
+        dx1 = (int)getX();
+        dy1 = (int)getY();
+        dx2 = dx1 + (int)getWidth();
+        dy2 = dy1 + (int)getHeight();
+
+        if (!hasHorizontalFlip())
         {
-            int dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2;
-            
-            dx1 = (int)getX();
-            dy1 = (int)getY();
-            dx2 = dx1 + (int)getWidth();
-            dy2 = dy1 + (int)getHeight();
-            
-            if (!hasHorizontalFlip())
-            {
-                sx1 = location.x;
-                sx2 = location.x + location.width;
-            }
-            else
-            {
-                sx1 = location.x + location.width;
-                sx2 = location.x;
-            }
-            
-            if (!hasVerticalFlip())
-            {
-                sy1 = location.y;
-                sy2 = location.y + location.height;
-            }
-            else
-            {
-                sy1 = location.y + location.height;
-                sy2 = location.y;
-            }
-            
-            draw(g, getImage(), dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2);
+            sx1 = location.x;
+            sx2 = location.x + location.width;
         }
+        else
+        {
+            sx1 = location.x + location.width;
+            sx2 = location.x;
+        }
+
+        if (!hasVerticalFlip())
+        {
+            sy1 = location.y;
+            sy2 = location.y + location.height;
+        }
+        else
+        {
+            sy1 = location.y + location.height;
+            sy2 = location.y;
+        }
+
+        draw(graphics, getImage(), dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2);
     }
     
     /**

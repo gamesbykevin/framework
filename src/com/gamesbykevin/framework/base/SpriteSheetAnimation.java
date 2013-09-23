@@ -56,6 +56,10 @@ public final class SpriteSheetAnimation
         reset();
     }
     
+    /**
+     * Reset animation back to the beginning.<br><br>
+     * Also finished and started will be set to false.
+     */
     public void reset()
     {
         setIndex(INDEX_START);
@@ -123,11 +127,20 @@ public final class SpriteSheetAnimation
         this.currentDelay = currentDelay;
     }
     
+    /**
+     * Get the coordinates of the current Animation index
+     * @return Rectangle
+     */
     public Rectangle getLocation()
     {
         return getLocation(this.index);
     }
     
+    /**
+     * Get the coordinates of the specified Animation index
+     * @param index
+     * @return Rectangle
+     */
     public Rectangle getLocation(int index)
     {
         return locations.get(index);

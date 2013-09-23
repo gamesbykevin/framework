@@ -20,10 +20,25 @@ public final class SpriteSheet
     //delay per frame (nanoseconds)
     private long delayPerFrame = -1; 
     
+    /**
+     * Create a new sprite sheet and copy all the animations
+     * @param spriteSheet 
+     */
     public SpriteSheet(final SpriteSheet spriteSheet)
     {
         this();
+        
+        //set the delay per update
         setDelay(spriteSheet.getDelay());
+        
+        //add existing animations
+        for (Object key : spriteSheet.animations.keySet())
+        {
+            add(spriteSheet.getSpriteSheetAnimation(key), key);
+        }
+        
+        //also set the current animation
+        setCurrent(spriteSheet.getCurrent());
     }
     
     public SpriteSheet(final long delayPerFrame)
@@ -87,7 +102,7 @@ public final class SpriteSheet
      */
     public boolean hasAnimations()
     {
-        return (animations.size() > 0);
+        return (animations != null && animations.size() > 0);
     }
     
     /**
