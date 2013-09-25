@@ -257,7 +257,7 @@ public abstract class Layer
     
     /**
      * If the mouse location is within the boundary of any Option
-     * set that as the current Option
+     * set that as the current Option which will in turn highlight
      * 
      * @param location 
      */
@@ -487,6 +487,16 @@ public abstract class Layer
                 }
             }
         }
+    }
+    
+    /**
+     * Get the background audio. <br><br>
+     * If it does not exist null is returned.
+     * @return Audio
+     */
+    public Audio getSound()
+    {
+        return this.sound;
     }
     
     /**

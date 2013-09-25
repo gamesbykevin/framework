@@ -206,15 +206,23 @@ public class Audio implements Runnable
                     {
                         while(true)
                         {
-                            //the thread will pause here as the framework plays the mp3 source
-                            player.play();
-
-                            //now that the player is complete
-                            if (player.isComplete())
+                            //does the player exist
+                            if (player != null)
+                            {
+                                //the thread will pause here as the framework plays the mp3 source
+                                player.play();
+                            }
+                            
+                            //does the player exist and has the audio finished playing
+                            if (player != null && player.isComplete())
                             {
                                 //create new instance so mp3 source can restart and the loop will continue
                                 player = new Player(source.getResourceAsStream(relativePath));
                             }
+                            
+                            //the player does not exist so exit infinite loop
+                            if (player == null)
+                                break;
                         }
                     }
                     else

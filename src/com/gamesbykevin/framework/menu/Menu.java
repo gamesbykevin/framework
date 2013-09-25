@@ -113,7 +113,19 @@ public class Menu
      */
     public void setLayer(final Object current)
     {
+        //make sure the current layer exists before we check if the audio exists
+        if (this.current != null)
+        {
+            //if the current layer has background audio, stop it before going to the next layer
+            if (getLayer(this.current).getSound() != null)
+                getLayer(this.current).getSound().stopSound();
+        }
+        
         this.current = current;
+        
+        //if the new layer has background audio, play it on infinite loop
+        if (getLayer(this.current).getSound() != null)
+            getLayer(this.current).getSound().play(true);
         
         this.reset();
     }
