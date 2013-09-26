@@ -107,6 +107,12 @@ public abstract class Layer
     //the original composite that determines transparency when rendering our Layer
     private Composite original;
     
+    //the default option container ratio
+    private static final float OPTION_CONTAINER_RATIO_DEFAULT = .85F;
+    
+    //if the layer contains options how big is the option container
+    private float optionContainerRatio = OPTION_CONTAINER_RATIO_DEFAULT;
+    
     public Layer(Type type, Rectangle screen)
     {
         this.screen = screen;
@@ -573,6 +579,22 @@ public abstract class Layer
         getOption(getCurrent()).setHighlighted(true);
     }
     
+    /**
+     * Set the size of the option container.
+     * @param optionContainerRatio Percentage of parent. Must be greater than 0 and less than or equal to 1.0 
+     * @throws Exception Exception will be throw if ratio is less than or equal to 0 or ratio is greater then 1.0
+     */
+    public void setOptionContainerRatio(final float optionContainerRatio) throws Exception
+    {
+        if (optionContainerRatio <= 0)
+            throw new Exception("Ratio must be greater than 0.00");
+        
+        if (optionContainerRatio > 1.0)
+            throw new Exception("Ratio must be less than or equal to 1.0");
+        
+        this.optionContainerRatio = optionContainerRatio;
+    }
+    
     public void render(Graphics2D graphics, Rectangle screen) throws Exception 
     {
         if (original == null)
@@ -673,12 +695,9 @@ public abstract class Layer
             int middleX = screen.x + (screen.width  / 2);
             int middleY = screen.y + (screen.height / 2);
 
-            //option container will cover 85% of window
-            double coverWindowRatio = .85;
-
-            //the width and height of this container will be 85% of its parent
-            int menuAreaW = (int)(screen.width  * coverWindowRatio);
-            int menuAreaH = (int)(screen.height * coverWindowRatio);
+            //the width and height of this container will be a % of its parent
+            int menuAreaW = (int)(screen.width  * optionContainerRatio);
+            int menuAreaH = (int)(screen.height * optionContainerRatio);
 
             //store coordinates for option container
             optionContainerArea = new Rectangle(middleX - (menuAreaW/2), middleY - (menuAreaH/2), menuAreaW, menuAreaH);
