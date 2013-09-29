@@ -187,7 +187,7 @@ public abstract class Layer
     /**
      * Reset Timer
      */
-    public void reset()
+    protected void reset()
     {
         if (timer != null)
             timer.reset();
@@ -230,7 +230,7 @@ public abstract class Layer
         this.nextLayerKey = nextLayerKey;
     }
     
-    public Object getNextLayerKey()
+    protected Object getNextLayerKey()
     {
         return this.nextLayerKey;
     }
@@ -267,7 +267,7 @@ public abstract class Layer
      * 
      * @param location 
      */
-    public void setCurrent(final Point location)
+    protected void setCurrent(final Point location)
     {
         for (Object key : options.keySet().toArray())
         {
@@ -286,7 +286,7 @@ public abstract class Layer
      * Set the key of the current Option
      * @param current 
      */
-    public void setCurrent(final Object current)
+    protected void setCurrent(final Object current)
     {
         this.current = current;
     }
@@ -295,12 +295,12 @@ public abstract class Layer
      * Does this Layer contain options
      * @return boolean
      */
-    public boolean hasOptions()
+    protected boolean hasOptions()
     {
         return (!options.isEmpty());
     }
     
-    public Option getOption(Object key)
+    protected Option getOption(Object key)
     {
         return options.get(key);
     }
@@ -332,7 +332,7 @@ public abstract class Layer
      * @param screen Window Layer is contained within
      * @param timeDeduction Time to deduct from timer
      */
-    public void update(final Menu menu, final Mouse mouse, final Keyboard keyboard, final Rectangle screen, final long time) 
+    protected void update(final Menu menu, final Mouse mouse, final Keyboard keyboard, final Rectangle screen, final long time) 
     {
         //make sure we aren't forced to view this layer
         if (!getForce())
@@ -500,7 +500,7 @@ public abstract class Layer
      * If it does not exist null is returned.
      * @return Audio
      */
-    public Audio getSound()
+    protected Audio getSound()
     {
         return this.sound;
     }
@@ -584,7 +584,7 @@ public abstract class Layer
      * @param optionContainerRatio Percentage of parent. Must be greater than 0 and less than or equal to 1.0 
      * @throws Exception Exception will be throw if ratio is less than or equal to 0 or ratio is greater then 1.0
      */
-    public void setOptionContainerRatio(final float optionContainerRatio) throws Exception
+    protected void setOptionContainerRatio(final float optionContainerRatio) throws Exception
     {
         if (optionContainerRatio <= 0)
             throw new Exception("Ratio must be greater than 0.00");
@@ -595,7 +595,7 @@ public abstract class Layer
         this.optionContainerRatio = optionContainerRatio;
     }
     
-    public void render(Graphics2D graphics, Rectangle screen) throws Exception 
+    protected void render(Graphics2D graphics, Rectangle screen) throws Exception 
     {
         if (original == null)
             original = graphics.getComposite();
@@ -759,7 +759,7 @@ public abstract class Layer
     /**
      * Free up resources
      */
-    public void dispose()
+    protected void dispose()
     {
         if (sound != null)
             sound.stopSound();

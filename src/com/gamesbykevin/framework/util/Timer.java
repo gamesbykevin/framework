@@ -110,6 +110,10 @@ public class Timer
         return this.reset;
     }
     
+    /**
+     * Return a % representing completion towards the remaining time
+     * @return float results will range from 0.0 (0%) to 1.0 (100%)
+     */
     public float getProgress()
     {
         return (float)((double)(getReset() - getRemaining()) / (double)getReset());

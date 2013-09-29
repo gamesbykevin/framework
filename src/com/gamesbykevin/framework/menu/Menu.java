@@ -151,6 +151,17 @@ public class Menu
     }
     
     /**
+     * Does the specified option exist in the specified layer
+     * @param layer
+     * @param option
+     * @return true if exists, false otherwise
+     */
+    public boolean hasOption(final Object layer, final Object option)
+    {
+        return (getLayer(layer).getOption(option) != null);
+    }
+    
+    /**
      * This will get the index of a specific selection for a specific option for a specific layer
      * @param layer  
      * @param option 
