@@ -422,6 +422,12 @@ public abstract class Layer
                 }
             }
         }
+        else
+        {
+            //since we are forced to view the layer we don't want any keyboard/mouse events to carry over to the next layer
+            keyboard.reset();
+            mouse.reset();
+        }
         
         float tmpPercentComplete = 1;
         
