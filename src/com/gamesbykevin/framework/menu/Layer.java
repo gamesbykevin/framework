@@ -367,6 +367,10 @@ public abstract class Layer
                                 //if this option has the next layer set
                                 if (option.getKeyLayer() != null)
                                 {
+                                    //reset keyboard and mouse events before moving to the next layer
+                                    keyboard.reset();
+                                    mouse.reset();
+                                    
                                     //set new Layer
                                     menu.setLayer(option.getKeyLayer());
                                 }
@@ -390,6 +394,10 @@ public abstract class Layer
                                 }
                                 else
                                 {
+                                    //reset keyboard and mouse events before moving to the next layer
+                                    keyboard.reset();
+                                    mouse.reset();
+                                    
                                     //set the new Layer
                                     menu.setLayer(option.getKeyLayer());
                                 }
