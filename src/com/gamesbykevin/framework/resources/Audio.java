@@ -56,6 +56,9 @@ public class Audio implements Runnable
         
         //store class since it lies in same directory as resources 
         this.source = source;
+        
+        //create basic objects depending on audio type
+        setup();
     }
     
     /**
@@ -149,22 +152,12 @@ public class Audio implements Runnable
     {
         try
         {
+            //make sure necessary objects are created to play audio
+            setup();
+            
             switch(getType())
             {
                 case MID:
-                    
-                    //get the midi sequence from the stream
-                    sequence = MidiSystem.getSequence(source.getResource(relativePath));
-                    
-                    //create a sequencer for the sequence
-                    sequencer = MidiSystem.getSequencer();
-
-                    //open so the sequencer will begin to acquire the system resources needed to function
-                    sequencer.open();
-
-                    //let the sequencer know where the midi file data is located
-                    sequencer.setSequence(sequence); 
-
                     //are we looping sound
                     if (loop)
                     {
@@ -179,28 +172,19 @@ public class Audio implements Runnable
 
                 case WAV:
                 case OTHER:
-
-                    this.ac = JApplet.newAudioClip(source.getResource(relativePath));
-                    
                     //are we looping sound
                     if (loop)
                     {
-                        //start playing sound with infinite loop
                         ac.loop();
                     }
                     else
                     {
-                        //start playing sound
                         ac.play();
                     }
 
                     break;     
 
                 case MP3:
-                    
-                    //create a new player with the assigned file name
-                    player = new Player(source.getResourceAsStream(relativePath));
-
                     //are we looping sound
                     if (loop)
                     {
@@ -240,6 +224,55 @@ public class Audio implements Runnable
 
             //if there was an error attempt to stop audio
             stopSound();
+        }
+    }
+    
+    /**
+     * Creates the necessary objects depending on the audio type
+     */
+    private void setup() throws Exception
+    {
+        switch(this.type)
+        {
+            case MID:
+                
+                //if the sequence or sequencer do not exist
+                if (sequence == null || sequencer == null)
+                {
+                    //get the midi sequence from the stream
+                    sequence = MidiSystem.getSequence(source.getResource(relativePath));
+
+                    //create a sequencer for the sequence
+                    sequencer = MidiSystem.getSequencer();
+
+                    //open so the sequencer will begin to acquire the system resources needed to function
+                    sequencer.open();
+
+                    //let the sequencer know where the midi file data is located
+                    sequencer.setSequence(sequence); 
+                }
+                else
+                {
+                    //reset sequencer back to the beginning
+                    sequencer.setTickPosition(0);
+                }
+                break;
+                
+            case WAV:
+            case OTHER:
+                if (this.ac == null)
+                {
+                    this.ac = JApplet.newAudioClip(source.getResource(relativePath));
+                }
+                break;
+                
+            case MP3:
+                if (player == null || player.isComplete())
+                {
+                    //create a new player with the assigned file name
+                    player = new Player(source.getResourceAsStream(relativePath));
+                }
+                break;
         }
     }
     
@@ -285,13 +318,10 @@ public class Audio implements Runnable
                     player = null;
                     break;
             }
-            
-            
-            super.finalize();
         }
         catch (Throwable e)
         {
-            System.out.println(e);
+            e.printStackTrace();
         }
     }
 }
