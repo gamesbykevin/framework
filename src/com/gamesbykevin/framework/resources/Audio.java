@@ -9,7 +9,7 @@ import javax.swing.JApplet;
 
 import javazoom.jl.player.Player;
 
-public class Audio implements Runnable
+public final class Audio implements Runnable, Disposable
 {
     //audio clip for wav/other format audio
     private AudioClip ac;
@@ -96,6 +96,7 @@ public class Audio implements Runnable
     /**
      * Stop sound and free up resources
      */
+    @Override
     public void dispose()
     {
         //attempt to stop sound 
@@ -277,15 +278,14 @@ public class Audio implements Runnable
     }
     
     /**
-     * Stop playing the sound. The method 
-     * also needs to be called stopSound()
-     * because there is an existing stop()
-     * method in the Thread class.
+     * Stop playing the sound. The method also needs to be called stopSound()
+     * because there is an existing stop() method in the Thread class.
      */
     public void stopSound()
     {
         try
         {
+            //if thread exists and is running interrupt it
             if (thread != null && thread.isAlive())
                 thread.interrupt();
             

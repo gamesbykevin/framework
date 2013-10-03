@@ -8,7 +8,7 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
 
-public class Progress 
+public class Progress implements Disposable
 {
     //we will draw an image to reduce load on machine
     private BufferedImage image;
@@ -45,6 +45,19 @@ public class Progress
     public Progress(final int goal)
     {
         this.goal = goal;
+    }
+    
+    @Override
+    public void dispose()
+    {
+        if (image != null)
+            image.flush();
+        
+        this.image = null;
+        this.description = null;
+        this.progressTextLocation = null;
+        this.progressBarDimension = null;
+        this.font = null;
     }
     
     /**
@@ -142,7 +155,7 @@ public class Progress
      */
     public void render(Graphics graphics, Rectangle screen)
     {
-        //create image of Progress information as all information will be static exception getProgress()
+        //create image of Progress information as all information will be static except getProgress()
         if (image == null)
         {
             //create an image of the same size as Rectangle screen

@@ -4,7 +4,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Text 
+public final class Text implements Disposable
 {
     //each line in the text file is stored in this array list
     private List<String> lines;
@@ -15,7 +15,7 @@ public class Text
         BufferedReader input =  new BufferedReader(new InputStreamReader(in));
 
         String line = null;
-        lines = new ArrayList<String>();
+        lines = new ArrayList<>();
         
         while ((line = input.readLine()) != null)
         {
@@ -54,6 +54,7 @@ public class Text
     /**
      * Free up resources
      */
+    @Override
     public void dispose()
     {
         lines.clear();
