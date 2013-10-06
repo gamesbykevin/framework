@@ -13,7 +13,7 @@ public final class SpriteSheet
     private boolean pause = false;
     
     //all of our animations will be contained here
-    private HashMap<Object, SpriteSheetAnimation> animations;
+    private HashMap<Object, Animation> animations;
     
     private Object current;
     
@@ -130,7 +130,12 @@ public final class SpriteSheet
      */
     public boolean hasDelay()
     {
-        return (getDelay() >= 0);
+        return hasDelay(getDelay());
+    }
+    
+    public boolean hasDelay(final long delay)
+    {
+        return (delay >= 0);
     }
     
     /**
@@ -179,9 +184,22 @@ public final class SpriteSheet
      * @param animation Sprite Animation
      * @param key Unique identifier for this animation
      */
-    public void add(final SpriteSheetAnimation animation, final Object key)
+    public void add(final Animation animation, final Object key)
     {
         animations.put(key, animation);
+    }
+    
+    public void update(final long delay) throws Exception
+    {
+        if (isPaused())
+            return;
+        
+        //make sure a delay is set even if it is 0
+        if (!hasDelay(delay))
+            throw new Exception("Delay is not set for this SpriteSheet");
+        
+        //update the animation
+        getSpriteSheetAnimation().update(delay);
     }
     
     /**
@@ -189,21 +207,14 @@ public final class SpriteSheet
      */
     public void update() throws Exception
     {
-        if (isPaused())
-            return;
-        
-        //make sure a delay is set even if it is 0
-        if (!hasDelay())
-            throw new Exception("Delay is not set for this SpriteSheet");
-        
-        getSpriteSheetAnimation().update(getDelay());
+        update(getDelay());
     }
     
     /**
      * Get current animation
      * @return SpriteSheetAnimation
      */
-    private SpriteSheetAnimation getSpriteSheetAnimation()
+    private Animation getSpriteSheetAnimation()
     {
         return getSpriteSheetAnimation(current);
     }
@@ -213,7 +224,7 @@ public final class SpriteSheet
      * @param key Unique identifier used to get the appropriate animation
      * @return 
      */
-    public SpriteSheetAnimation getSpriteSheetAnimation(Object key)
+    public Animation getSpriteSheetAnimation(Object key)
     {
         return animations.get(key);
     }

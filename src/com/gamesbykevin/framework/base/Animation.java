@@ -12,7 +12,7 @@ import java.util.List;
  * 4) tell is if the animation has started or finished<br>
  * @author GOD
  */
-public final class SpriteSheetAnimation 
+public final class Animation 
 {
     //where each image is located on the sprite sheet
     private List<Rectangle> locations;
@@ -37,7 +37,7 @@ public final class SpriteSheetAnimation
     //how much longer until we can move to the next frame in animation (nanoseconds)
     private long currentDelay = 0;
     
-    public SpriteSheetAnimation()
+    public Animation()
     {
         locations = new ArrayList<>();
         delays = new ArrayList<>();

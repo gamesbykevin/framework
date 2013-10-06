@@ -37,6 +37,10 @@ public class Sprite extends Cell
         
     }
     
+    /**
+     * Create a new Sprite copying all the information from the parameter Sprite
+     * @param sprite 
+     */
     public Sprite(final Sprite sprite)
     {
         setDimensions(sprite.getWidth(), sprite.getHeight());
@@ -46,8 +50,8 @@ public class Sprite extends Cell
         setVelocityY(sprite.getVelocityY());
         setHorizontalFlip(sprite.hasHorizontalFlip());
         setVerticalFlip(sprite.hasVerticalFlip());
-        super.setCol(sprite.getCol());
-        super.setRow(sprite.getRow());
+        setCol(sprite.getCol());
+        setRow(sprite.getRow());
         
         //copy animations as well
         if (sprite.getSpriteSheet() != null)
