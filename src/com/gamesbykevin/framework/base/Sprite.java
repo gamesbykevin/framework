@@ -34,7 +34,7 @@ public class Sprite extends Cell
     
     public Sprite()
     {
-        
+        super();
     }
     
     /**
@@ -43,6 +43,8 @@ public class Sprite extends Cell
      */
     public Sprite(final Sprite sprite)
     {
+        this();
+        
         setDimensions(sprite.getWidth(), sprite.getHeight());
         setLocation(sprite.getPoint());
         setImage(sprite.getImage());
@@ -79,15 +81,6 @@ public class Sprite extends Cell
     public SpriteSheet getSpriteSheet()
     {
         return spriteSheet;
-    }
-    
-    /**
-     * Get the cell for this sprite
-     * @return 
-     */
-    public Cell getCell()
-    {
-        return new Cell(getCol(), getRow());
     }
     
     /**
