@@ -203,19 +203,19 @@ public class LabyrinthHelper
         switch(wall)
         {
             case South:
-                neighbor = new Location(current.getCol(), current.getRow() + 1);
+                neighbor = new Location((int)current.getCol(), (int)(current.getRow() + 1));
                 break;
 
             case North:
-                neighbor = new Location(current.getCol(), current.getRow() - 1);
+                neighbor = new Location((int)current.getCol(), (int)(current.getRow() - 1));
                 break;
 
             case West:
-                neighbor = new Location(current.getCol() - 1, current.getRow());
+                neighbor = new Location((int)(current.getCol() - 1), (int)current.getRow());
                 break;
 
             case East:
-                neighbor = new Location(current.getCol() + 1, current.getRow());
+                neighbor = new Location((int)(current.getCol() + 1), (int)current.getRow());
                 break;
         }
         
@@ -230,7 +230,7 @@ public class LabyrinthHelper
      * @param row Row
      * @return boolean
      */
-    protected boolean hasLocation(final int col, final int row)
+    protected boolean hasLocation(final double col, final double row)
     {
         return (col >=0 && col < getColumnCount() && row >=0 && row < getRowCount());
     }
@@ -253,14 +253,14 @@ public class LabyrinthHelper
      * @param row Row
      * @return Location
      */
-    public Location getLocation(final int col, final int row)
+    public Location getLocation(final double col, final double row)
     {
         //if the Location is out of bounds return null
         if (!hasLocation(col, row))
             return null;
         
         //all object in ArrayList are in order so we can mathimatically calculate the index
-        final int index = (row * cols) + col;
+        final int index = (int)((row * cols) + col);
         
         return cells.get(index);
     }
@@ -433,8 +433,8 @@ public class LabyrinthHelper
         //draw the walls of each cell
         for (Location cell : cells)
         {
-            final int drawX = screen.x + (cell.getCol() * cellW);
-            final int drawY = screen.y + (cell.getRow() * cellH);
+            final int drawX = (int)(screen.x + (cell.getCol() * cellW));
+            final int drawY = (int)(screen.y + (cell.getRow() * cellH));
 
             //make the cell itself white
             graphics.setColor(Color.WHITE);

@@ -20,7 +20,7 @@ public class Node extends Cell
         this(location.getCol(), location.getRow(), parent);
     }
     
-    public Node(int locationX, int locationY, Node parent)
+    public Node(double locationX, double locationY, Node parent)
     {
         super(locationX, locationY);
         setParent(parent);
@@ -36,7 +36,7 @@ public class Node extends Cell
         setLocationX(cell.getCol());
     }
     
-    public void setLocationX(int locationX)
+    public void setLocationX(double locationX)
     {
         setCol(locationX);
     }
@@ -46,7 +46,7 @@ public class Node extends Cell
         setLocationY(cell.getRow());
     }
     
-    public void setLocationY(int locationY)
+    public void setLocationY(double locationY)
     {
         setRow(locationY);
     }
@@ -56,12 +56,12 @@ public class Node extends Cell
         this.parent = parent;
     }
     
-    public int getLocationX()
+    public double getLocationX()
     {
         return getCol();
     }
     
-    public int getLocationY()
+    public double getLocationY()
     {
         return getRow();
     }

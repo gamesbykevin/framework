@@ -3,10 +3,10 @@ package com.gamesbykevin.framework.base;
 public class Cell 
 {
     //the location of this Cell
-    private int col = 0, row = 0;
+    private double col = 0, row = 0;
     
     //the Boundaries of this Cell
-    private int minCol = 0, maxCol = 0, minRow = 0, maxRow = 0;
+    private double minCol = 0, maxCol = 0, minRow = 0, maxRow = 0;
     
     /**
      * Construct a new Cell instance with a column, row value of 0
@@ -22,7 +22,7 @@ public class Cell
      * @param col
      * @param row 
      */
-    public Cell(final int col, final int row)
+    public Cell(final double col, final double row)
     {
         this.col = col;
         this.row = row;
@@ -57,7 +57,7 @@ public class Cell
      * @param minRow The minimum row
      * @param maxRow The maximum row
      */
-    public void setBounds(final int minCol, final int maxCol, final int minRow, final int maxRow)
+    public void setBounds(final double minCol, final double maxCol, final double minRow, final double maxRow)
     {
         this.minCol = minCol;
         this.maxCol = maxCol;
@@ -83,7 +83,7 @@ public class Cell
      * @param row
      * @return boolean
      */
-    public boolean equals(final int col, final int row)
+    public boolean equals(final double col, final double row)
     {
         return (col == this.col && row == this.row);
     }
@@ -106,22 +106,30 @@ public class Cell
      * @param maxRow Maximum value allowed for the Row
      * @return boolean
      */
-    public boolean hasBounds(final int minCol, final int maxCol, final int minRow, final int maxRow)
+    public boolean hasBounds(final double minCol, final double maxCol, final double minRow, final double maxRow)
     {
         return (getCol() >= minCol && getCol() <= maxCol && getRow() >= minRow && getRow() <= maxRow);
     }
     
+    /**
+     * Set the column based on the column value in Cell
+     * @param cell 
+     */
     public void setCol(final Cell cell)
     {
         setCol(cell.getCol());
     }
     
-    public void setCol(final int col)
+    /**
+     * Set the column
+     * @param col 
+     */
+    public void setCol(final double col)
     {
         this.col = col;
     }
     
-    public int getCol()
+    public double getCol()
     {
         return this.col;
     }
@@ -147,12 +155,12 @@ public class Cell
         setRow(cell.getRow());
     }
     
-    public void setRow(final int row)
+    public void setRow(final double row)
     {
         this.row = row;
     }
     
-    public int getRow()
+    public double getRow()
     {
         return this.row;
     }
@@ -173,22 +181,22 @@ public class Cell
         this.row++;
     }
     
-    public int getMinCol()
+    public double getMinCol()
     {
         return minCol;
     }
     
-    public int getMaxCol()
+    public double getMaxCol()
     {
         return maxCol;
     }
     
-    public int getMinRow()
+    public double getMinRow()
     {
         return minRow;
     }
     
-    public int getMaxRow()
+    public double getMaxRow()
     {
         return maxRow;
     }

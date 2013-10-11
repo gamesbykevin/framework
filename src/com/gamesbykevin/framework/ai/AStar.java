@@ -25,7 +25,7 @@ public class AStar
         this(start.getCol(), start.getRow(), goal.getCol(), goal.getRow());
     }
     
-    public AStar(int startX, int startY, int goalX, int goalY)
+    public AStar(double startX, double startY, double goalX, double goalY)
     {
         start = new Node(startX, startY, null);
         goal  = new Node(goalX,  goalY, null);
@@ -261,7 +261,7 @@ public class AStar
     
     private boolean hasPath(boolean[][] map, Cell test)
     {
-        return map[test.getRow()][test.getCol()];
+        return map[(int)test.getRow()][(int)test.getCol()];
     }
     
     private void addOpenList(Node node)
@@ -405,7 +405,7 @@ public class AStar
         path.clear();
     }
     
-    public boolean hasExistingPath(int col, int row)
+    public boolean hasExistingPath(double col, double row)
     {
         Cell cell = new Cell(col, row);
         

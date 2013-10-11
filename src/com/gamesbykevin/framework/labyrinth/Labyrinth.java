@@ -267,7 +267,7 @@ public class Labyrinth
      */
     public Location getLocation(Cell cell) throws Exception
     {
-        return getLocation(cell.getCol(), cell.getRow());
+        return getLocation((int)cell.getCol(), (int)cell.getRow());
     }
     
     /**
@@ -312,7 +312,7 @@ public class Labyrinth
      */
     public boolean hasLocation(final Cell cell) throws Exception
     {
-        return hasLocation(cell.getCol(), cell.getRow());
+        return hasLocation((int)cell.getCol(), (int)cell.getRow());
     }
     
     /**

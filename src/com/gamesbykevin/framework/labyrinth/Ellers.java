@@ -136,7 +136,7 @@ public final class Ellers extends LabyrinthHelper implements IAlgorithm
                             Location randomLocation = locationGroupRow.get(randomIndex);
 
                             //get the Location below the current one
-                            Location southNeighbor = super.getLocation(randomLocation.getCol(), randomLocation.getRow() + 1);
+                            Location southNeighbor = super.getLocation((int)randomLocation.getCol(), (int)randomLocation.getRow() + 1);
 
                             //create a passage between Locations
                             randomLocation.remove(Wall.South);
