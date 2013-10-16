@@ -37,6 +37,9 @@ public class Cell
     public Cell(final Cell cell)
     {
         this(cell.getCol(), cell.getRow());
+        
+        //also copy boundaries as well
+        setBounds(cell);
     }
     
     /**
@@ -77,11 +80,11 @@ public class Cell
     }
     
     /**
-     * Does the cell equal the given col, row. 
+     * Does the cell equal the given col, row. <br>
      * Does not check if the boundaries are equal.
      * @param col
      * @param row
-     * @return boolean
+     * @return boolean True if the column and row are equal, false otherwise
      */
     public boolean equals(final double col, final double row)
     {

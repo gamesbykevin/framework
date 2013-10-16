@@ -1,453 +1,478 @@
 package com.gamesbykevin.framework.ai;
 
 import com.gamesbykevin.framework.base.Cell;
+import com.gamesbykevin.framework.labyrinth.Location;
+import com.gamesbykevin.framework.labyrinth.Location.Wall;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This is my implementation of the A* algorithm.
+ * This is used for calculating the shortest path.
+ * 
+ * @author GOD
+ */
 public class AStar 
 {
-    private Node start, goal;
+    //our start position
+    private Node start;
     
-    private List<Node> openList, closedList, path;
+    //the destination
+    private Node goal;
     
-    private boolean foundGoal = false;
+    //list of locations to be considered
+    private List<Node> open;
+    
+    //list of locations that we have already checked
+    private List<Node> closed;
+    
+    //the map of the playing area
+    private List<Location> map;
+    
+    //the path to the goal
+    private List<Cell> path;
+    
+    //when calculating the path are diagonal moves allowed
+    private boolean diagonal = false;
+    
+    //the cost moving in a diagonal direction (NW, NE, SE, SW)
+    private static final int DIAGONAL_COST = 14;
+    
+    //the cost moving in a non-diagonal direction (W, S, E, N)
+    private static final int NON_DIAGONAL_COST = 10;
     
     public AStar()
     {
-        openList = new ArrayList<>();
-        closedList = new ArrayList<>();
-        path = new ArrayList<>();
-    }
-    
-    public AStar(Cell start, Cell goal)
-    {
-        this(start.getCol(), start.getRow(), goal.getCol(), goal.getRow());
-    }
-    
-    public AStar(double startX, double startY, double goalX, double goalY)
-    {
-        start = new Node(startX, startY, null);
-        goal  = new Node(goalX,  goalY, null);
-    }
-    
-    public void dispose()
-    {
-        start = null;
-        goal  = null;
-
-        if (closedList != null)
-        {
-            for (Object o : closedList)
-            {
-                o = null;
-            }
-
-            closedList.clear();
-        }
-
-        if (openList != null)
-        {
-            for (Object o : openList)
-            {
-                o = null;
-            }
-
-            openList.clear();
-        }
-
-        if (path != null)
-        {
-            for (Object o : path)
-            {
-                o = null;
-            }
-
-            path.clear();
-        }
-
-        closedList = null;
-        openList   = null;
-        path       = null;
-    }
-    
-    public void setStart(Cell cell)
-    {
-        if (start != null)
-        {
-            start.dispose();
-            start = null;
-        }
+        //create new open list
+        this.open = new ArrayList<>();
         
+        //create new closed list
+        this.closed = new ArrayList<>();
+        
+        //create new list containing the path to the goal
+        this.path = new ArrayList<>();
+    }
+    
+    /**
+     * Get the shortest calculated path
+     * @return List of steps needed to follow to reach the goal
+     */
+    public List<Cell> getPath()
+    {
+        return this.path;
+    }
+    
+    /**
+     * Are we to allow diagonal movement when calculating the shortest path
+     * @param diagonal True if allowed, otherwise false
+     */
+    public void setDiagonal(final boolean diagonal)
+    {
+        this.diagonal = diagonal;
+    }
+    
+    public boolean hasDiagonal()
+    {
+        return this.diagonal;
+    }
+    
+    public void setStart(final Cell start)
+    {
+        setStart((int)start.getCol(), (int)start.getRow());
+    }
+    
+    public void setStart(final int col, final int row)
+    {
+        this.start = new Node(col, row);
+    }
+    
+    public void setGoal(final Cell goal)
+    {
+        setGoal((int)goal.getCol(), (int)goal.getRow());
+    }
+    
+    public void setGoal(final int col, final int row)
+    {
+        this.goal = new Node(col, row);
+    }
+    
+    public Node getStart()
+    {
+        return this.start;
+    }
+    
+    public Node getGoal()
+    {
+        return this.goal;
+    }
+    
+    /**
+     * Set the map of the area we want to calculate the path.
+     * @param map 
+     */
+    public void setMap(final List<Location> map)
+    {
+        this.map = map;
+    }
+    
+    /**
+     * Add node with no parent node
+     * @param cell 
+     */
+    private void addOpen(final Cell cell)
+    {
+        addOpen(cell, null);
+    }
+    
+    /**
+     * Add node to the open list.<br><br>
+     * If the node already exists another will not be added.<br><br>
+     * In addition if the Cell belongs to the closed list it also will not be added.
+     * @param cell The location we want to use to create a new node and add it to the list
+     * @param parent The parent node of the one we are adding
+     */
+    private void addOpen(final Cell cell, final Node parent)
+    {
+        //do not add if the cell doesn't exist
         if (cell == null)
-        {
-            start = null;
-        }
-        else
-        {
-            start = new Node(cell.getCol(), cell.getRow(), null);
-        }
+            return;
         
-        cell = null;
-    }
-    
-    public void setGoal(Cell cell)
-    {
-        if (goal != null)
+        //if the Cell exists in the closed list it will not be added
+        for (Cell tmp : closed)
         {
-            goal.dispose();
-            goal = null;
+            //if Cell already exists do not add to list
+            if (tmp.equals(cell))
+                return;
         }
         
-        if (cell == null)
+        //create new Node
+        Node node = new Node(cell);
+        
+        //make sure the parent exists
+        if (parent != null)
         {
-            goal = null;
-        }
-        else
-        {
-            goal = new Node(cell.getCol(), cell.getRow(), null);
-        }
-        
-        cell = null;
-    }
-    
-    public void calculateShortestPath(boolean[][] map, ArrayList otherObstacles)
-    {
-        calculateShortestPath(map, otherObstacles, false);
-    }
-    
-    public void calculateShortestPath(boolean[][] map, ArrayList otherObstacles, boolean allowDiagnolMovement)  
-    {   //anything true in boolean[][] map will be a valid path, 
-        //ArrayList otherObstacles are any other cells in the way note: can be null if no obstacles
-        
-        if (openList == null)
-            openList = new ArrayList<>();
-        
-        if (closedList == null)
-            closedList = new ArrayList<>();
-        
-        start.setBounds(0, map[0].length -  1, 0, map.length - 1);  //set boundaries for the start cell
-        start.setGoalScore(getGoalScore(start));
-        start.setStartScore(0.0);
-        
-        addOpenList(start);
-        
-        Node current = null;
-        Node node = null;
-        
-        while(hasOpenNode())
-        {
-            //get lowest cost node from the open list
-            current = getLowestTotalScore();
-
-            removeOpenNode(current);
-            addClosedList(current);
+            //set the parent
+            node.setParent(parent);
             
-            if (current.getGoalScore() == 0)
-            {   //we found the goal
-                foundGoal = true;
-                break;
-            }
-
-            //add nodes surrounding the current node
-            List<Node> possibleNewNodes = new ArrayList<>();
-            
-            for (int x=-1; x <= 1; x++)
+            //determine if this new node is diagonal or not
+            if (parent.getCol() == cell.getCol() || parent.getRow() == cell.getRow())
             {
-                for (int y=-1; y <= 1; y++)
-                {
-                    if (x == 0 && y == 0)
-                        continue;
-
-                    if (!allowDiagnolMovement && x != 0 && y != 0)
-                        continue;
-
-                    possibleNewNodes.add(new Node(current.getCol() + x, current.getRow() + y, current));
-                }
+                node.setCost(parent.getCost() + NON_DIAGONAL_COST);
             }
-            
-            for (int i=0; i < possibleNewNodes.size(); i++)
+            else
             {
-                node = possibleNewNodes.get(i);
-
-                if (current.getCol() != node.getCol() && current.getRow() != node.getRow())
-                {
-                    node.setStartScore(current.getStartScore() + 1.4);
-                }
-                else
-                {
-                    node.setStartScore(current.getStartScore() + 1.0);
-                }
-
-                node.setGoalScore(getGoalScore(node));
-
-                if (isValidNode(map, node, otherObstacles))
-                {
-                    if (getOpenNode(node) != null)
-                    {
-                        if (node.getStartScore() < getOpenNode(node).getStartScore())
-                        {   //if node parent score is less than existing set new parent for the node
-                            addOpenList(node);//new parent was already set so just update it
-                        }
-                    }
-                    else
-                    {
-                        addOpenList(node);
-                    }
-                }
-            }
-            
-            possibleNewNodes.clear();
-            possibleNewNodes = null;
-        }
-        
-        //after we found the goal backtrack the closed list to create the path until we reach the start
-        if (closedList.size() > 0 && foundGoal)
-        {
-            current = closedList.get(closedList.size() - 1);
-
-            while(true)
-            {   //start at goal and finish at the start
-                if (path.size() < 1)
-                {
-                    path.add(new Node(current));
-                }
-                else
-                {
-                    if (current.getParent() != null)    //the start node will not have a parent node
-                    {
-                        current = getClosedNode(current.getParent());   //get parent node
-                        path.add(new Node(current));
-                    }
-
-                    if (current.getCol() == start.getCol() && current.getRow() == start.getRow())
-                        break;
-                }
+                node.setCost(parent.getCost() + DIAGONAL_COST);
             }
         }
         
-        openList.clear();
-        closedList.clear();
-        
-        current = null;
-        node    = null;
-    }
-    
-    public boolean hasFoundGoal()
-    {
-        return foundGoal;
-    }
-    
-    private boolean isValidNode(boolean[][] map, Node node, ArrayList otherObstacles)
-    {
-        if (otherObstacles != null && otherObstacles.size() > 0)
+        //check to see if the Cell exists already
+        for (int index = 0; index < open.size(); index++)
         {
-            for (int i=0; i < otherObstacles.size(); i++)
+            Node tmp = open.get(index);
+            
+            //if the cell already exists
+            if (tmp.equals(cell))
             {
-                Cell tmp = (Cell)otherObstacles.get(i);
-                
-                if (node.equals(tmp))//if any of the obstacles hit the node it is not valid
+                //determine if the new node will have a lower cost
+                if (node.getCost() < tmp.getCost())
                 {
-                    tmp = null;
-                    return false;
-                }
-                
-                tmp = null;
-            }
-        }
-        
-        return (node.hasBounds(start.getMinCol(), start.getMaxCol(), start.getMinRow(), start.getMaxRow()) && hasPath(map, node) && getClosedNode(node) == null);
-    }
-    
-    private boolean hasPath(boolean[][] map, Cell test)
-    {
-        return map[(int)test.getRow()][(int)test.getCol()];
-    }
-    
-    private void addOpenList(Node node)
-    {
-        if (getOpenNode(node) != null)
-        {
-            for (int i=0; i < openList.size(); i++)
-            {
-                Node tmp = openList.get(i);
-
-                if (node.equals(tmp))
-                {
-                    openList.set(i, node);
+                    //since the new node has a lower cost remove the current one from the list
+                    open.remove(index);
+                    
+                    //no need to continue loop
                     break;
                 }
-                
-                tmp = null;
+                else
+                {
+                    //the node already exists and the existing node is a lower cost so we do nothing
+                    return;
+                }
             }
+        }
+        
+        //add the new node to open list
+        open.add(node);
+    }
+    
+    private void addClosed(final Node node)
+    {
+        this.closed.add(node);
+    }
+    
+    /**
+     * Remove cell from open list
+     * @param cell 
+     */
+    private void removeOpen(final Cell cell)
+    {
+        for (int index=0; index < open.size(); index++)
+        {
+            if (open.get(index).equals(cell))
+            {
+                open.remove(index);
+                break;
+            }
+        }
+    }
+    
+    /**
+     * Here we will check the open list for the lowest cost node.<br><br>
+     * If the open list is empty we will return the start location.
+     * @return Node
+     */
+    private Node getLowestCost()
+    {
+        if (open.isEmpty())
+            return getStart();
+        
+        Node tmp = null;
+        
+        //an estimate of the highest maximum cost, we start out high
+        int maxCost = (DIAGONAL_COST * map.size());
+        
+        //check each node in the open list
+        for (Node node : open)
+        {
+            //calculate the total cost of the current node
+            final int cost = getHeuristic(node) + node.getCost();
+            
+            //if the cost of the node is less than or equal to the max cost
+            if (cost <= maxCost)
+            {
+                //the lowest cost node
+                tmp = node;
+                
+                //lower the max cost to the current cost
+                maxCost = cost;
+            }
+        }
+        
+        return tmp;
+    }
+    
+    /**
+     * Calculate the heuristic of the current node.<br><br>
+     * The heuristic is the distance from the node to the goal <br>
+     * ignoring all obstacles in play and no diagonal movement is allowed.
+     * 
+     * @param node
+     * @return The heuristic
+     */
+    private int getHeuristic(final Node node)
+    {
+        //get the number of columns from our goal
+        final int columnDistance;
+
+        if (node.getCol() > getGoal().getCol())
+        {
+            columnDistance = (int)(node.getCol() - getGoal().getCol());
+        }
+        else if (node.getCol() < getGoal().getCol())
+        {
+            columnDistance = (int)(getGoal().getCol() - node.getCol());
         }
         else
         {
-            openList.add(node);
+            columnDistance = 0;
         }
-    }
-    
-    private void addClosedList(Node node)
-    {
-        closedList.add(node);
-    }
-    
-    private Node getLowestTotalScore()
-    {   //gets lowest cost node from open list
-        double lowestScore = 0;
-        int index = -1;
-        
-        for (int i=0; i < openList.size(); i++)
+
+        //get the number of rows from our goal
+        final int rowDistance;
+
+        if (node.getRow() > getGoal().getRow())
         {
-            Node tmp = openList.get(i);
-            
-            if (i == 0 || tmp.getTotalScore() < lowestScore)
-            {
-                index = i;
-                lowestScore = tmp.getTotalScore();
-            }
-            
-            tmp = null;
+            rowDistance = (int)(node.getRow() - getGoal().getRow());
         }
-        
-        return openList.get(index);
-    }
-    
-    private boolean hasOpenNode()
-    {
-        return (openList.size() > 0);
-    }
-    
-    private Node getOpenNode(Node testNode)
-    {
-        for (int i=0; i < openList.size(); i++)
+        else if (node.getRow() < getGoal().getRow())
         {
-            Node tmp = openList.get(i);
-            
-            if (testNode.equals(tmp))
-                return tmp;
-            
-            tmp = null;
+            rowDistance = (int)(getGoal().getRow() - node.getRow());
         }
-        
-        return null;
-    }
-    
-    private Node getClosedNode(Node testNode)
-    {
-        for (int i=0; i < closedList.size(); i++)
+        else
         {
-            Node tmp = closedList.get(i);
-            
-            if (testNode.equals(tmp))
-            {
-                return tmp;
-            }
-            
-            tmp = null;
+            rowDistance = 0;
         }
         
-        return null;
+        //the heuristic cost
+        return ((columnDistance + rowDistance) * NON_DIAGONAL_COST);
     }
     
-    private void removeOpenNode(Node node)
+    /**
+     * Clear the open, closed, and path Lists
+     */
+    private void reset()
     {
-        for (int i=0; i < openList.size(); i++)
-        {
-            Node tmpNode = openList.get(i);
-            
-            if (node.equals(tmpNode))
-            {
-                tmpNode = null;
-                openList.remove(i);
-                return;
-            }
-            
-            tmpNode = null;
-        }
-    }
-    
-    private double getGoalScore(Cell current)
-    {
-        double diffX = current.getCol() - goal.getCol();
-        double diffY = current.getRow() - goal.getRow();
+        //clear list
+        open.clear();
         
-        if (diffX < 0)
-            diffX = -diffX;
-        if (diffY < 0)
-            diffY = -diffY;
+        //clear list
+        closed.clear();
         
-        return diffX + diffY;
-    }
-    
-    public Cell getStart()
-    {
-        return start;
-    }
-    
-    public Cell getGoal()
-    {
-        return goal;
-    }
-    
-    public List<Node> getPath()
-    {   //returns an arraylist of cell's from the goal to the start
-        return path;
-    }
-    
-    public boolean hasPath()
-    {   //has any path available
-        return path.size() > 0;
-    }
-    
-    public void clearPath()
-    {
+        //clear list
         path.clear();
     }
     
-    public boolean hasExistingPath(double col, double row)
+    /**
+     * Calculate the shortest path
+     * @throws Exception if the shortest path could not be found
+     */
+    public void calculate() throws Exception
     {
-        Cell cell = new Cell(col, row);
+        if (getStart() == null)
+            throw new Exception("Please set start position");
         
-        for (int i=0; i < path.size(); i++)
+        if (getGoal() == null)
+            throw new Exception("Please set goal position");
+        
+        if (map == null)
+            throw new Exception("Please set the map");
+        
+        //reset all lists
+        reset();
+        
+        while(true)
         {
-            Cell test = (Cell)path.get(i);
+            //get the lowest cost node
+            Node current = getLowestCost();
+
+            //add current Node to open list if it isn't already and is not in the closed list
+            addOpen(current);
+
+            //get the current location
+            final Location location = getLocation(current);
+
+            //check for any open places
+            checkOpen(location, current);
+
+            //remove the current Node from the open list
+            removeOpen(current);
+
+            //add the Node to the closed list because we don't need to check it for now
+            addClosed(current);
             
-            if (cell.equals(test))
-            {
-                test = null;
-                cell = null;
-                return true;
-            }
+            //we have added the goal to the closed list so exit loop
+            if (current.equals(getGoal()))
+                break;
             
-            test = null;
+            //if the open list is empty throw exception
+            if (open.isEmpty())
+                throw new Exception("Path to goal could not be found");
         }
         
-        cell = null;
+        //the most recent added to the closed list is the goal
+        Node current = closed.get(closed.size() - 1);
         
-        return false;
-    }
-    
-    public boolean hasExistingPath(Cell cell)
-    {
-        return hasExistingPath(cell.getCol(), cell.getRow());
-    }
-    
-    public boolean hasExistingPath(ArrayList tmpPath)
-    {   //ArrayList tmpPath will be checked if it collides with this.path
-        for (int i=0; i < tmpPath.size(); i++)
+        //add node to our path
+        path.add(new Cell(current));
+        
+        //continue to backtrack until we have reached the start location
+        while(true)
         {
-            Cell cell = (Cell)tmpPath.get(i);
-            
-            if (hasExistingPath(cell))
+            //look for the parent node
+            for (Node node : closed)
             {
-                cell = null;
-                return true;
+                //we have found the parent
+                if (node.getId() == current.getParent())
+                {
+                    //mark parent node as the current
+                    current = node;
+                    
+                    //add current node to our path
+                    path.add(new Cell(current));
+                    
+                    //exit loop
+                    break;
+                }
             }
             
-            cell = null;
+            //if the current node equals our start position we are done
+            if (current.equals(getStart()))
+                break;
         }
         
-        return false;
+    }
+    
+    /**
+     * With the current location check for any open neighbors
+     * @param location
+     * @param current 
+     */
+    private void checkOpen(final Location location, final Node current)
+    {
+        //if there is no wall to the north
+        if (!location.hasWall(Wall.North))
+        {
+            //add new location to list if appropriate and set the parent
+            addOpen(getLocation(current.getCol(), current.getRow() - 1), current);
+        }
+
+        //if there is no wall to the east
+        if (!location.hasWall(Wall.East))
+        {
+            //add new location to list if appropriate and set the parent
+            addOpen(getLocation(current.getCol() + 1, current.getRow()), current);
+        }
+
+        //if there is no wall to the south
+        if (!location.hasWall(Wall.South))
+        {
+            //add new location to list if appropriate and set the parent
+            addOpen(getLocation(current.getCol(), current.getRow() + 1), current);
+        }
+
+        //if there is no wall to the west
+        if (!location.hasWall(Wall.West))
+        {
+            //add new location to list if appropriate and set the parent
+            addOpen(getLocation(current.getCol() - 1, current.getRow()), current);
+        }
+
+        //if we are allowed to check diagonal locations then we will
+        if (this.hasDiagonal())
+        {
+            //if there is no wall to the west or north
+            if (!location.hasWall(Wall.West) || !location.hasWall(Wall.North))
+            {
+                //add new location to list if appropriate and set the parent
+                addOpen(getLocation(current.getCol() - 1, current.getRow() - 1), current);
+            }
+
+            //if there is no wall to the east or north
+            if (!location.hasWall(Wall.East) || !location.hasWall(Wall.North))
+            {
+                //add new location to list if appropriate and set the parent
+                addOpen(getLocation(current.getCol() + 1, current.getRow() - 1), current);
+            }
+
+            //if there is no wall to the east or south
+            if (!location.hasWall(Wall.East) || !location.hasWall(Wall.South))
+            {
+                //add new location to list if appropriate and set the parent
+                addOpen(getLocation(current.getCol() + 1, current.getRow() + 1), current);
+            }
+
+            //if there is no wall to the west or south
+            if (!location.hasWall(Wall.West) || !location.hasWall(Wall.South))
+            {
+                //add new location to list if appropriate and set the parent
+                addOpen(getLocation(current.getCol() - 1, current.getRow() + 1), current);
+            }
+        }
+    }
+    
+    private Location getLocation(final Cell cell)
+    {
+        return getLocation(cell.getCol(), cell.getRow());
+    }
+    
+    private Location getLocation(final double col, final double row)
+    {
+        for (Location location : map)
+        {
+            if (location.equals(col, row))
+                return location;
+        }
+        
+        return null;
     }
 }

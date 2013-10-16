@@ -2,107 +2,65 @@ package com.gamesbykevin.framework.ai;
 
 import com.gamesbykevin.framework.base.Cell;
 
+import com.gamesbykevin.framework.labyrinth.Location;
+
+/**
+ * The Node is part of the path to the destination.
+ * @author GOD
+ */
 public class Node extends Cell
 {
-    private Node parent;
-    private double goalScore = 0;
-    private double startScore = 0;
+    //each node is to be unique
+    private final long id = System.nanoTime();
     
-    public Node(Node node)
+    //the parent node of the current node
+    private long parent;
+    
+    //the current cost to reach this node
+    private int cost = 0;
+    
+    public Node(final double col, final double row)
     {
-        super(node.getLocationX(), node.getLocationY());
-        setParent(node.getParent());
-        super.setBounds(node.getMinCol(), node.getMaxCol(), node.getMinRow(), node.getMaxRow());
+        super(col, row);
     }
     
-    public Node(Cell location, Node parent)
+    public Node(final Cell cell)
     {
-        this(location.getCol(), location.getRow(), parent);
+        this(cell.getCol(), cell.getRow());
     }
     
-    public Node(double locationX, double locationY, Node parent)
+    public Node(final Location location)
     {
-        super(locationX, locationY);
-        setParent(parent);
+        this(location.getCol(), location.getRow());
     }
     
-    public void dispose()
+    public int getCost()
     {
-        parent = null;
+        return this.cost;
     }
     
-    public void setLocationX(Cell cell)
+    public void setCost(final int cost)
     {
-        setLocationX(cell.getCol());
+        this.cost = cost;
     }
     
-    public void setLocationX(double locationX)
-    {
-        setCol(locationX);
-    }
-    
-    public void setLocationY(Cell cell)
-    {
-        setLocationY(cell.getRow());
-    }
-    
-    public void setLocationY(double locationY)
-    {
-        setRow(locationY);
-    }
-    
-    public void setParent(Node parent)
+    private void setParent(final long parent)
     {
         this.parent = parent;
     }
     
-    public double getLocationX()
+    public void setParent(final Node parent)
     {
-        return getCol();
+        setParent(parent.getId());
     }
     
-    public double getLocationY()
+    public long getParent()
     {
-        return getRow();
+        return this.parent;
     }
     
-    public Node getParent()
+    public long getId()
     {
-        return parent;
-    }
-    
-    public double getTotalScore()
-    {
-        return goalScore + startScore;
-    }
-    
-    public double getGoalScore()
-    {
-        return goalScore;
-    }
-    
-    public double getStartScore()
-    {
-        return startScore;
-    }
-    
-    public void setGoalScore(double score)
-    {
-        this.goalScore = score;
-    }
-    
-    public void setStartScore(double score)
-    {
-        this.startScore = score;
-    }
-    
-    public boolean equals(Node node)
-    {   
-        return (node.getLocationX() == getLocationX() && node.getLocationY() == getLocationY());
-    }
-    
-    public boolean hasBounds(Cell cell)
-    {
-        return hasBounds(cell);
+        return this.id;
     }
 }

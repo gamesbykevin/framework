@@ -189,6 +189,15 @@ public final class SpriteSheet
         animations.put(key, animation);
     }
     
+    /**
+     * Remove animation from our sprite sheet
+     * @param key 
+     */
+    public void remove(final Object key)
+    {
+        animations.remove(key);
+    }
+    
     public void update(final long delay) throws Exception
     {
         if (isPaused())

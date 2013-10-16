@@ -30,11 +30,13 @@ public class Location extends Cell
     private int cost;
     
     /**
-     * Create a new Location with the specified Location
+     * Create a new Location with the specified Location.
+     * 
+     * All new Locations will have all 4 walls added by default
      * @param col
      * @param row 
      */
-    public Location(final int col, final int row)
+    public Location(final double col, final double row)
     {
         super(col, row);
         
@@ -43,7 +45,7 @@ public class Location extends Cell
         //each Location will have all 4 walls to start
         for (Wall wall : Wall.values())
         {
-            this.walls.add(wall);
+            add(wall);
         }
     }
     
@@ -114,8 +116,9 @@ public class Location extends Cell
     }
     
     /**
-     * Add the Wall to the List
-     * @param wall 
+     * Add the Wall to the List.<br><br>
+     * If the wall already exists it will not be added.
+     * @param wall Wall to add (example: North, South, West, East)
      */
     public void add(final Wall wall)
     {
