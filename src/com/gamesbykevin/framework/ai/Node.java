@@ -1,7 +1,6 @@
 package com.gamesbykevin.framework.ai;
 
 import com.gamesbykevin.framework.base.Cell;
-
 import com.gamesbykevin.framework.labyrinth.Location;
 
 /**

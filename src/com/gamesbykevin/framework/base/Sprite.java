@@ -1,12 +1,14 @@
 package com.gamesbykevin.framework.base;
 
+import com.gamesbykevin.framework.resources.Disposable;
+
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 
-public class Sprite extends Cell 
+public class Sprite extends Cell implements Disposable
 {
     //(x, y) = location (dx, dy) = velocity for x/y coordinates, (w, h) = width and height
     private double x = 0, y = 0, dx = 0, dy = 0, w = 0, h = 0;
@@ -68,6 +70,7 @@ public class Sprite extends Cell
         this.spriteSheet = new SpriteSheet();
     }
     
+    @Override
     public void dispose()
     {
         if (image != null)
@@ -679,7 +682,7 @@ public class Sprite extends Cell
      * @param sy2 Source y2
      * @return 
      */
-    public void draw(final Graphics graphics, final Image image, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2)
+    public void draw(final Graphics graphics, final Image image, final int dx1, final int dy1, final int dx2, final int dy2, final int sx1, final int sy1, final int sx2, final int sy2)
     {
         graphics.drawImage(image, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, null);
     }

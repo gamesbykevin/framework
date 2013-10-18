@@ -1,5 +1,7 @@
 package com.gamesbykevin.framework.base;
 
+import com.gamesbykevin.framework.resources.Disposable;
+
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +14,7 @@ import java.util.List;
  * 4) tell is if the animation has started or finished<br>
  * @author GOD
  */
-public final class Animation 
+public final class Animation implements Disposable
 {
     //where each image is located on the sprite sheet
     private List<Rectangle> locations;
@@ -43,12 +45,22 @@ public final class Animation
         delays = new ArrayList<>();
     }
     
+    @Override
+    public void dispose()
+    {
+        locations.clear();
+        locations = null;
+    
+        delays.clear();
+        delays = null;
+    }
+    
     /**
      * Adds the location and delay to the animation, and then calls reset
      * @param location Location of animation frame
      * @param delay Delay to display animation frame
      */
-    public void add(Rectangle location, long delay)
+    public void add(final Rectangle location, final long delay)
     {
         locations.add(location);
         delays.add(delay);
@@ -72,7 +84,7 @@ public final class Animation
      * Update the current animation by deducting time
      * @param delayPerFrame
      */
-    public void update(long delayPerFrame)
+    public void update(final long delayPerFrame)
     {
         setDelay(getDelay() - delayPerFrame);
         
@@ -122,7 +134,7 @@ public final class Animation
         return this.currentDelay;
     }
     
-    private void setDelay(long currentDelay)
+    private void setDelay(final long currentDelay)
     {
         this.currentDelay = currentDelay;
     }
@@ -141,7 +153,7 @@ public final class Animation
      * @param index
      * @return Rectangle
      */
-    public Rectangle getLocation(int index)
+    public Rectangle getLocation(final int index)
     {
         return locations.get(index);
     }
@@ -151,7 +163,7 @@ public final class Animation
         return loop;
     }
     
-    public void setLoop(boolean loop)
+    public void setLoop(final boolean loop)
     {
         this.loop = loop;
     }
@@ -161,7 +173,7 @@ public final class Animation
         return this.index;
     }
     
-    private void setIndex(int index)
+    private void setIndex(final int index)
     {
         this.index = index;
     }
@@ -171,7 +183,7 @@ public final class Animation
         return started;
     }
     
-    private void setStarted(boolean started)
+    private void setStarted(final boolean started)
     {
         this.started = started;
     }
@@ -181,7 +193,7 @@ public final class Animation
         return finished;
     }
     
-    private void setFinished(boolean finished)
+    private void setFinished(final boolean finished)
     {
         this.finished = finished;
     }

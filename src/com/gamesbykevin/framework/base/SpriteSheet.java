@@ -1,5 +1,7 @@
 package com.gamesbykevin.framework.base;
 
+import com.gamesbykevin.framework.resources.Disposable;
+
 import java.awt.Rectangle;
 import java.util.HashMap;
 
@@ -7,7 +9,7 @@ import java.util.HashMap;
  * This class contains a List of animations
  * @author GOD
  */
-public final class SpriteSheet 
+public final class SpriteSheet implements Disposable
 {
     //pause animations
     private boolean pause = false;
@@ -50,6 +52,26 @@ public final class SpriteSheet
     public SpriteSheet()
     {
         animations = new HashMap<>();
+    }
+    
+    @Override
+    public void dispose()
+    {
+        for (Object key : animations.keySet())
+        {
+            Animation animation = animations.get(key);
+            
+            if (animation != null)
+                animation.dispose();
+            
+            animation = null;
+            
+            animations.put(key, animation);
+        }
+        
+        animations.clear();
+    
+        current = null;
     }
     
     /**

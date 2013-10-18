@@ -3,6 +3,7 @@ package com.gamesbykevin.framework.ai;
 import com.gamesbykevin.framework.base.Cell;
 import com.gamesbykevin.framework.labyrinth.Location;
 import com.gamesbykevin.framework.labyrinth.Location.Wall;
+import com.gamesbykevin.framework.resources.Disposable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.List;
  * 
  * @author GOD
  */
-public class AStar 
+public class AStar implements Disposable
 {
     //our start position
     private Node start;
@@ -52,6 +53,36 @@ public class AStar
         
         //create new list containing the path to the goal
         this.path = new ArrayList<>();
+    }
+    
+    @Override
+    public void dispose()
+    {
+        start = null;
+        goal = null;
+    
+        if (map != null)
+        {
+            for (Location location : map)
+            {
+                if (location != null)
+                    location.dispose();
+                
+                location = null;
+            }
+            
+            map.clear();
+            map = null;
+        }
+    
+        open.clear();
+        open = null;
+        
+        closed.clear();
+        closed = null;
+        
+        path.clear();
+        path = null;
     }
     
     /**
@@ -460,11 +491,26 @@ public class AStar
         }
     }
     
+    /**
+     * Get the location at the specified cell.<br>
+     * If the location is not found null will be returned.
+     * 
+     * @param cell
+     * @return Location containing a list of existing walls
+     */
     private Location getLocation(final Cell cell)
     {
         return getLocation(cell.getCol(), cell.getRow());
     }
     
+    /**
+     * Get the location at the specified column, row.<br>
+     * If the location is not found null will be returned.
+     * 
+     * @param column
+     * @param row
+     * @return Location containing a list of existing walls
+     */
     private Location getLocation(final double col, final double row)
     {
         for (Location location : map)
