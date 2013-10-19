@@ -5,7 +5,7 @@ import com.gamesbykevin.framework.resources.Audio;
 import java.awt.*;
 import java.util.*;
 
-public class Option 
+public abstract class Option 
 {
     //all possible selections for this option, LinkedHashMap retains order when selections are added
     private LinkedHashMap<Object, Selection> selections;
@@ -40,9 +40,9 @@ public class Option
      */
     public Option(Object keyLayer)
     {
-        this.keyLayer = keyLayer;
+        this("");
         
-        selections = new LinkedHashMap<>(); 
+        this.keyLayer = keyLayer;
     }
     
     /**
@@ -56,6 +56,8 @@ public class Option
     public Option(String title)
     {
         this.title = title;
+        
+        this.selections = new LinkedHashMap<>(); 
     }
     
     /**
@@ -143,9 +145,6 @@ public class Option
      */
     public void add(String description, Audio sound)
     {
-        if (selections == null)
-            selections = new LinkedHashMap<>(); 
-        
         //as the hash map grows the key will change
         int key = selections.size();
         

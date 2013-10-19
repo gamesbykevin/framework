@@ -2,13 +2,14 @@ package com.gamesbykevin.framework.labyrinth;
 
 import com.gamesbykevin.framework.base.Cell;
 import com.gamesbykevin.framework.resources.Progress;
+import com.gamesbykevin.framework.resources.Disposable;
 
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.util.List;
 import java.util.Random;
 
-public class Labyrinth 
+public final class Labyrinth implements Disposable
 {
     public enum Algorithm
     {
@@ -30,6 +31,9 @@ public class Labyrinth
     
     //the seed used to generate random numbers
     private final long seed = System.nanoTime();
+    
+    //has the maze been initialied
+    private boolean initialized = false;
     
     /**
      * Create a new labyrinth using the specified Algorithm and the number of columns/rows
@@ -86,29 +90,53 @@ public class Labyrinth
         return algorithm;
     }
     
+    @Override
     public void dispose()
     {
+        try
+        {
+            switch(getAlgorithm())
+            {
+                case DepthFirstSearch:
+                    depthFirstSearch.dispose();
+                    depthFirstSearch = null;
+                    break;
+
+                case Prims:
+                    prims.dispose();
+                    prims = null;
+                    break;
+
+                case Kruskals:
+                    kruskals.dispose();
+                    kruskals = null;
+                    break;
+
+                case Ellers:
+                    ellers.dispose();
+                    ellers = null;
+                    break;
+
+                case HuntKill:
+                    huntKill.dispose();
+                    huntKill = null;
+                    break;
+
+                case Sidewinder:
+                    sidewinder.dispose();
+                    sidewinder = null;
+                    break;
+
+                default:
+                    throw new Exception("Algorithm not setup here");
+            }
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+        
         algorithm = null;
-        
-        if (depthFirstSearch != null)
-            depthFirstSearch.dispose();
-        if (prims != null)
-            prims.dispose();
-        if (kruskals != null)
-            kruskals.dispose();
-        if (ellers != null)
-            ellers.dispose();
-        if (huntKill != null)
-            huntKill.dispose();
-        if (sidewinder != null)
-            sidewinder.dispose();
-        
-        depthFirstSearch = null;
-        prims = null;
-        kruskals = null;
-        ellers = null;
-        huntKill = null;
-        sidewinder = null;
     }
     
     /**
@@ -116,7 +144,7 @@ public class Labyrinth
      * 
      * @throws Exception If the start Location is not set
      */
-    public void create() throws Exception
+    private void initialize() throws Exception
     {
         switch(algorithm)
         {
@@ -150,6 +178,20 @@ public class Labyrinth
     }
     
     /**
+     * Generate the maze until the maze is setup
+     * @throws Exception 
+     */
+    public void generate() throws Exception
+    {
+        //continue to update until the maze has been generated
+        while (!isComplete())
+        {
+            //update the maze creation
+            update();
+        }
+    }
+    
+    /**
      * Update the maze creation a little more
      * @throws Exception 
      */
@@ -157,6 +199,9 @@ public class Labyrinth
     {
         if (isComplete())
             return;
+        
+        if (!initialized)
+            setInitialized();
         
         switch(algorithm)
         {
@@ -191,6 +236,15 @@ public class Labyrinth
         //if the maze is complete now after update, calculate the cost of each Location
         if (isComplete())
             setCost();
+    }
+    
+    private void setInitialized() throws Exception
+    {
+        //setup objects for the maze
+        initialize();
+
+        //mark as initialized
+        initialized = true;
     }
     
     private void setCost() throws Exception
@@ -541,7 +595,10 @@ public class Labyrinth
      */
     public boolean isComplete() throws Exception
     {
-        switch(algorithm)
+        if (!initialized)
+            setInitialized();
+        
+        switch(getAlgorithm())
         {
             case DepthFirstSearch:
                 return depthFirstSearch.isComplete();

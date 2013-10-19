@@ -7,6 +7,7 @@ import com.gamesbykevin.framework.resources.Disposable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * This is my implementation of the A* algorithm.
@@ -139,7 +140,9 @@ public class AStar implements Disposable
     }
     
     /**
-     * Set the map of the area we want to calculate the path.
+     * Set the map of the area we want to calculate the path.<br>
+     * It will be a List of Location(s). <br>
+     * Each Location has a column and row followed by a number of walls (North, South, East, West)
      * @param map 
      */
     public void setMap(final List<Location> map)
@@ -250,14 +253,17 @@ public class AStar implements Disposable
     /**
      * Here we will check the open list for the lowest cost node.<br><br>
      * If the open list is empty we will return the start location.
-     * @return Node
+     * 
+     * @param random Our object used to make random decisions
+     * @return 
      */
-    private Node getLowestCost()
+    private Node getLowestCost(final Random random)
     {
         if (open.isEmpty())
             return getStart();
         
-        Node tmp = null;
+        //list of possible nodes
+        List<Node> possible = new ArrayList<>();
         
         //an estimate of the highest maximum cost, we start out high
         int maxCost = (DIAGONAL_COST * map.size());
@@ -271,15 +277,23 @@ public class AStar implements Disposable
             //if the cost of the node is less than or equal to the max cost
             if (cost <= maxCost)
             {
-                //the lowest cost node
-                tmp = node;
+                //is this really the lowest cost
+                if (cost < maxCost)
+                {
+                    //lower the max cost to the current cost
+                    maxCost = cost;
+                    
+                    //since this is the current lowest cost clear the list of any other nodes
+                    possible.clear();
+                }
                 
-                //lower the max cost to the current cost
-                maxCost = cost;
+                //add the node to the list as the possible lowest cost node
+                possible.add(node);
             }
         }
         
-        return tmp;
+        //get a random node from our list if multiple lowest cost nodes are available
+        return possible.get(random.nextInt(possible.size()));
     }
     
     /**
@@ -345,9 +359,11 @@ public class AStar implements Disposable
     
     /**
      * Calculate the shortest path
-     * @throws Exception if the shortest path could not be found
+     * 
+     * @param random Our object used for random decision making
+     * @throws Exception If the shortest path could not be found, if the start/goal/map not set
      */
-    public void calculate() throws Exception
+    public void calculate(final Random random) throws Exception
     {
         if (getStart() == null)
             throw new Exception("Please set start position");
@@ -364,7 +380,7 @@ public class AStar implements Disposable
         while(true)
         {
             //get the lowest cost node
-            Node current = getLowestCost();
+            Node current = getLowestCost(random);
 
             //add current Node to open list if it isn't already and is not in the closed list
             addOpen(current);

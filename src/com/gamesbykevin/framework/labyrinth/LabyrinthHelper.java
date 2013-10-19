@@ -14,7 +14,7 @@ import java.util.List;
  * This class will contain common objects and methods used to generate a Labyrinth
  * @author GOD
  */
-public class LabyrinthHelper 
+public abstract class LabyrinthHelper 
 {
     //all of the cells in the labyrinth
     private List<Location> cells;
