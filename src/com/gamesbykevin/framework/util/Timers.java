@@ -2,7 +2,7 @@ package com.gamesbykevin.framework.util;
 
 import java.util.HashMap;
 
-public class TimerCollection 
+public class Timers 
 {
     /**
      * MM/dd/yyyy HH:mm:ss.SSS
@@ -51,7 +51,7 @@ public class TimerCollection
     //the timer to deduct every time update() is called
     private long timeDeduction;
     
-    public TimerCollection(final long timeDeduction)
+    public Timers(final long timeDeduction)
     {
         this.timeDeduction = timeDeduction;
         
@@ -233,11 +233,11 @@ public class TimerCollection
     
     public static long toNanoSeconds(final long milliseconds)
     {
-        return (milliseconds * TimerCollection.NANO_SECONDS_PER_MILLISECOND);
+        return (milliseconds * Timers.NANO_SECONDS_PER_MILLISECOND);
     }
     
     public static long toNanoSeconds(final int minutes)
     {
-        return (minutes * TimerCollection.NANO_SECONDS_PER_MINUTE);
+        return (minutes * Timers.NANO_SECONDS_PER_MINUTE);
     }
 }
