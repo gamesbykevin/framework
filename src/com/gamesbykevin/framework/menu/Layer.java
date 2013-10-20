@@ -609,7 +609,7 @@ public abstract class Layer
         this.optionContainerRatio = optionContainerRatio;
     }
     
-    protected void render(Graphics2D graphics, Rectangle screen) throws Exception 
+    protected void render(Graphics2D graphics, Rectangle screen) 
     {
         if (original == null)
             original = graphics.getComposite();

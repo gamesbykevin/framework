@@ -37,6 +37,15 @@ public class Timer
     }
     
     /**
+     * Has the timer started counting down
+     * @return Return true if the time remaining is not equal to the reset time, false otherwise
+     */
+    public boolean hasStarted()
+    {
+        return (getRemaining() != getReset());
+    }
+    
+    /**
      * Pause the timer, so even when update 
      * is called the timer will not update.
      * 

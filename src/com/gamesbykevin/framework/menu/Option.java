@@ -264,10 +264,17 @@ public abstract class Option
      * @param color2 The text color if this Option is highlighted
      * @throws Exception
      */
-    public void render(Graphics graphics, Color color1, Color color2) throws Exception
+    public void render(Graphics graphics, Color color1, Color color2)
     {
-        if (getBoundary() == null)
-            throw new Exception("The boundary needs to be set before this option can be drawn");
+        try
+        {
+            if (getBoundary() == null)
+                throw new Exception("The boundary needs to be set before this option can be drawn");
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
         
         //if the font size isn't set
         if (fontSize == 0)

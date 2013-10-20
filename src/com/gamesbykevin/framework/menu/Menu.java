@@ -280,7 +280,7 @@ public class Menu
      * @return Graphics 
      * @throws Exception 
      */
-    public void render(Graphics graphics) throws Exception
+    public void render(Graphics graphics)
     {
         //if the menu has finished we will not draw it
         if (hasFinished())

@@ -39,6 +39,12 @@ public class Timers
      */
     public static final String FORMAT_7 = "ss.SSS";
     
+    /**
+     * mm:ss
+     */
+    public static final String FORMAT_8 = "mm:ss";
+    
+    
     //how many nano seconds per .......
     public static final long NANO_SECONDS_PER_SECOND      = 1000000000;
     public static final long NANO_SECONDS_PER_MILLISECOND = 1000000;
@@ -199,6 +205,16 @@ public class Timers
         getTimer(key).setReset(reset);
     }
     
+    public boolean hasStarted(final Object key)
+    {
+        return getTimer(key).hasStarted();
+    }
+    
+    /**
+     * Determine if the timer started yet
+     * @param key
+     * @return Return true if the time remaining equals the reset time, false otherwise
+     */
     public boolean hasTimePassed(final Object key)
     {
         return getTimer(key).hasTimePassed();
