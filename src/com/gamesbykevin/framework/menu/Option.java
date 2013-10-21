@@ -1,11 +1,12 @@
 package com.gamesbykevin.framework.menu;
 
 import com.gamesbykevin.framework.resources.Audio;
+import com.gamesbykevin.framework.resources.Disposable;
 
 import java.awt.*;
 import java.util.*;
 
-public abstract class Option 
+public abstract class Option implements Disposable
 {
     //all possible selections for this option, LinkedHashMap retains order when selections are added
     private LinkedHashMap<Object, Selection> selections;
@@ -63,6 +64,7 @@ public abstract class Option
     /**
      * Free up resources
      */
+    @Override
     public void dispose()
     {
         if (selections != null)

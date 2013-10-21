@@ -2,6 +2,7 @@ package com.gamesbykevin.framework.menu;
 
 import com.gamesbykevin.framework.input.*;
 import com.gamesbykevin.framework.resources.*;
+import com.gamesbykevin.framework.resources.Disposable;
 import com.gamesbykevin.framework.util.*;
 
 import java.awt.AlphaComposite;
@@ -23,7 +24,7 @@ import java.util.LinkedHashMap;
  * 
  * @author GOD
  */
-public abstract class Layer 
+public abstract class Layer implements Disposable 
 {
     public enum Type
     {
@@ -773,7 +774,8 @@ public abstract class Layer
     /**
      * Free up resources
      */
-    protected void dispose()
+    @Override
+    public void dispose()
     {
         if (sound != null)
             sound.stopSound();

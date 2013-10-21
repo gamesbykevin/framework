@@ -1,12 +1,12 @@
 package com.gamesbykevin.framework.menu;
 
 import com.gamesbykevin.framework.resources.Audio;
-
+import com.gamesbykevin.framework.resources.Disposable;
 /**
  * Each menu layer can contain a number of Options and each Option can have a number of option selections
  * @author GOD
  */
-public class Selection 
+public final class Selection implements Disposable
 {
     //play sound when specific selection is selected
     private Audio sound;    
@@ -65,6 +65,7 @@ public class Selection
     /**
      * Free up resources
      */
+    @Override
     public void dispose()
     {
         if (sound != null)

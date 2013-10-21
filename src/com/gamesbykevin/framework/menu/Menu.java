@@ -2,6 +2,7 @@ package com.gamesbykevin.framework.menu;
 
 import com.gamesbykevin.framework.input.Keyboard;
 import com.gamesbykevin.framework.input.Mouse;
+import com.gamesbykevin.framework.resources.Disposable;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -9,7 +10,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.util.LinkedHashMap;
 
-public class Menu 
+public abstract class Menu implements Disposable
 {
     //I used LinkedHashMap because it maintains order of items in map unlike HashMap
     private LinkedHashMap<Object, Layer> layers;
@@ -40,6 +41,7 @@ public class Menu
     /**
      * Free up resources
      */
+    @Override
     public void dispose()
     {
         //loop through every key available
