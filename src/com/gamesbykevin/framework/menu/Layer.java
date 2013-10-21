@@ -727,7 +727,7 @@ public abstract class Layer
             final int arcHeight = (int)(optionContainerImage.getHeight() * .15);
             
             //set stroke so outline drawn is thick
-            tmpG2D.setStroke(new BasicStroke(8.0f));
+            tmpG2D.setStroke(new BasicStroke(10.0f));
 
             //if back ground color exists
             if (OPTION_BACKGROUND_COLOR != null)
@@ -745,7 +745,7 @@ public abstract class Layer
             if (title != null && title.length() > 0)
             {
                 //the appropriate font size
-                float fontSize = Menu.getFontSize(title, optionContainerImage.getWidth(), graphics) - 2;
+                float fontSize = Menu.getFontSize(title, optionContainerImage.getWidth(), graphics) - 4;
                 
                 //now that the appropriate font size has been found set it
                 tmpG2D.setFont(graphics.getFont().deriveFont(Font.BOLD, fontSize));
