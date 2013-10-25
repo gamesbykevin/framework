@@ -17,6 +17,7 @@ public final class SpriteSheet implements Disposable
     //all of our animations will be contained here
     private HashMap<Object, Animation> animations;
     
+    //the current animation
     private Object current;
     
     //delay per frame (nanoseconds)
@@ -242,21 +243,45 @@ public final class SpriteSheet implements Disposable
     }
     
     /**
-     * Get current animation
-     * @return SpriteSheetAnimation
+     * Get current animation. If animation is not set exception will occur.
+     * @return Animation based on the current animation set
      */
     private Animation getSpriteSheetAnimation()
     {
-        return getSpriteSheetAnimation(current);
+        try
+        {
+            if (current == null)
+                throw new Exception("current animation is null and not set.");
+
+            return getSpriteSheetAnimation(current);
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+        
+        return null;
     }
     
     /**
-     * Get the sprite sheet animation
+     * Get the sprite sheet animation. If animation is not set exception will occur.
      * @param key Unique identifier used to get the appropriate animation
-     * @return 
+     * @return Animation that corresponds with parameter key
      */
     public Animation getSpriteSheetAnimation(Object key)
     {
-        return animations.get(key);
+        try
+        {
+            if (key == null)
+                throw new Exception("animation key is null and not set.");
+
+            return animations.get(key);
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+        
+        return null;
     }
 }
