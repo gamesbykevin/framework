@@ -178,7 +178,7 @@ public final class Labyrinth implements Disposable
     }
     
     /**
-     * Generate the maze until the maze is setup
+     * Generate the maze continuously until the entire maze is generated
      * @throws Exception 
      */
     public void generate() throws Exception
@@ -192,7 +192,8 @@ public final class Labyrinth implements Disposable
     }
     
     /**
-     * Update the maze creation a little more
+     * Generate the maze once every time update() is called. 
+     * Once the maze isComplete() no further generation will occur. 
      * @throws Exception 
      */
     public void update() throws Exception
