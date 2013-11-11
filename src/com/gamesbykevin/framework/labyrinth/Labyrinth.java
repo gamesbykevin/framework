@@ -516,6 +516,11 @@ public final class Labyrinth implements Disposable
         }
     }
     
+    public void setFinish(final Cell cell) throws Exception
+    {
+        setFinish((int)cell.getCol(), (int)cell.getRow());
+    }
+    
     /**
      * Set the finish position.
      * 

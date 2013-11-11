@@ -37,6 +37,9 @@ public class Progress implements Disposable
     //store the font in this object so when the progress is rendered everything is consistent
     private Font font;
     
+    //the area the progress will be drawn within
+    private Rectangle screen;
+    
     /**
      * Create new Progress tracker with the goal set
      * 
@@ -45,6 +48,20 @@ public class Progress implements Disposable
     public Progress(final int goal)
     {
         this.goal = goal;
+    }
+    
+    /**
+     * Set the screen where the progress will be shown
+     * @param screen 
+     */
+    public void setScreen(final Rectangle screen)
+    {
+        this.screen = screen;
+    }
+    
+    public Rectangle getScreen()
+    {
+        return this.screen;
     }
     
     @Override
@@ -58,6 +75,7 @@ public class Progress implements Disposable
         this.progressTextLocation = null;
         this.progressBarDimension = null;
         this.font = null;
+        this.screen = null;
     }
     
     /**
@@ -146,6 +164,16 @@ public class Progress implements Disposable
     public boolean isComplete()
     {
         return (getCount() >= getGoal());
+    }
+    
+    /**
+     * Draw the progress within the set screen.<br>
+     * If the screen is not set a null exception will be thrown
+     * @param graphics 
+     */
+    public void render(Graphics graphics)
+    {
+        render(graphics, getScreen());
     }
     
     /**
