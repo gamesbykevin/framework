@@ -14,6 +14,7 @@ public class Mouse
     
     public Mouse()
     {
+        this.location = new Point();
     }
     
     public void dispose()
