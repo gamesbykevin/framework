@@ -247,6 +247,16 @@ public class Timers
         return this.timeDeduction;
     }
     
+    public static long toNanoSeconds(final float milliseconds)
+    {
+        return (long)(milliseconds * Timers.NANO_SECONDS_PER_MILLISECOND);
+    }
+    
+    public static long toNanoSeconds(final double milliseconds)
+    {
+        return (long)(milliseconds * Timers.NANO_SECONDS_PER_MILLISECOND);
+    }
+    
     public static long toNanoSeconds(final long milliseconds)
     {
         return (milliseconds * Timers.NANO_SECONDS_PER_MILLISECOND);
