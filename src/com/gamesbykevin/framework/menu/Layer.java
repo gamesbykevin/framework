@@ -333,7 +333,7 @@ public abstract class Layer implements Disposable
      * @param screen Window Layer is contained within
      * @param timeDeduction Time to deduct from timer
      */
-    protected void update(final Menu menu, final Mouse mouse, final Keyboard keyboard, final Rectangle screen, final long time) 
+    protected void update(final Menu menu, final Mouse mouse, final Keyboard keyboard, final Rectangle screen, final long time) throws Exception
     {
         //make sure we aren't forced to view this layer
         if (!getForce())

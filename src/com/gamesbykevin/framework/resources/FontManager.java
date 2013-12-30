@@ -42,11 +42,19 @@ public class FontManager extends ResourceManager implements IResourceManager
         {
             if (resources.get(key) == null)
             {
-                //load resource
-                resources.put(key, Font.createFont(Font.TRUETYPE_FONT, source.getResource(tmp.get(key)).openStream()));
-                
-                //increase progress
-                super.increase();
+                try
+                {
+                    //load resource
+                    resources.put(key, Font.createFont(Font.TRUETYPE_FONT, source.getResource(tmp.get(key)).openStream()));
+
+                    //increase progress
+                    super.increase();
+                }
+                catch(Exception e)
+                {
+                    //notify which resource file has issues loading
+                    throw new Exception("Error loading resource path = \"" + tmp.get(key) + "\"");
+                }
                 
                 //we are only loading one resource at a time
                 return;

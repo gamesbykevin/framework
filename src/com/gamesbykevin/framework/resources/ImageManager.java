@@ -44,11 +44,19 @@ public class ImageManager extends ResourceManager implements IResourceManager
         {
             if (resources.get(key) == null)
             {
-                //load resource
-                resources.put(key, new ImageIcon(source.getResource(tmp.get(key))).getImage());
+                try
+                {
+                    //load resource
+                    resources.put(key, new ImageIcon(source.getResource(tmp.get(key))).getImage());
                 
-                //increase progress
-                super.increase();
+                    //increase progress
+                    super.increase();
+                }
+                catch(Exception e)
+                {
+                    //notify which resource file has issues loading
+                    throw new Exception("Error loading resource path = \"" + tmp.get(key) + "\"");
+                }
                 
                 //we are only loading one resource at a time
                 return;

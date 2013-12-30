@@ -45,12 +45,20 @@ public class AudioManager extends ResourceManager implements IResourceManager
         {
             if (get(key) == null)
             {
-                //load resource
-                resources.put(key, new Audio(source, tmp.get(key)));
+                try
+                {
+                    //load resource
+                    resources.put(key, new Audio(source, tmp.get(key)));
+
+                    //increase progress
+                    super.increase();
+                }
+                catch(Exception e)
+                {
+                    //notify which resource file has issues loading
+                    throw new Exception("Error loading resource path = \"" + tmp.get(key) + "\"");
+                }
                 
-                //increase progress
-                super.increase();
-        
                 //we are only loading one resource at a time
                 return;
             }            

@@ -47,8 +47,16 @@ public abstract class Menu implements Disposable
         //loop through every key available
         for (Object key : layers.keySet().toArray())
         {
-            //recycle layer elements
-            getLayer(key).dispose();
+            try
+            {
+                //recycle layer elements
+                getLayer(key).dispose();
+            }
+            catch(Exception e)
+            {
+                e.printStackTrace();
+            }
+            
             layers.put(key, null);
         }
         
@@ -89,7 +97,7 @@ public abstract class Menu implements Disposable
     /**
      * Reset the timer of the current Layer
      */
-    public void reset()
+    public void reset() throws Exception
     {
         getLayer().reset();
     }
@@ -111,9 +119,10 @@ public abstract class Menu implements Disposable
     
     /**
      * Sets the current Layer and resets the Timer for that Layer
-     * @param current 
+     * @param key The Layer we want to be the current
+     * @throws Exception If the Layer is not found using the parameter key an Exception will be thrown
      */
-    public void setLayer(final Object current)
+    public void setLayer(final Object key) throws Exception
     {
         //make sure the current layer exists before we check if the audio exists
         if (this.current != null)
@@ -123,7 +132,8 @@ public abstract class Menu implements Disposable
                 getLayer(this.current).getSound().stopSound();
         }
         
-        this.current = current;
+        //store the next layer
+        this.current = key;
         
         //if the new layer has background audio, play it on infinite loop
         if (getLayer(this.current).getSound() != null)
@@ -132,13 +142,43 @@ public abstract class Menu implements Disposable
         this.reset();
     }
     
-    private Layer getLayer(final Object key)
+    /**
+     * Does the Layer exist
+     * @param key The unique identifier to get the Layer
+     * @return true if the Layer exists, false otherwise
+     */
+    protected boolean hasLayer(final Object key)
     {
-        return layers.get(key);
+        return (layers.get(key) != null);
+    }
+    
+    /**
+     * Get the Layer with the specified key.
+     * @param key The unique identifier to get the Layer
+     * @return Layer
+     * @throws Exception If the Layer is not found with the specified key an Exception will be thrown
+     */
+    private Layer getLayer(final Object key) throws Exception
+    {
+        if (!hasLayer(key))
+        {
+            if (key != null)
+            {
+                throw new Exception("Layer not found with key = " + key.toString());
+            }
+            else
+            {
+                throw new Exception("Layer not found.");
+            }
+        }
+        else
+        {
+            return layers.get(key);
+        }
     }
     
     //gets the current Layer
-    private Layer getLayer()
+    private Layer getLayer() throws Exception
     {   
         return getLayer(getKey());
     }
@@ -158,7 +198,7 @@ public abstract class Menu implements Disposable
      * @param option
      * @return true if exists, false otherwise
      */
-    public boolean hasOption(final Object layer, final Object option)
+    public boolean hasOption(final Object layer, final Object option) throws Exception
     {
         return (getLayer(layer).getOption(option) != null);
     }
@@ -169,7 +209,7 @@ public abstract class Menu implements Disposable
      * @param option 
      * @return int
      */
-    public int getOptionSelectionIndex(final Object layer, final Object option)
+    public int getOptionSelectionIndex(final Object layer, final Object option) throws Exception
     {   
         return getLayer(layer).getOption(option).getIndex();
     }
@@ -180,7 +220,7 @@ public abstract class Menu implements Disposable
      * @param option The option key 
      * @param index The value we want set
      */
-    public void setOptionSelectionIndex(final Object option, final int index)
+    public void setOptionSelectionIndex(final Object option, final int index) throws Exception
     {
         for (Object key : layers.keySet().toArray())
         {
@@ -220,7 +260,7 @@ public abstract class Menu implements Disposable
      * @param keyboard Object containing any keyboard input/events
      * @param time The time deduction per each update
      */
-    public void update(final Mouse mouse, final Keyboard keyboard, final long time) 
+    public void update(final Mouse mouse, final Keyboard keyboard, final long time) throws Exception
     {
         //if the menu has finished we will not update the current layer
         if (hasFinished())
@@ -288,6 +328,13 @@ public abstract class Menu implements Disposable
         if (hasFinished())
             return;
         
-        getLayer().render((Graphics2D)graphics, screen);
+        try
+        {
+            getLayer().render((Graphics2D)graphics, screen);
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 }
