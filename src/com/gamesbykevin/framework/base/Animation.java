@@ -45,6 +45,20 @@ public final class Animation implements Disposable
         delays = new ArrayList<>();
     }
     
+    /**
+     * Use this constructor for convenience if you only have one frame in your animation
+     * @param location
+     * @param delay 
+     */
+    public Animation(final Rectangle location, final long delay)
+    {
+        //call default constructor
+        this();
+        
+        //add animation frame
+        add(location, delay);
+    }
+    
     @Override
     public void dispose()
     {
