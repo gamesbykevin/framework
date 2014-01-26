@@ -279,9 +279,22 @@ public class Sprite extends Cell implements Disposable
         setHeight(h);
     }
     
+    /**
+     * Set the width and height based on parameters passed.
+     * @param dimension 
+     */
     public void setDimensions(final Dimension dimension)
     {
         setDimensions(dimension.getWidth(), dimension.getHeight());
+    }
+    
+    /**
+     * Set the width and height based on parameters passed.
+     * @param rectangle 
+     */
+    public void setDimensions(final Rectangle rectangle)
+    {
+        setDimensions(rectangle.width, rectangle.height);
     }
     
     /**
@@ -519,9 +532,8 @@ public class Sprite extends Cell implements Disposable
     
     /**
      * Draw the sprite with the parameter image
-     * @param g Graphics object to draw to
+     * @param graphics Graphics object to draw to
      * @param image specified Image to draw
-     * @return Graphics
      */
     public void draw(final Graphics graphics, final Image image)
     {
@@ -539,12 +551,11 @@ public class Sprite extends Cell implements Disposable
      * Draw our sprite object with the specified 
      * parameter image and draw a specified portion 
      * of that image.
-     * @param g Graphics object to draw to
+     * @param graphics Graphics object to draw to
      * @param image Image to be drawn
      * @param location Portion of Image we want to draw
-     * @return Graphics
      */
-    public void draw(final Graphics g, final Image image, final Rectangle location)
+    public void draw(final Graphics graphics, final Image image, final Rectangle location)
     {
         int dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2;
             
@@ -602,13 +613,12 @@ public class Sprite extends Cell implements Disposable
             }
         }
         
-        draw(g, image, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2);
+        draw(graphics, image, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2);
     }
     
     /**
      * Draw our sprite object
-     * @param g Graphics object to draw to
-     * @return Graphics 
+     * @param graphics Graphics object to draw to
      */
     public void draw(final Graphics graphics)
     {
@@ -629,9 +639,8 @@ public class Sprite extends Cell implements Disposable
      * Draw our sprite image with the specified parameter
      * that will indicate which part of the image is to be drawn.
      * 
-     * @param g Graphics object we want to draw to
+     * @param graphics Graphics object we want to draw to
      * @param location Rectangle area of image that we want to draw
-     * @return Graphics
      */
     public void draw(final Graphics graphics, final Rectangle location)
     {
@@ -670,7 +679,7 @@ public class Sprite extends Cell implements Disposable
     /**
      * Draw our sprite with the provided image at the provided location
      * 
-     * @param g Graphics object to draw to
+     * @param graphics Graphics object to draw to
      * @param image Image to draw
      * @param dx1 Destination x1
      * @param dy1 Destination y1
