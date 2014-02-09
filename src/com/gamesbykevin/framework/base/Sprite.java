@@ -13,6 +13,12 @@ public class Sprite extends Cell implements Disposable
     //(x, y) = location (dx, dy) = velocity for x/y coordinates, (w, h) = width and height
     private double x = 0, y = 0, dx = 0, dy = 0, w = 0, h = 0;
     
+    //each object will have it's own id
+    private final long id = System.nanoTime();
+    
+    //does this object belong to another
+    private long parentId = 0;
+    
     //switch image east/west
     private boolean horizontalFlip = false;
     
@@ -68,6 +74,33 @@ public class Sprite extends Cell implements Disposable
     public void createSpriteSheet()
     {
         this.spriteSheet = new SpriteSheet();
+    }
+    
+    /**
+     * Which object does this one belong to
+     * @return The unique identifier of the object this belongs to
+     */
+    public long getParentId()
+    {
+        return this.parentId;
+    }
+    
+    /**
+     * Set the id so we know which object this one belongs to
+     * @param parentId The unique identifier of the parent object
+     */
+    public void setParentId(final long parentId)
+    {
+        this.parentId = parentId;
+    }
+    
+    /**
+     * Get the unique identifier for this object
+     * @return The unique id
+     */
+    public long getId()
+    {
+        return this.id;
     }
     
     @Override
@@ -244,6 +277,32 @@ public class Sprite extends Cell implements Disposable
     public double getY()
     {
         return this.y;
+    }
+    
+    public double getDistance(final Sprite sprite)
+    {
+        return getDistance(sprite.getX(), sprite.getY());
+    }
+    
+    public double getDistance(final Point point)
+    {
+        return getDistance((double)point.x, (double)point.y);
+    }
+    
+    public double getDistance(final int x, final int y)
+    {
+        return getDistance((double)x, (double)y);
+    }
+    
+    /**
+     * Get the distance between the current location and the parameter location
+     * @param x x-coordinate
+     * @param y y-coordinate
+     * @return The distance between the current location and the parameter location.
+     */
+    public double getDistance(final double x, final double y)
+    {
+        return Math.sqrt(Math.pow(x - getX(), 2) + Math.pow(y - getY(), 2));
     }
     
     /**
