@@ -24,7 +24,7 @@ import java.util.LinkedHashMap;
  * 
  * @author GOD
  */
-public abstract class Layer implements Disposable 
+public final class Layer implements Disposable 
 {
     public enum Type
     {
@@ -49,7 +49,7 @@ public abstract class Layer implements Disposable
     private Type type;
     
     //the key representing our current option selected
-    private Object current;
+    private String current;
     
     //options assigned to this layer
     private LinkedHashMap<Object, Option> options;
@@ -79,14 +79,17 @@ public abstract class Layer implements Disposable
     private Image image;
     
     //after layer complete which is next
-    private Object nextLayerKey;
+    private String nextLayerKey;
     
     //if this layer has options a title will be rendered
     private String title;
     
     //does this layer have background sound to play
     private Audio sound;
-
+    
+    //the sound effect to play when an option is changed
+    private Audio optionSound;
+    
     //option container border color
     private Color OPTION_BORDER_COLOR = Color.WHITE; 
     
@@ -212,6 +215,11 @@ public abstract class Layer implements Disposable
         this.sound = sound;
     }
     
+    protected void setOptionSound(final Audio optionSound)
+    {
+        this.optionSound = optionSound;
+    }
+    
     /**
      * Does this layer contain a background image
      * @param image 
@@ -228,7 +236,7 @@ public abstract class Layer implements Disposable
      */
     protected void setNextLayer(final Object nextLayerKey)
     {
-        this.nextLayerKey = nextLayerKey;
+        this.nextLayerKey = nextLayerKey.toString();
     }
     
     protected Object getNextLayerKey()
@@ -253,12 +261,8 @@ public abstract class Layer implements Disposable
      * @param option The option we want to add to the Layer
      * @throws Exception
      */
-    protected void add(Object key, Option option) throws Exception
+    protected void add(Object key, Option option)
     {
-        //if this Layer has the next Layer set then we can't add options
-        if (getNextLayerKey() != null)
-            throw new Exception("This Layer has the next Layer set so we can't add options");
-        
         options.put(key, option);
     }
     
@@ -289,7 +293,7 @@ public abstract class Layer implements Disposable
      */
     protected void setCurrent(final Object current)
     {
-        this.current = current;
+        this.current = current.toString();
     }
     
     /**
@@ -302,6 +306,11 @@ public abstract class Layer implements Disposable
     }
     
     protected Option getOption(Object key)
+    {
+        return getOption(key.toString());
+    }
+    
+    private Option getOption(final String key)
     {
         return options.get(key);
     }
@@ -365,13 +374,15 @@ public abstract class Layer implements Disposable
                             //does the option exist
                             if (option != null)
                             {
+                                //reset keyboard events
+                                keyboard.reset();
+                                
+                                //reset mouse events
+                                mouse.reset();
+                                
                                 //if this option has the next layer set
                                 if (option.getKeyLayer() != null)
                                 {
-                                    //reset keyboard and mouse events before moving to the next layer
-                                    keyboard.reset();
-                                    mouse.reset();
-                                    
                                     //set new Layer
                                     menu.setLayer(option.getKeyLayer());
                                 }
@@ -379,6 +390,9 @@ public abstract class Layer implements Disposable
                                 {
                                     //move to the next selection
                                     option.next();
+                                    
+                                    //play sound effect since option changed
+                                    optionSound.play(false);
                                 }
                             }
                         }
@@ -387,18 +401,23 @@ public abstract class Layer implements Disposable
                         {
                             if (keyboard.hasKeyPressed(KeyEvent.VK_ENTER))
                             {
+                                //reset keyboard events
+                                keyboard.reset();
+                                
+                                //reset mouse events
+                                mouse.reset();
+                                
                                 //if this option does not contain the next layer
                                 if (option.getKeyLayer() == null)
                                 {
                                     //change the option to the next selection
                                     option.next();
+                                    
+                                    //play sound effect since option changed
+                                    optionSound.play(false);
                                 }
                                 else
                                 {
-                                    //reset keyboard and mouse events before moving to the next layer
-                                    keyboard.reset();
-                                    mouse.reset();
-                                    
                                     //set the new Layer
                                     menu.setLayer(option.getKeyLayer());
                                 }
@@ -781,6 +800,11 @@ public abstract class Layer implements Disposable
             sound.stopSound();
         
         sound = null;
+        
+        if (optionSound != null)
+            optionSound.stopSound();
+        
+        optionSound = null;
         
         if (image != null)
             image.flush();

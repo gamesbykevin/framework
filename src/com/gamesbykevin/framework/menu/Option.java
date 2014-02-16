@@ -6,7 +6,7 @@ import com.gamesbykevin.framework.resources.Disposable;
 import java.awt.*;
 import java.util.*;
 
-public abstract class Option implements Disposable
+public final class Option implements Disposable
 {
     //all possible selections for this option, LinkedHashMap retains order when selections are added
     private LinkedHashMap<Object, Selection> selections;
@@ -139,20 +139,17 @@ public abstract class Option implements Disposable
     
     /**
      * Add option selection to this option.
-     * When this specific option selection
-     * is current play the specified sound.
      * 
+     * @param value The value of the selection
      * @param description Text to display
-     * @param sound Sound to play when this option selection is current
      */
-    public void add(String description, Audio sound)
+    public void add(final String value, final String description)
     {
         //as the hash map grows the key will change
         int key = selections.size();
         
-        Selection selection = new Selection(description, sound);
-        
-        selections.put(key, selection);
+        //create new selection and add to hash map
+        selections.put(key, new Selection(value, description));
     }
     
     /**
@@ -205,14 +202,8 @@ public abstract class Option implements Disposable
      */
     public void next()
     {
-        //stop audio of current selection if applicable
-        getSelection().stopSound();
-        
         //increment the index to move to the next selection
         setIndex(getIndex() + 1);
-        
-        //play audio of current selection if exists
-        getSelection().play();
         
         //reset font size so we can ensure the next selection fits inside the container
         fontSize = 0.0f;

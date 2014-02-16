@@ -3,12 +3,23 @@ package com.gamesbykevin.framework.menu;
 import com.gamesbykevin.framework.input.Keyboard;
 import com.gamesbykevin.framework.input.Mouse;
 import com.gamesbykevin.framework.resources.Disposable;
+import com.gamesbykevin.framework.resources.Audio;
+import com.gamesbykevin.framework.util.Timer;
+import com.gamesbykevin.framework.util.Timers;
+
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-
+import java.awt.Image;
 import java.awt.Rectangle;
 import java.util.LinkedHashMap;
+import javax.swing.ImageIcon;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public abstract class Menu implements Disposable
 {
@@ -22,20 +33,244 @@ public abstract class Menu implements Disposable
     public static final float MAX_FONT_SIZE = 48.0f;
     
     //the curent key so we know what the current layer is
-    private Object current;
+    private String current;
     
     //the key that indicates the last layer of this menu
-    private Object finish;
+    private String finish;
     
     /**
      * Create a new Menu that is to be displayed within Rectangle screen
      * @param screen Rectangle that is the container for the menu
+     * @param fileLocation Where our xml file is
+     * @source The class where the resources are found at
      */
-    public Menu(final Rectangle screen) 
+    public Menu(final Rectangle screen, final String fileLocation, final Class source) throws Exception
     {
         this.screen = screen;
         
         this.layers = new LinkedHashMap<>();
+        
+        //create the layers/options from xml file
+        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+        
+        //create/load/parse xml file
+        Document doc = dBuilder.parse(source.getResourceAsStream(fileLocation));
+
+        //optional, but recommended
+        doc.getDocumentElement().normalize();
+        
+        //get the layers in our xml
+        NodeList layerNodeList = doc.getElementsByTagName("layer");
+        
+        //our layer object
+        Layer layer;
+        
+        //our option object
+        Option option;
+        
+        for (int temp = 0; temp < layerNodeList.getLength(); temp++) 
+        {
+            Node layerNode = layerNodeList.item(temp);
+
+            if (layerNode.getNodeType() != Node.ELEMENT_NODE)
+                continue;
+
+            Element layerElement = (Element)layerNode;
+
+            //the layer configuration
+            String transition = "", title = "", layerId, nextLayerId; 
+            boolean force = false, pause = false;
+            long duration = 0;
+            float ratio = 1;
+            
+            //layer configurations for the resources
+            String backgroundImageLocation, backgroundMusicLocation, optionSoundLocation;
+            Image backgroundImage = null;
+            Audio backgroundMusic = null, optionSound = null;
+            
+            //what is the unique name of the Layer
+            layerId = layerElement.getAttribute("id");
+            
+            //what is the next Layer
+            nextLayerId = layerElement.getAttribute("next");
+            
+            if (layerElement.getElementsByTagName("transition").getLength() > 0)
+                transition = layerElement.getElementsByTagName("transition").item(0).getTextContent();
+            
+            if (layerElement.getElementsByTagName("force").getLength() > 0)
+                force = Boolean.parseBoolean(layerElement.getElementsByTagName("force").item(0).getTextContent());
+            
+            if (layerElement.getElementsByTagName("pause").getLength() > 0)
+                pause = Boolean.parseBoolean(layerElement.getElementsByTagName("pause").item(0).getTextContent());
+            
+            if (layerElement.getElementsByTagName("duration").getLength() > 0 && layerElement.getElementsByTagName("duration").item(0).getTextContent().length() > 0)
+                duration = Long.parseLong(layerElement.getElementsByTagName("duration").item(0).getTextContent());
+            
+            if (layerElement.getElementsByTagName("image").getLength() > 0)
+            {
+                backgroundImageLocation = layerElement.getElementsByTagName("image").item(0).getTextContent();
+                
+                if (backgroundImageLocation.trim().length() > 0)
+                    backgroundImage = new ImageIcon(source.getResource(backgroundImageLocation)).getImage();
+            }
+            
+            if (layerElement.getElementsByTagName("backgroundMusicLocation").getLength() > 0)
+            {
+                backgroundMusicLocation = layerElement.getElementsByTagName("backgroundMusicLocation").item(0).getTextContent();
+                
+                if (backgroundMusicLocation.trim().length() > 0)
+                    backgroundMusic = new Audio(source, backgroundMusicLocation);
+            }
+
+            if (layerElement.getElementsByTagName("optionSoundLocation").getLength() > 0)
+            {
+                optionSoundLocation = layerElement.getElementsByTagName("optionSoundLocation").item(0).getTextContent();
+                
+                if (optionSoundLocation.trim().length() > 0)
+                    optionSound = new Audio(source, optionSoundLocation);
+            }
+            
+            //the layer can only have a title if there are options
+            if (layerElement.getElementsByTagName("title").getLength() > 0)
+                title = layerElement.getElementsByTagName("title").item(0).getTextContent();
+
+            //the option container will only exist if there are options
+            if (layerElement.getElementsByTagName("optionContainerRatio").getLength() > 0)
+                ratio = Float.parseFloat(layerElement.getElementsByTagName("optionContainerRatio").item(0).getTextContent());
+
+            //determine the transisition type
+            Layer.Type transitionType = Layer.Type.NONE;
+            
+            //make sure we have transition before we attempt to match
+            if (transition.trim().length() > 0)
+            {
+                //figure out which transition 
+                for (Layer.Type type : Layer.Type.values())
+                {
+                    if (type.toString().equalsIgnoreCase(transition))
+                    {
+                        transitionType = type;
+                        break;
+                    }
+                }
+            }
+            
+            //create new layer
+            layer = new Layer(transitionType, screen);
+            
+            //do we force the user to view the layer
+            layer.setForce(force);
+            
+            //do we pause the layer
+            layer.setPause(pause);
+            
+            //set the next layer we go to
+            if (nextLayerId.trim().length() > 0)
+                layer.setNextLayer(nextLayerId);
+        
+            //set the timer
+            layer.setTimer(new Timer(Timers.toNanoSeconds(duration)));
+            
+            //set the option container ratio
+            layer.setOptionContainerRatio(ratio);
+            
+            //set the tile
+            layer.setTitle(title);
+            
+            //set the background image
+            layer.setImage(backgroundImage);
+            
+            //set the background music
+            layer.setSound(backgroundMusic);
+            
+            //set the option change sound
+            layer.setOptionSound(optionSound);
+            
+            //do we have options
+            if (layerElement.getElementsByTagName("options").getLength() > 0)
+            {
+                //list of all options
+                NodeList optionsList = layerElement.getChildNodes();
+
+                //check all of the options
+                for (int i=0; i < optionsList.getLength(); i++)
+                {
+                    Node optionNode = optionsList.item(i);
+
+                    if (optionNode.getNodeType() != Node.ELEMENT_NODE)
+                        continue;
+
+                    Element optionElement = (Element)optionNode;
+
+                    //if the name attribute does not exist skip this node
+                    if (optionElement.getAttribute("name").trim().length() < 1)
+                        continue;
+
+                    //the display name of the option
+                    String optionTitle = optionElement.getAttribute("name");
+
+                    //the unique id of the option
+                    String optionId = optionElement.getAttribute("id");
+
+                    //the next layer we are supposed to go to
+                    String next = optionElement.getAttribute("next");
+                    
+                    //list of option selections
+                    NodeList optionSelectionList = optionElement.getChildNodes();
+
+                    if (next != null && next.trim().length() > 0)
+                    {
+                        //create option with the next layer set
+                        option = new Option((Object)next);
+                        
+                        //in this case there will only be 1 selection
+                        option.add(optionTitle, optionTitle);
+                    }
+                    else
+                    {
+                        option = new Option(optionTitle);
+                        
+                        //check all of the option selections
+                        for (int x=0; x < optionSelectionList.getLength(); x++)
+                        {
+                            Node optionSelectionNode = optionSelectionList.item(x);
+
+                            if (optionSelectionNode.getNodeType() != Node.ELEMENT_NODE)
+                                continue;
+
+                            Element optionSelectionElement = (Element)optionSelectionNode;
+
+                            String value = optionSelectionElement.getAttribute("value");
+                            String desc = optionSelectionElement.getTextContent();
+
+                            option.add(value, desc);
+                        }
+                    }
+                    
+                    //if option already exists throw exception
+                    if (layer.getOption(optionId) != null)
+                    {
+                        throw new Exception("Each option needs to have a unique id. Option Id : (" + optionId + ")");
+                    }
+                    else
+                    {
+                        //add option to the layer
+                        layer.add(optionId, option);
+                    }
+                }
+            }
+            
+            if (hasLayer(layerId))
+            {
+                throw new Exception("Each layer needs to have a unique id. Layer Id : (" + layerId + ")");
+            }
+            else
+            {
+                //add the layer to the menu
+                add(layerId, layer);
+            }
+        }
     }
     
     /**
@@ -74,7 +309,7 @@ public abstract class Menu implements Disposable
      * @param key
      * @param Layer 
      */
-    protected void add(Object key, Layer layer)
+    protected void add(final String key, final Layer layer)
     {
         layers.put(key, layer);
     }
@@ -86,10 +321,10 @@ public abstract class Menu implements Disposable
      */
     protected boolean hasCurrent(final Object key)
     {
-        return (this.current == key);
+        return getCurrent().equalsIgnoreCase(key.toString());
     }
     
-    private Object getCurrent()
+    private String getCurrent()
     {
         return this.current;
     }
@@ -109,10 +344,10 @@ public abstract class Menu implements Disposable
     //lets us know which layer is the last
     public void setFinish(final Object key)
     {
-        this.finish = key;
+        this.finish = key.toString();
     }
     
-    private Object getFinish()
+    private String getFinish()
     {
         return this.finish;
     }
@@ -133,7 +368,7 @@ public abstract class Menu implements Disposable
         }
         
         //store the next layer
-        this.current = key;
+        this.current = key.toString();
         
         //if the new layer has background audio, play it on infinite loop
         if (getLayer(this.current).getSound() != null)
@@ -147,7 +382,7 @@ public abstract class Menu implements Disposable
      * @param key The unique identifier to get the Layer
      * @return true if the Layer exists, false otherwise
      */
-    protected boolean hasLayer(final Object key)
+    protected boolean hasLayer(final String key)
     {
         return (layers.get(key) != null);
     }
@@ -158,23 +393,21 @@ public abstract class Menu implements Disposable
      * @return Layer
      * @throws Exception If the Layer is not found with the specified key an Exception will be thrown
      */
-    private Layer getLayer(final Object key) throws Exception
+    private Layer getLayer(final String key) throws Exception
     {
         if (!hasLayer(key))
         {
-            if (key != null)
-            {
-                throw new Exception("Layer not found with key = " + key.toString());
-            }
-            else
-            {
-                throw new Exception("Layer not found.");
-            }
+            throw new Exception("Layer not found with key = " + key.toString());
         }
         else
         {
-            return layers.get(key);
+            return layers.get(key.toString());
         }
+    }
+    
+    private Layer getLayer(final Object key) throws Exception
+    {
+        return getLayer(key.toString());
     }
     
     //gets the current Layer
@@ -187,9 +420,9 @@ public abstract class Menu implements Disposable
      * Gets the current key
      * @return Object
      */
-    public Object getKey()
+    public String getKey()
     {   
-        return current;
+        return current.toString();
     }
     
     /**
@@ -251,7 +484,7 @@ public abstract class Menu implements Disposable
      */
     public boolean hasFinished()
     {
-        return (getCurrent() == getFinish());
+        return getCurrent().equalsIgnoreCase(getFinish());
     }
     
     /**
