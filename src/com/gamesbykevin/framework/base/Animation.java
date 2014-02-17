@@ -172,11 +172,19 @@ public final class Animation implements Disposable
         return locations.get(index);
     }
     
+    /**
+     * Is this animation looping
+     * @return True if looping, false otherwise
+     */
     public boolean hasLoop()
     {
         return loop;
     }
     
+    /**
+     * Set the animation to loop once finished
+     * @param loop True if we want to loop, false otherwise
+     */
     public void setLoop(final boolean loop)
     {
         this.loop = loop;
