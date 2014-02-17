@@ -186,6 +186,15 @@ public class Sprite extends Cell implements Disposable
     }
     
     /**
+     * Set the location
+     * @param sprite We will use the getX() and getY() coordinates
+     */
+    public void setLocation(final Sprite sprite)
+    {
+        setLocation(sprite.getX(), sprite.getY());
+    }
+    
+    /**
      * Set the x, y coordinate location for this sprite
      * 
      * @param location 
