@@ -189,12 +189,18 @@ public final class Layer implements Disposable
     }
     
     /**
-     * Reset Timer
+     * Reset Timer and Layer progress
      */
     protected void reset()
     {
         if (timer != null)
+        {
+            //reset timer
             timer.reset();
+            
+            //reset progress
+            setProgress(0);
+        }
     }
     
     /**
@@ -457,53 +463,15 @@ public final class Layer implements Disposable
             mouse.reset();
         }
         
-        float tmpPercentComplete = 1;
+        //the timer progress
+        float percent = 1;
         
         if (timer != null)
-            tmpPercentComplete = timer.getProgress();
+            percent = timer.getProgress();
         
-        if (tmpPercentComplete > 1)
-            tmpPercentComplete = 1;
-        if (tmpPercentComplete < 0)
-            tmpPercentComplete = 0;
+        //set the progress
+        setProgress(percent);
         
-        switch (type)
-        {
-            case FADE_IN:
-                setVisibility(tmpPercentComplete);
-                break;
-
-            case FADE_OUT:
-                setVisibility(1 - tmpPercentComplete);
-                break;
-
-            case SCROLL_HORIZONTAL_EAST:
-            case SCROLL_HORIZONTAL_EAST_REPEAT:
-                location.x = screen.x - (int)((1 - tmpPercentComplete) * screen.width);
-                break;
-
-            case SCROLL_HORIZONTAL_WEST:
-            case SCROLL_HORIZONTAL_WEST_REPEAT:
-                location.x = screen.x + screen.width - (int)(tmpPercentComplete * screen.width);
-                break;
-
-            case SCROLL_VERTICAL_NORTH:
-            case SCROLL_VERTICAL_NORTH_REPEAT:
-                location.y = screen.y + screen.height - (int)(tmpPercentComplete * screen.height);
-                break;
-
-            case SCROLL_VERTICAL_SOUTH:
-            case SCROLL_VERTICAL_SOUTH_REPEAT:
-                location.y = screen.y - (int)((1 - tmpPercentComplete) * screen.height);
-                break;
-                
-            case CURTAIN_CLOSE_HORIZONTAL:
-            case CURTAIN_OPEN_HORIZONTAL:
-            case CURTAIN_CLOSE_VERTICAL:
-            case CURTAIN_OPEN_VERTICAL:
-                this.percentComplete = tmpPercentComplete;
-                break;
-        }
         
         //is timer setup here
         if (timer != null)
@@ -526,6 +494,52 @@ public final class Layer implements Disposable
                     timer.reset();
                 }
             }
+        }
+    }
+    
+    private void setProgress(float percent)
+    {
+        if (percent > 1)
+            percent = 1;
+        if (percent < 0)
+            percent = 0;
+        
+        switch (type)
+        {
+            case FADE_IN:
+                setVisibility(percent);
+                break;
+
+            case FADE_OUT:
+                setVisibility(1 - percent);
+                break;
+
+            case SCROLL_HORIZONTAL_EAST:
+            case SCROLL_HORIZONTAL_EAST_REPEAT:
+                location.x = screen.x - (int)((1 - percent) * screen.width);
+                break;
+
+            case SCROLL_HORIZONTAL_WEST:
+            case SCROLL_HORIZONTAL_WEST_REPEAT:
+                location.x = screen.x + screen.width - (int)(percent * screen.width);
+                break;
+
+            case SCROLL_VERTICAL_NORTH:
+            case SCROLL_VERTICAL_NORTH_REPEAT:
+                location.y = screen.y + screen.height - (int)(percent * screen.height);
+                break;
+
+            case SCROLL_VERTICAL_SOUTH:
+            case SCROLL_VERTICAL_SOUTH_REPEAT:
+                location.y = screen.y - (int)((1 - percent) * screen.height);
+                break;
+                
+            case CURTAIN_CLOSE_HORIZONTAL:
+            case CURTAIN_OPEN_HORIZONTAL:
+            case CURTAIN_CLOSE_VERTICAL:
+            case CURTAIN_OPEN_VERTICAL:
+                this.percentComplete = percent;
+                break;
         }
     }
     
