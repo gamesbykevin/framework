@@ -16,6 +16,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferInt;
 import java.util.LinkedHashMap;
 
 /**
@@ -104,6 +105,15 @@ public final class Layer implements Disposable
     
     //store the background of the container
     private BufferedImage optionContainerImage;
+
+    //draw all of the current options to the screen
+    private BufferedImage optionsImage;
+    
+    //temporary graphics for writing images
+    private Graphics2D tmpGraphics;
+    
+    //our flag that will help determine if a new image is to be drawn
+    private boolean renderNewOptionsImage = true;
     
     //y-coordinate to start drawing the options
     private int startOptionsY;
@@ -282,15 +292,18 @@ public final class Layer implements Disposable
     {
         for (Object key : options.keySet().toArray())
         {
-            //is the mouse location within the boundary of this option
-            if (options.get(key).hasBoundary(location))
+            //only check if there is a change
+            if (key != getCurrent())
             {
-                setCurrent(key);
-                break;
+                //is the mouse location within the boundary of this option
+                if (options.get(key).hasBoundary(location, this.optionContainerArea.x, this.startOptionsY))
+                {
+                    setCurrent(key);
+                    setHighlighted();
+                    break;
+                }
             }
         }
-        
-        setHighlighted();
     }
     
     /**
@@ -397,6 +410,9 @@ public final class Layer implements Disposable
                                     //move to the next selection
                                     option.next();
                                     
+                                    //highlight the new selection
+                                    setHighlighted();
+                                    
                                     //play sound effect since option changed
                                     optionSound.play(false);
                                 }
@@ -419,6 +435,9 @@ public final class Layer implements Disposable
                                     //change the option to the next selection
                                     option.next();
                                     
+                                    //highlight the new selection
+                                    setHighlighted();
+                                    
                                     //play sound effect since option changed
                                     optionSound.play(false);
                                 }
@@ -435,8 +454,6 @@ public final class Layer implements Disposable
                             if (keyboard.hasKeyPressed(KeyEvent.VK_DOWN))
                                 setNextOption(false);
                         }
-
-                        setHighlighted();
                     }
                 }
 
@@ -452,6 +469,10 @@ public final class Layer implements Disposable
                     {
                         //mouse has moved so check for new option highlighted
                         setCurrent(mouse.getLocation());
+                        
+                        //reset keyboard and mouse events
+                        keyboard.reset();
+                        mouse.reset();
                     }
                 }
             }
@@ -471,7 +492,6 @@ public final class Layer implements Disposable
         
         //set the progress
         setProgress(percent);
-        
         
         //is timer setup here
         if (timer != null)
@@ -568,6 +588,8 @@ public final class Layer implements Disposable
             return;
         }
         
+        boolean modified = false;
+        
         for (int i=0; i < options.size(); i++)
         {
             //have we located the current position of our key
@@ -581,11 +603,17 @@ public final class Layer implements Disposable
                     {
                         //get the previous
                         setCurrent(options.keySet().toArray()[i - 1]);
+                        
+                        //a change has been made
+                        modified = true;
                     }
                     else
                     {
                         //get the last
                         setCurrent(options.keySet().toArray()[options.keySet().toArray().length - 1]);
+                        
+                        //a change has been made
+                        modified = true;
                     }
                 }
                 else
@@ -595,11 +623,17 @@ public final class Layer implements Disposable
                     {
                         //get the next
                         setCurrent(options.keySet().toArray()[i + 1]);
+                        
+                        //a change has been made
+                        modified = true;
                     }
                     else
                     {
                         //get the first
                         setCurrent(options.keySet().toArray()[0]);
+                        
+                        //a change has been made
+                        modified = true;
                     }
                 }
                 
@@ -607,6 +641,18 @@ public final class Layer implements Disposable
                 break;
             }
         }
+        
+        if (modified)
+        {
+            //also make sure it is marked as highlighted
+            setHighlighted();
+        }
+    }
+    
+    private void resetOptionsImage()
+    {
+        //flag that new image needs to be drawn
+        renderNewOptionsImage = true;
     }
     
     /**
@@ -614,6 +660,9 @@ public final class Layer implements Disposable
      */
     private void setHighlighted()
     {
+        //reset options image
+        resetOptionsImage();
+        
         //mark all options as not highlighted
         for (Option option : options.values())
         {
@@ -648,6 +697,7 @@ public final class Layer implements Disposable
         if (original == null)
             original = graphics.getComposite();
         
+        //set the transparency
         graphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, visibility));
         
         if (image != null)
@@ -673,26 +723,17 @@ public final class Layer implements Disposable
         //do we have options for this Layer
         if (hasOptions())
         {
+            //draw the options container first
             drawOptionContainer(graphics);
             
-            int count = 0;
-            
-            //draw each option in this Layer
-            for (Option option : options.values())
-            {
-                //if the boundary is not set yet we need to set it before drawing option
-                if (option.getBoundary() == null)
-                    option.setBoundary(new Rectangle(optionContainerArea.x, startOptionsY + (graphics.getFontMetrics().getHeight() * count), optionContainerArea.width, graphics.getFontMetrics().getHeight()));
-                
-                option.render(graphics, OPTION_BORDER_COLOR, OPTION_TEXT_COLOR);
-                
-                count++;
-            }
+            //then draw the options
+            drawOptions(graphics);
         }
         
         //set the original composite back
         graphics.setComposite(original);
         
+        //store temp width and height
         int width, height;
         
         //draw curtain(s) here
@@ -729,12 +770,65 @@ public final class Layer implements Disposable
     }
     
     /**
+     * Draw all the options as 1 image
+     * @param graphics 
+     */
+    private void drawOptions(final Graphics2D graphics)
+    {
+        if (optionsImage == null)
+        {
+            //create transparent image
+            optionsImage = new BufferedImage(optionContainerArea.width, (graphics.getFontMetrics().getHeight() * options.size()), BufferedImage.TYPE_INT_ARGB);
+        }
+        
+        if (renderNewOptionsImage)
+        {
+            //set flag to false
+            renderNewOptionsImage = false;
+            
+            //get pixel data
+            final int[] pixels = ((DataBufferInt)optionsImage.getRaster().getDataBuffer()).getData();
+            
+            //remove all pixel data
+            for (int i=0; i < pixels.length; i++)
+            {
+                pixels[i] = 0;
+            }
+            
+            //get our graphics object for this image that we will draw to
+            tmpGraphics = optionsImage.createGraphics();
+            
+            //store the font as well
+            tmpGraphics.setFont(graphics.getFont());
+            
+            //keep track so we can calculate the y-coordinates
+            int count = 0;
+            
+            //draw each option in this Layer
+            for (Option option : options.values())
+            {
+                //if the boundary is not set yet we need to set it before drawing option
+                if (option.getBoundary() == null)
+                    option.setBoundary(new Rectangle(0, (tmpGraphics.getFontMetrics().getHeight() * count), optionContainerArea.width, tmpGraphics.getFontMetrics().getHeight()));
+                
+                option.render(tmpGraphics, OPTION_BORDER_COLOR, OPTION_TEXT_COLOR);
+                
+                //keep track so we can calculate the y-coordinates
+                count++;
+            }
+        }
+        
+        //draw the options
+        graphics.drawImage(optionsImage, optionContainerArea.x, startOptionsY, null);
+    }
+    
+    /**
      * Draws the background for the options (if they exist) including the title as well.
      * 
      * @param graphics Graphics2D we want to render to
      * @return Graphics 
      */
-    private void drawOptionContainer(Graphics2D graphics)
+    private void drawOptionContainer(final Graphics2D graphics)
     {
         //if we haven't created our option container background
         if (optionContainerImage == null)
@@ -754,26 +848,29 @@ public final class Layer implements Disposable
             optionContainerImage = new BufferedImage(optionContainerArea.width, optionContainerArea.height, BufferedImage.TYPE_INT_ARGB);
             
             //get our graphics object for this image that we will draw to
-            Graphics2D tmpG2D = optionContainerImage.createGraphics();
+            tmpGraphics = optionContainerImage.createGraphics();
 
+            //store the font as well
+            tmpGraphics.setFont(graphics.getFont());
+            
             // the width of the rounded corners will be 15% of the container dimensions
             final int arcWidth  = (int)(optionContainerImage.getWidth()  * .15);
             final int arcHeight = (int)(optionContainerImage.getHeight() * .15);
             
             //set stroke so outline drawn is thick
-            tmpG2D.setStroke(new BasicStroke(10.0f));
+            tmpGraphics.setStroke(new BasicStroke(10.0f));
 
             //if back ground color exists
             if (OPTION_BACKGROUND_COLOR != null)
             {
                 //fill background of our container with specified color
-                tmpG2D.setColor(OPTION_BACKGROUND_COLOR);
-                tmpG2D.fillRoundRect(0, 0, optionContainerImage.getWidth(), optionContainerImage.getHeight(), arcWidth, arcHeight);
+                tmpGraphics.setColor(OPTION_BACKGROUND_COLOR);
+                tmpGraphics.fillRoundRect(0, 0, optionContainerImage.getWidth(), optionContainerImage.getHeight(), arcWidth, arcHeight);
             }
 
             //draw outline around container
-            tmpG2D.setColor(OPTION_BORDER_COLOR);
-            tmpG2D.drawRoundRect(0, 0, optionContainerImage.getWidth() - 1, optionContainerImage.getHeight() - 1, arcWidth, arcHeight);
+            tmpGraphics.setColor(OPTION_BORDER_COLOR);
+            tmpGraphics.drawRoundRect(0, 0, optionContainerImage.getWidth() - 1, optionContainerImage.getHeight() - 1, arcWidth, arcHeight);
 
             //if the title exists
             if (title != null && title.length() > 0)
@@ -782,20 +879,20 @@ public final class Layer implements Disposable
                 float fontSize = Menu.getFontSize(title, optionContainerImage.getWidth(), graphics) - 4;
                 
                 //now that the appropriate font size has been found set it
-                tmpG2D.setFont(graphics.getFont().deriveFont(Font.BOLD, fontSize));
+                tmpGraphics.setFont(graphics.getFont().deriveFont(Font.BOLD, fontSize));
                 
                 //middle x coordinate of this image
                 middleX = (optionContainerImage.getWidth() / 2);
                 
                 //get the pixel width of the text so we can calculate the appropriate x coordinate
-                final int textWidth = tmpG2D.getFontMetrics().stringWidth(title);
+                final int textWidth = tmpGraphics.getFontMetrics().stringWidth(title);
 
                 //draw the title in its appropriate place
-                tmpG2D.drawString(title, middleX - (textWidth/2), tmpG2D.getFontMetrics().getHeight());
+                tmpGraphics.drawString(title, middleX - (textWidth/2), tmpGraphics.getFontMetrics().getHeight());
             }
             
             //store the starting y position of the options
-            startOptionsY = optionContainerArea.y + (int)(tmpG2D.getFontMetrics().getHeight() * 1.25);
+            startOptionsY = optionContainerArea.y + (int)(tmpGraphics.getFontMetrics().getHeight() * 1.25);
         }
         else
         {
@@ -844,5 +941,10 @@ public final class Layer implements Disposable
             optionContainerImage.flush();
         
         optionContainerImage = null;
+        
+        if (optionsImage != null)
+            optionsImage.flush();
+        
+        optionsImage = null;
     }
 }

@@ -23,7 +23,7 @@ public final class Option implements Disposable
     //title of the options
     private String title = "";
     
-    //actual font size
+    //actual font size, default to 0
     private float fontSize = 0.0f;
     
     //the x, y coordinates to draw the option selection
@@ -31,6 +31,12 @@ public final class Option implements Disposable
     
     //is this option the current one selected
     private boolean highlight = false;
+    
+    //the description of the current option selection
+    private String description;
+    
+    //the font for our options
+    private Font font;
     
     /**
      * Create new Option with the next layer set by parameter key
@@ -129,12 +135,20 @@ public final class Option implements Disposable
      * @param location
      * @return boolean
      */
-    public boolean hasBoundary(Point location)
+    /**
+     * Is the location inside the boundary.<br>
+     * This is to determine if the mouse is inside the option.
+     * @param location Location of the mouse
+     * @param offsetX additional x pixels to add to the mouse location
+     * @param offsetY additional y pixels to add to the mouse location
+     * @return true if the point is inside the option boundary, false otherwise
+     */
+    public boolean hasBoundary(final Point location, final int offsetX, final int offsetY)
     {
         if (boundary == null)
             return false;
         
-        return boundary.contains(location);
+        return boundary.contains(location.x - offsetX, location.y - offsetY);
     }
     
     /**
@@ -150,6 +164,10 @@ public final class Option implements Disposable
         
         //create new selection and add to hash map
         selections.put(key, new Selection(value, description));
+        
+        //if there is no description, set one by default
+        if (getDescription() == null)
+            setDescription();
     }
     
     /**
@@ -205,6 +223,9 @@ public final class Option implements Disposable
         //increment the index to move to the next selection
         setIndex(getIndex() + 1);
         
+        //set the new description
+        setDescription();
+        
         //reset font size so we can ensure the next selection fits inside the container
         fontSize = 0.0f;
     }
@@ -238,15 +259,22 @@ public final class Option implements Disposable
     }
     
     /**
-     * Get the Text to draw for the current option selection.
+     * Set the description that will be displayed.<br>
      * This will concatenate the title (if exists) and the 
      * description of the current option selection.
-     * 
+     */
+    private void setDescription()
+    {
+        this.description = this.title + getSelection().getDescription();
+    }
+    
+    /**
+     * Get the Text to draw for the current option selection.
      * @return String
      */
     private String getDescription()
     {
-        return title + getSelection().getDescription();
+        return this.description;
     }
     
     /**
@@ -257,7 +285,7 @@ public final class Option implements Disposable
      * @param color2 The text color if this Option is highlighted
      * @throws Exception
      */
-    public void render(Graphics graphics, Color color1, Color color2)
+    public void render(final Graphics graphics, final Color color1, final Color color2)
     {
         try
         {
@@ -277,10 +305,10 @@ public final class Option implements Disposable
             //set the x, y coordinates where our description will be drawn
             drawX = getBoundary().x + (int)(getBoundary().width * .03);
             drawY = getBoundary().y + graphics.getFontMetrics().getHeight();
+            
+            //get the desired font according to font size calculated
+            graphics.getFont().deriveFont(fontSize);
         }
-        
-        //set the appropriate font size
-        graphics.getFont().deriveFont(fontSize);
 
         if (hasHighlight())
         {
