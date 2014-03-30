@@ -13,6 +13,9 @@ public class Sprite extends Cell implements Disposable
     //(x, y) = location (dx, dy) = velocity for x/y coordinates, (w, h) = width and height
     private double x = 0, y = 0, dx = 0, dy = 0, w = 0, h = 0;
     
+    //z location as well (if needed for 3d)
+    private double z = 0;
+    
     //each object will have it's own id
     private final long id = System.nanoTime();
     
@@ -55,6 +58,7 @@ public class Sprite extends Cell implements Disposable
         
         setDimensions(sprite.getWidth(), sprite.getHeight());
         setLocation(sprite.getPoint());
+        setZ(sprite.getZ());
         setImage(sprite.getImage());
         setVelocityX(sprite.getVelocityX());
         setVelocityY(sprite.getVelocityY());
@@ -255,6 +259,16 @@ public class Sprite extends Cell implements Disposable
     public double getX()
     {
         return this.x;
+    }
+    
+    public void setZ(final double z)
+    {
+        this.z = z;
+    }
+    
+    public double getZ()
+    {
+        return this.z;
     }
     
     /**

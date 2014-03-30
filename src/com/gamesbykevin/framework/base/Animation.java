@@ -70,9 +70,22 @@ public final class Animation implements Disposable
     }
     
     /**
-     * Adds the location and delay to the animation, and then calls reset
+     * Add animation frame, then call reset
+     * @param x Start x coordinate of our animation frame
+     * @param y Start y coordinate of our animation frame
+     * @param width Width of animation frame
+     * @param height Height of animation frame
+     * @param delay Duration of frame
+     */
+    public void add(final int x, final int y, final int width, final int height, final long delay)
+    {
+        add(new Rectangle(x, y, width, height), delay);
+    }
+    
+    /**
+     * Add animation frame, then call reset
      * @param location Location of animation frame
-     * @param delay Delay to display animation frame
+     * @param delay Duration of frame
      */
     public void add(final Rectangle location, final long delay)
     {

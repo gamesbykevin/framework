@@ -251,7 +251,7 @@ public final class SpriteSheet implements Disposable
         try
         {
             if (current == null)
-                throw new Exception("current animation is null and not set.");
+                throw new Exception("The current animation was not found because the current animation has not been set yet. setCurrent() will set the current animation");
 
             return getSpriteSheetAnimation(current);
         }
