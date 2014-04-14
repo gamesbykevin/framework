@@ -35,6 +35,12 @@ public final class Labyrinth implements Disposable
     //has the maze been initialied
     private boolean initialized = false;
     
+    //the number of columns in the maze
+    private final int cols;
+    
+    //the number of rows in the maze
+    private final int rows;
+    
     /**
      * Create a new labyrinth using the specified Algorithm and the number of columns/rows
      * 
@@ -44,6 +50,9 @@ public final class Labyrinth implements Disposable
      */
     public Labyrinth(final int cols, final int rows, final Algorithm algorithm) throws Exception
     {
+        this.cols = cols;
+        this.rows = rows;
+        
         //set the algorithm we will be using
         this.algorithm = algorithm;
         
@@ -79,6 +88,24 @@ public final class Labyrinth implements Disposable
             default:
                 throw new Exception("Algorithm not setup here");
         }
+    }
+    
+    /**
+     * Get the number of columns in the maze.
+     * @return The total number of columns.
+     */
+    public int getCols()
+    {
+        return this.cols;
+    }
+    
+    /**
+     * Get the number of rows in the maze.
+     * @return The total number of rows.
+     */
+    public int getRows()
+    {
+        return this.rows;
     }
     
     /**
@@ -316,8 +343,8 @@ public final class Labyrinth implements Disposable
     
     /**
      * Get Location at Cell column/row
-     * @param cell
-     * @return Location
+     * @param cell The location we want
+     * @return Location, if the location does not exist null is returned
      * @throws Exception 
      */
     public Location getLocation(Cell cell) throws Exception
@@ -329,7 +356,7 @@ public final class Labyrinth implements Disposable
      * Get Location at column/row
      * @param col
      * @param row
-     * @return Location
+     * @return Location, if the location does not exist null is returned
      * @throws Exception 
      */
     public Location getLocation(int col, int row) throws Exception
