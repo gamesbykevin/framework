@@ -10,44 +10,75 @@ import javax.swing.ImageIcon;
  */
 public class ImageManager extends ResourceManager implements IResourceManager
 {
-    //all resources will be contained in this hash map
-    private final HashMap<Object, Image> resources;
+    //the name of the node where the resources are
+    private static final String NODE_NAME = "image";
     
-    public ImageManager(final String locationFormat, final Object[] keys)
+    //list of resources
+    private HashMap<Object, Image> resources;
+    
+    /**
+     * Create new Image manager that will contain a collection of images
+     * @param xmlConfigurationLocation The location of the xml configuration file
+     * @throws Exception
+     */
+    public ImageManager(final String xmlConfigurationLocation) throws Exception
     {
-        super(locationFormat, keys);
-        
-        //create empty list of resources
-        resources = new HashMap<>();
+        this(xmlConfigurationLocation, NODE_NAME);
     }
+
+    public ImageManager(final String xmlConfigurationLocation, final String nodeName) throws Exception
+    {
+        //call to parent constructor
+        super(xmlConfigurationLocation, nodeName);
+        
+        //create new list of resources
+        this.resources = new HashMap<>();
+    }
+    
     
     @Override
     public void dispose()
     {
         super.dispose();
         
-        for (Object key : resources.keySet())
+        for (Image image : resources.values())
         {
-            resources.get(key).flush();
-            resources.put(key, null);
+            if (image != null)
+            {
+                image.flush();
+                image = null;
+            }
         }
         
         resources.clear();
+        resources = null;
     }
     
+    /**
+     * Load the next resource
+     * @param source Class where resource is located
+     * @throws Exception 
+     */
     @Override
     public void update(final Class source) throws Exception
     {
-        final HashMap<Object, String> tmp = super.getLocations();
-        
-        for (Object key : tmp.keySet())
+        //if there are no resource locations load them from xml file
+        if (getLocations().isEmpty())
         {
-            if (resources.get(key) == null)
+            //load configuration file
+            loadXmlConfiguration(source);
+        }
+        
+        //check each file location
+        for (Object key : getLocations().keySet())
+        {
+            //check if current resource is loaded
+            if (get(key) == null)
             {
                 try
                 {
                     //load resource
-                    resources.put(key, new ImageIcon(source.getResource(tmp.get(key))).getImage());
+                    this.resources.put(key, new ImageIcon(source.getResource(getLocation(key))).getImage());
                 
                     //increase progress
                     super.increase();
@@ -55,20 +86,20 @@ public class ImageManager extends ResourceManager implements IResourceManager
                 catch(Exception e)
                 {
                     //notify which resource file has issues loading
-                    throw new Exception("Error loading resource path = \"" + tmp.get(key) + "\"");
+                    throw new Exception("Error loading resource path = \"" + getLocation(key) + "\"");
                 }
                 
-                //we are only loading one resource at a time
+                //we are only loading one resource at a time so exit
                 return;
             }
         }
         
-        //since we made it through all resources mark progress as complete
-        super.setComplete();
+        //since all resources have finished mark progress as complete
+        super.finish();
     }
     
     public Image get(final Object key)
     {
-        return resources.get(key);
+        return resources.get(key.toString());
     }
 }

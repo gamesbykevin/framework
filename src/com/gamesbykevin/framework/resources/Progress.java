@@ -113,6 +113,15 @@ public class Progress implements Disposable
     }
     
     /**
+     * Set the goal we want.
+     * @param goal The goal we are trying to reach
+     */
+    public void changeGoal(final int goal)
+    {
+        this.goal = goal;
+    }
+    
+    /**
      * Where are we currently at
      * @return int
      */

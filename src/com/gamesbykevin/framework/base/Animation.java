@@ -148,7 +148,7 @@ public final class Animation implements Disposable
      * @return 
      */
     public long getDelayMax()
-    {   
+    {
         return delays.get(getIndex());
     }
     

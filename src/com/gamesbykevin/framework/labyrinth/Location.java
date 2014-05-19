@@ -29,6 +29,25 @@ public class Location extends Cell
     //the cost will be used to calculate the minimum number of moves to get to the start Location
     private int cost;
     
+    public Location(Location location)
+    {
+        this(location.getCol(), location.getRow());
+        
+        //copy data from instance location
+        setCost(location.getCost());
+        setGroup(location.getGroup());
+        setVisited(location.hasVisited());
+        
+        //remove any existing walls
+        walls.clear();
+        
+        //copy from instance location
+        for (Wall wall : location.getWalls())
+        {
+            add(wall);
+        }
+    }
+    
     /**
      * Create a new Location with the specified Location.
      * 

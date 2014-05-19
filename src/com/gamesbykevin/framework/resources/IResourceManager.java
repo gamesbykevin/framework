@@ -19,9 +19,9 @@ public interface IResourceManager extends Disposable
     
     /**
      * This method will determine if all resources have been loaded into memory
-     * @return true if we are still loading resources
+     * @return true if loading is complete, false otherwise
      */
-    public boolean isLoading();
+    public boolean isComplete();
     
     /**
      * This is the area where we draw a visual representation of the progress

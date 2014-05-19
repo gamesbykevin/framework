@@ -11,15 +11,29 @@ public class AudioManager extends ResourceManager implements IResourceManager
     //is audio enabled
     private boolean enabled = true;
     
-    //all resources will be contained in this hash map
-    private final HashMap<Object, Audio> resources;
+    //list of resources
+    private HashMap<Object, Audio> resources;
     
-    public AudioManager(final String locationFormat, final Object[] keys)
+    //the name of the node where the resources are
+    private static final String NODE_NAME = "sound";
+    
+    /**
+     * Create new Audio manager that will contain a collection of audio files
+     * @param xmlConfigurationLocation The location of the xml configuration file
+     * @throws Exception
+     */
+    public AudioManager(final String xmlConfigurationLocation) throws Exception
     {
-        super(locationFormat, keys);
+        this(xmlConfigurationLocation, NODE_NAME);
+    }
+    
+    public AudioManager(final String xmlConfigurationLocation, final String nodeName) throws Exception
+    {
+        //call to parent constructor
+        super(xmlConfigurationLocation, nodeName);
         
-        //create empty list of resources
-        resources = new HashMap<>();
+        //create a new list that will contain the resources
+        this.resources = new HashMap<>();
     }
     
     @Override
@@ -27,45 +41,61 @@ public class AudioManager extends ResourceManager implements IResourceManager
     {
         super.dispose();
         
-        for (Object key : resources.keySet())
+        for (Audio audio : resources.values())
         {
-            resources.get(key).dispose();
-            resources.put(key, null);
+            if (audio != null)
+            {
+                audio.dispose();
+                audio = null;
+            }
         }
         
-        resources.clear();
+        this.resources.clear();
+        this.resources = null;
     }
     
+    /**
+     * Load the next resource
+     * @param source Class where resource is located
+     * @throws Exception 
+     */
     @Override
     public void update(final Class source) throws Exception
     {
-        final HashMap<Object, String> tmp = super.getLocations();
-        
-        for (Object key : tmp.keySet())
+        //if there are no resource locations load them from xml file
+        if (getLocations().isEmpty())
         {
+            //load configuration file
+            loadXmlConfiguration(source);
+        }
+        
+        //check each file location
+        for (Object key : getLocations().keySet())
+        {
+            //check if current resource is loaded
             if (get(key) == null)
             {
                 try
                 {
                     //load resource
-                    resources.put(key, new Audio(source, tmp.get(key)));
-
+                    this.resources.put(key, new Audio(source, getLocation(key)));
+                
                     //increase progress
                     super.increase();
                 }
                 catch(Exception e)
                 {
                     //notify which resource file has issues loading
-                    throw new Exception("Error loading resource path = \"" + tmp.get(key) + "\"");
+                    throw new Exception("Error loading resource path = \"" + getLocation(key) + "\"");
                 }
                 
-                //we are only loading one resource at a time
+                //we are only loading one resource at a time so exit
                 return;
-            }            
+            }
         }
         
-        //since we made it through all resources mark progress as complete
-        super.setComplete();
+        //since all resources have finished mark progress as complete
+        super.finish();
     }
     
     /**
@@ -91,7 +121,7 @@ public class AudioManager extends ResourceManager implements IResourceManager
      */
     public void stopAll()
     {
-        for (Object key : resources.keySet().toArray())
+        for(Object key: resources.keySet())
         {
             stop(key);
         }
@@ -116,7 +146,8 @@ public class AudioManager extends ResourceManager implements IResourceManager
     }
     
     /**
-     * Play the audio and loop if parameter is true
+     * Play the audio and loop if parameter is true.<br>
+     * If audio is not enabled nothing will happen.
      * @param key The unique key used to identify which audio to play
      * @param loop Do we want to loop the audio
      */
@@ -137,6 +168,6 @@ public class AudioManager extends ResourceManager implements IResourceManager
     
     public Audio get(final Object key)
     {
-        return resources.get(key);
+        return resources.get(key.toString());
     }
 }

@@ -9,15 +9,29 @@ import java.util.HashMap;
  */
 public class FontManager extends ResourceManager implements IResourceManager
 {
-    //all resources will be contained in this hash map
-    private final HashMap<Object, Font> resources;
+    //the name of the node where the resources are
+    private static final String NODE_NAME = "font";
     
-    public FontManager(final String locationFormat, final Object[] keys)
+    //list of resources
+    private HashMap<Object, Font> resources;
+    
+    /**
+     * Create new font manager that will contain a collection of font files
+     * @param xmlConfigurationLocation The location of the xml configuration file
+     * @throws Exception
+     */
+    public FontManager(final String xmlConfigurationLocation) throws Exception
     {
-        super(locationFormat, keys);
+        this(xmlConfigurationLocation, NODE_NAME);
+    }
+    
+    public FontManager(final String xmlConfigurationLocation, final String nodeName) throws Exception
+    {
+        //call to parent constructor
+        super(xmlConfigurationLocation, nodeName);
         
-        //create empty list of resources
-        resources = new HashMap<>();
+        //create new list of resources
+        this.resources = new HashMap<>();
     }
     
     @Override
@@ -25,48 +39,67 @@ public class FontManager extends ResourceManager implements IResourceManager
     {
         super.dispose();
         
-        for (Object key : resources.keySet())
-        {
-            resources.put(key, null);
-        }
-        
         resources.clear();
+        resources = null;
     }
     
+    /**
+     * Load the next resource
+     * @param source Class where resource is located
+     * @throws Exception 
+     */
     @Override
     public void update(final Class source) throws Exception
     {
-        final HashMap<Object, String> tmp = super.getLocations();
-        
-        for (Object key : tmp.keySet())
+        //if there are no resource locations load them from xml file
+        if (getLocations().isEmpty())
         {
-            if (resources.get(key) == null)
+            //load configuration file
+            loadXmlConfiguration(source);
+        }
+        
+        //check each file location
+        for (Object key : getLocations().keySet())
+        {
+            //check if current resource is loaded
+            if (get(key) == null)
             {
                 try
                 {
                     //load resource
-                    resources.put(key, Font.createFont(Font.TRUETYPE_FONT, source.getResource(tmp.get(key)).openStream()));
-
+                    this.resources.put(key, Font.createFont(Font.TRUETYPE_FONT, source.getResource(getLocation(key)).openStream()));
+                
                     //increase progress
                     super.increase();
                 }
                 catch(Exception e)
                 {
                     //notify which resource file has issues loading
-                    throw new Exception("Error loading resource path = \"" + tmp.get(key) + "\"");
+                    throw new Exception("Error loading resource path = \"" + getLocation(key) + "\"");
                 }
                 
-                //we are only loading one resource at a time
+                //we are only loading one resource at a time so exit
                 return;
             }
         }
         
-        //since we made it through all resources mark progress as complete
-        super.setComplete();
+        //since all resources have finished mark progress as complete
+        super.finish();
     }
     
     public Font get(final Object key)
     {
-        return resources.get(key);
+        return resources.get(key.toString());
+    }
+    
+    /**
+     * Add/Update Font<br>
+     * If the key is found the existing Font will be updated, else it will be added.
+     * @param key The unique key to identify the Font
+     * @param font The Font object
+     */
+    public void set(final Object key, final Font font)
+    {
+        resources.put(key.toString(), font);
     }
 }

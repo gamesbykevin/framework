@@ -104,6 +104,10 @@ public class AStar implements Disposable
         this.diagonal = diagonal;
     }
     
+    /**
+     * Do we allow diagonal movement when calculating the shortest path
+     * @return true if yes, otherwise false if no
+     */
     public boolean hasDiagonal()
     {
         return this.diagonal;
@@ -143,11 +147,21 @@ public class AStar implements Disposable
      * Set the map of the area we want to calculate the path.<br>
      * It will be a List of Location(s). <br>
      * Each Location has a column and row followed by a number of walls (North, South, East, West)
-     * @param map 
+     * @param map Map of the maze
      */
     public void setMap(final List<Location> map)
     {
-        this.map = map;
+        //create new map if it doesn't exist
+        if (this.map == null)
+            this.map = new ArrayList<>();
+        
+        //remove any existing elements
+        this.map.clear();
+        
+        for (Location location : map)
+        {
+            this.map.add(new Location(location));
+        }
     }
     
     /**

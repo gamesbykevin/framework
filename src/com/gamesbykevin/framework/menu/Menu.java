@@ -54,7 +54,7 @@ public abstract class Menu implements Disposable
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
         
-        //create/load/parse xml file
+        //create, load, and parse xml file
         Document doc = dBuilder.parse(source.getResourceAsStream(fileLocation));
 
         //optional, but recommended
@@ -261,6 +261,7 @@ public abstract class Menu implements Disposable
                 }
             }
             
+            //check for duplicate ids
             if (hasLayer(layerId))
             {
                 throw new Exception("Each layer needs to have a unique id. Layer Id : (" + layerId + ")");
