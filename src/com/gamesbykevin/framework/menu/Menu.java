@@ -383,7 +383,7 @@ public abstract class Menu implements Disposable
      * @param key The unique identifier to get the Layer
      * @return true if the Layer exists, false otherwise
      */
-    protected boolean hasLayer(final String key)
+    protected boolean hasLayer(final Object key)
     {
         return (layers.get(key) != null);
     }
@@ -434,7 +434,19 @@ public abstract class Menu implements Disposable
      */
     public boolean hasOption(final Object layer, final Object option) throws Exception
     {
-        return (getLayer(layer).getOption(option) != null);
+        return (getOption(layer, option) != null);
+    }
+    
+    /**
+     * Get the option.
+     * @param layer The layer where we want to check
+     * @param option The id of the option we want
+     * @return The option found at the specified layer. If not found null is returned
+     * @throws Exception 
+     */
+    public Option getOption(final Object layer, final Object option) throws Exception
+    {
+        return getLayer(layer).getOption(option);
     }
     
     /**
