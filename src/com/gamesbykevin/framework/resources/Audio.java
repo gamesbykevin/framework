@@ -307,15 +307,18 @@ public final class Audio implements Runnable, Disposable
                 case OTHER:
 
                     if (ac != null)
+                    {
                         ac.stop();
+                    }
                     break;
 
                 case MP3:
                     
                     if (player != null)
+                    {
                         player.close();
-
-                    player = null;
+                        player = null;
+                    }
                     break;
             }
         }

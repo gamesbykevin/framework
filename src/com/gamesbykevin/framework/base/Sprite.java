@@ -10,11 +10,13 @@ import java.awt.Rectangle;
 
 public class Sprite extends Cell implements Disposable
 {
-    //(x, y) = location (dx, dy) = velocity for x/y coordinates, (w, h) = width and height
+    /**
+     * (x, y) = location (dx, dy) = velocity for x/y coordinates, (w, h) = width and height
+     */
     private double x = 0, y = 0, dx = 0, dy = 0, w = 0, h = 0;
     
-    //z location as well (if needed for 3d)
-    private double z = 0;
+    //z location as well, dz = velocity
+    private double z = 0, dz = 0;
     
     //each object will have it's own id
     private final long id = System.nanoTime();
@@ -62,6 +64,7 @@ public class Sprite extends Cell implements Disposable
         setImage(sprite.getImage());
         setVelocityX(sprite.getVelocityX());
         setVelocityY(sprite.getVelocityY());
+        setVelocityZ(sprite.getVelocityZ());
         setHorizontalFlip(sprite.hasHorizontalFlip());
         setVerticalFlip(sprite.hasVerticalFlip());
         setCol(sprite.getCol());
@@ -111,9 +114,10 @@ public class Sprite extends Cell implements Disposable
     public void dispose()
     {
         if (image != null)
-            image.flush();
-
-        image = null;
+        {
+            this.image.flush();
+            this.image = null;
+        }
 
         spriteSheet = null;
     }
@@ -444,12 +448,13 @@ public class Sprite extends Cell implements Disposable
     }
     
     /**
-     * Set the x, y velocity to 0
+     * Set the x, y, z velocity to 0
      */
     public void resetVelocity()
     {
         resetVelocityX();
         resetVelocityY();
+        resetVelocityZ();
     }
     
     /**
@@ -466,6 +471,14 @@ public class Sprite extends Cell implements Disposable
     public void resetVelocityX()
     {
         setVelocityX(0);
+    }
+    
+    /**
+     * Set velocity to 0
+     */
+    public void resetVelocityZ()
+    {
+        setVelocityZ(0);
     }
     
     /**
@@ -498,7 +511,7 @@ public class Sprite extends Cell implements Disposable
      * Sets the x, y velocity so when update is called
      * the sprite position will be updated accordingly.
      * 
-     * @param velocity
+     * @param velocity the x point is the x-velocity, y is y-velocity
      */
     public void setVelocity(final Point velocity)
     {
@@ -548,14 +561,40 @@ public class Sprite extends Cell implements Disposable
     }
     
     /**
-     * Does the user have velocityX or velocityY
-     * Will return true if x velocity or y velocity
-     * are not equal to 0
+     * Sets the z velocity so when update is called
+     * the sprite position will be updated accordingly.
+     * 
+     * @param dz
+     */
+    public void setVelocityZ(final double dz)
+    {
+        this.dz = dz;
+    }
+    
+    /**
+     * Sets the z velocity so when update is called
+     * the sprite position will be updated accordingly.
+     * 
+     * @param dz
+     */
+    public void setVelocityZ(final int dz)
+    {
+        setVelocityZ((double)dz);
+    }
+    
+    public double getVelocityZ()
+    {
+        return this.dz;
+    }
+    
+    /**
+     * Does the user have velocityX, velocityY, or velocityZ
+     * Will return true if velocityX, velocityY, or velocityZ are not equal to 0
      * @return boolean
      */
     public boolean hasVelocity()
     {
-        return (hasVelocityX() || hasVelocityY());
+        return (hasVelocityX() || hasVelocityY() || hasVelocityZ());
     }
     
     /**
@@ -579,11 +618,23 @@ public class Sprite extends Cell implements Disposable
     }
 
     /**
-     * Adjust the (x,y) based on the current velocity
+     * Is the z velocity not equal to 0? 
+     * If so then there is velocity z
+     * @return boolean
+     */
+    public boolean hasVelocityZ()
+    {
+        return (getVelocityZ() != 0);
+    }
+    
+    /**
+     * Adjust the (x,y,z) based on the current velocity set
      */
     private void move()
     {
-        this.setLocation(getX() + getVelocityX(), getY() + getVelocityY());
+        this.setX(getX() + getVelocityX());
+        this.setY(getY() + getVelocityY());
+        this.setZ(getZ() + getVelocityZ());
     }
     
     /**
@@ -604,11 +655,11 @@ public class Sprite extends Cell implements Disposable
     }
     
     /**
-     * Update the x,y location based on the current x,y velocity.
+     * Update the x,y,z location based on the current x,y,z velocity.
      */
     public void update()
     {
-        //update x,y
+        //update x,y,z
         move();
     }
     
@@ -771,10 +822,21 @@ public class Sprite extends Cell implements Disposable
      * @param sy1 Source y1
      * @param sx2 Source x2
      * @param sy2 Source y2
-     * @return 
      */
     public void draw(final Graphics graphics, final Image image, final int dx1, final int dy1, final int dx2, final int dy2, final int sx1, final int sy1, final int sx2, final int sy2)
     {
-        graphics.drawImage(image, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, null);
+        try
+        {
+            if (dx2 - dx1 < 1)
+                throw new Exception("Sprite can't be drawn because the width is less than 1");
+            if (dy2 - dy1 < 1)
+                throw new Exception("Sprite can't be drawn because the height is less than 1");
+
+            graphics.drawImage(image, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, null);
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 }

@@ -165,6 +165,15 @@ public class AStar implements Disposable
     }
     
     /**
+     * Has a map already been set
+     * @return true if the map is not equal to null, false otherwise
+     */
+    public boolean hasMap()
+    {
+        return (this.map != null);
+    }
+    
+    /**
      * Add node with no parent node
      * @param cell 
      */

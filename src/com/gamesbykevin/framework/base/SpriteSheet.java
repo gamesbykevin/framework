@@ -94,6 +94,15 @@ public final class SpriteSheet implements Disposable
     }
     
     /**
+     * Is the current animation set to loop
+     * @return true if the current animation is set to loop, false otherwise
+     */
+    public boolean hasLoop()
+    {
+        return getSpriteSheetAnimation().hasLoop();
+    }
+    
+    /**
      * Returns the location of the current animation
      * @return Rectangle location of the current animation
      */
