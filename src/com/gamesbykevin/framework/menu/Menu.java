@@ -54,8 +54,22 @@ public abstract class Menu implements Disposable
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
         
-        //create, load, and parse xml file
-        Document doc = dBuilder.parse(source.getResourceAsStream(fileLocation));
+        //document object
+        Document doc = null;
+        
+        try
+        {
+            //load and parse xml file
+            doc = dBuilder.parse(source.getResourceAsStream(fileLocation));
+        }
+        catch (Exception e)
+        {
+            //display custom message
+            System.out.println("Error loading xml: " + fileLocation);
+
+            //print stack trace
+            e.printStackTrace();
+        }
 
         //optional, but recommended
         doc.getDocumentElement().normalize();
@@ -112,7 +126,20 @@ public abstract class Menu implements Disposable
                 backgroundImageLocation = layerElement.getElementsByTagName("image").item(0).getTextContent();
                 
                 if (backgroundImageLocation.trim().length() > 0)
-                    backgroundImage = new ImageIcon(source.getResource(backgroundImageLocation)).getImage();
+                {
+                    try
+                    {
+                        backgroundImage = new ImageIcon(source.getResource(backgroundImageLocation)).getImage();
+                    }
+                    catch (Exception e)
+                    {
+                        //display custom message
+                        System.out.println("Error loading image: " + backgroundImageLocation);
+                        
+                        //print stack trace
+                        e.printStackTrace();
+                    }
+                }
             }
             
             if (layerElement.getElementsByTagName("backgroundMusicLocation").getLength() > 0)
@@ -120,7 +147,20 @@ public abstract class Menu implements Disposable
                 backgroundMusicLocation = layerElement.getElementsByTagName("backgroundMusicLocation").item(0).getTextContent();
                 
                 if (backgroundMusicLocation.trim().length() > 0)
-                    backgroundMusic = new Audio(source, backgroundMusicLocation);
+                {
+                    try
+                    {
+                        backgroundMusic = new Audio(source, backgroundMusicLocation);
+                    }
+                    catch (Exception e)
+                    {
+                        //display custom message
+                        System.out.println("Error loading audio: " + backgroundMusicLocation);
+                        
+                        //print stack trace
+                        e.printStackTrace();
+                    }
+                }
             }
 
             if (layerElement.getElementsByTagName("optionSoundLocation").getLength() > 0)
@@ -128,7 +168,20 @@ public abstract class Menu implements Disposable
                 optionSoundLocation = layerElement.getElementsByTagName("optionSoundLocation").item(0).getTextContent();
                 
                 if (optionSoundLocation.trim().length() > 0)
-                    optionSound = new Audio(source, optionSoundLocation);
+                {
+                    try
+                    {
+                        optionSound = new Audio(source, optionSoundLocation);
+                    }
+                    catch (Exception e)
+                    {
+                        //display custom message
+                        System.out.println("Error loading audio: " + optionSoundLocation);
+                        
+                        //print stack trace
+                        e.printStackTrace();
+                    }
+                }
             }
             
             //the layer can only have a title if there are options
