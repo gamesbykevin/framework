@@ -1,18 +1,19 @@
 package com.gamesbykevin.framework.input;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.awt.event.KeyEvent;
 
 public class Keyboard 
 {
-    private List<Integer> keysPressed, keysReleased;
-    private List<Character> keysTyped;
+    //any keys pressed will be true in here
+    private boolean[] pressed;
+    
+    //any keys released will be true in here
+    private boolean[] released;
     
     public Keyboard()
     {
-        keysPressed  = new ArrayList<>();
-        keysReleased = new ArrayList<>();
-        keysTyped    = new ArrayList<>();
+        this.pressed    = new boolean[KeyEvent.KEY_LAST];
+        this.released   = new boolean[KeyEvent.KEY_LAST];
     }
     
     /**
@@ -20,143 +21,115 @@ public class Keyboard
      */
     public void dispose()
     {
-        keysPressed.clear();
-        keysPressed = null;
-
-        keysReleased.clear();
-        keysReleased = null;
-
-        keysTyped.clear();
-        keysTyped = null;
+        this.pressed    = null;
+        this.released   = null;
     }
     
     /**
-     * Add the specified keyChar typed
-     * @param keyChar 
-     */
-    public void addKeyTyped(final char keyChar)
-    {
-        if (keysTyped.indexOf(keyChar) < 0)
-            keysTyped.add(keyChar);
-    }
-    
-    /**
-     * Remove the specified key typed
-     * @param keyChar 
-     */
-    public void removeKeyTyped(final char keyChar)
-    {
-        final int index = keysTyped.indexOf(keyChar);
-        
-        if (index > -1 && !keysTyped.isEmpty())
-            keysTyped.remove(index);
-    }
-    
-    /**
-     * Have there been keys typed
-     * @return boolean
-     */
-    public boolean isKeyTyped()
-    {
-        return (!keysTyped.isEmpty());
-    }
-    
-    /**
-     * Checks if the keyTyped flag is true and if the 
-     * keyChar is in the keysTyped List.
-     * 
-     * @param keyChar
-     * @return boolean
-     */
-    public boolean hasKeyTyped(final char keyChar)
-    {
-        return keysTyped.indexOf(keyChar) > -1;
-    }
-    
-    /**
-     * Add keyCode to List
-     * 
-     * @param keyCode 
+     * Add key to List
+     * @param keyCode The key we want to flag true
      */
     public void addKeyReleased(final int keyCode)
     {
-        if (keysReleased.indexOf(keyCode) < 0)
-            keysReleased.add(keyCode);
+        checkRange(keyCode);
+        this.released[keyCode] = true;
     }
     
     /**
-     * Remove keyCode from List
-     * 
-     * @param keyCode 
+     * Remove key from list
+     * @param keyCode The key we want to flag false
      */
     public void removeKeyReleased(final int keyCode)
     {
-        final int index = keysReleased.indexOf(keyCode);
-        
-        if (index > -1 && !keysReleased.isEmpty())
-            keysReleased.remove(index);
+        checkRange(keyCode);
+        this.released[keyCode] = false;
     }
     
     /**
      * Check if any keys have been released
-     * 
-     * @return boolean
+     * @return boolean true if at least 1 key was released, false otherwise
      */
     public boolean isKeyReleased()
     {
-        return (!keysReleased.isEmpty());
+        for (int i=0; i < released.length; i++)
+        {
+            //a key was released
+            if (released[i])
+                return true;
+        }
+        
+        return false;
     }
     
     /**
-     * Does keyCode exist in list
-     * @param keyCode
-     * @return boolean
+     * Has the specified key been released
+     * @param key Key we want to check
+     * @return boolean true if it has been released, false otherwise
      */
     public boolean hasKeyReleased(final int keyCode)
     {
-        return keysReleased.indexOf(keyCode) > -1;
+        checkRange(keyCode);
+        return released[keyCode];
     }
 
+    private void checkRange(final int index)
+    {
+        try
+        {
+            if (index < 0 || index > pressed.length - 1 || index > released.length - 1)
+                throw new Exception("The keyCode value: " + index + " is too large for the keyboard array and can't be cheked for keyboard events");
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+    
     /**
-     * Add keyCode to List
-     * @param keyCode 
+     * Add key to List
+     * @param keyCode The key we want to flag true
      */
     public void addKeyPressed(final int keyCode)
     {
-        if (keysPressed.indexOf(keyCode) < 0)
-            keysPressed.add(keyCode);
+        checkRange(keyCode);
+        pressed[keyCode] = true;
     }
     
     /**
-     * Removes the keyCode from the List
-     * @param keyCode 
+     * Removes the key from the List
+     * @param keyCode Key we want to flag false
      */
     public void removeKeyPressed(final int keyCode)
     {
-        final int index = keysPressed.indexOf(keyCode);
-        
-        if (index > -1 && !keysPressed.isEmpty())
-            keysPressed.remove(index);
+        checkRange(keyCode);
+        pressed[keyCode] = false;
     }
     
     /**
-     * Has any key been pressed
-     * @return boolean
+     * Check if any keys have been pressed
+     * @return boolean true if at least 1 key was pressed, false otherwise
      */
     public boolean isKeyPressed()
     {
-        return (!keysPressed.isEmpty());
+        for (int i=0; i < pressed.length; i++)
+        {
+            //a key was pressed
+            if (pressed[i])
+                return true;
+        }
+        
+        return false;
     }
     
     /**
-     * Checks if keyPressed flag is set to true and if parameter
-     * keyCode exists in the List
-     * @param keyCode
-     * @return boolean
+     * Has the specified key been pressed
+     * @param key Key we want to check
+     * @return boolean true if it has been pressed, false otherwise
      */
     public boolean hasKeyPressed(final int keyCode)
     {
-        return (keysPressed.indexOf(keyCode) > -1);
+        checkRange(keyCode);
+        return pressed[keyCode];
     }
     
     /**
@@ -164,7 +137,10 @@ public class Keyboard
      */
     public void resetKeyReleased()
     {
-        keysReleased.clear();
+        for (int i=0; i < released.length; i++)
+        {
+            released[i] = false;
+        }
     }
     
     /**
@@ -172,24 +148,18 @@ public class Keyboard
      */
     public void resetKeyPressed()
     {
-        keysPressed.clear();
+        for (int i=0; i < pressed.length; i++)
+        {
+            pressed[i] = false;
+        }
     }
     
     /**
-     * Reset all key typed events
-     */
-    public void resetKeyTyped()
-    {
-        keysTyped.clear();
-    }
-    
-    /**
-     * Reset all key pressed, released, typed events
+     * Reset all key pressed, released events
      */
     public void reset()
     {
         resetKeyPressed();
         resetKeyReleased();
-        resetKeyTyped();
     }
 }

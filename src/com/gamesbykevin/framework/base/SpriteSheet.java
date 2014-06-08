@@ -141,9 +141,20 @@ public final class SpriteSheet implements Disposable
      * Sets the current animation with the assigned unique key
      * @param current Object that uniquely identifies the animation
      */
-    public void setCurrent(final Object current)
+    public void setCurrent(final Object key)
     {
-        this.current = current;
+        try
+        {
+            //if the animation does not exist throw exception because we can't set it
+            if (getSpriteSheetAnimation(key) == null)
+                throw new Exception("Animation does not exist for: " + key.toString());
+        
+            this.current = key;
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
     
     /**
