@@ -120,7 +120,11 @@ public final class Audio implements Runnable, Disposable
                 break;
         }
 
-        source = null;
+        if (source != null)
+            source = null;
+        
+        if (thread != null)
+            thread = null;
     }
     
     /**

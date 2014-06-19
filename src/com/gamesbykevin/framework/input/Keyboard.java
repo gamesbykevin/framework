@@ -12,8 +12,8 @@ public class Keyboard
     
     public Keyboard()
     {
-        this.pressed    = new boolean[KeyEvent.KEY_LAST];
-        this.released   = new boolean[KeyEvent.KEY_LAST];
+        this.pressed    = new boolean[600];
+        this.released   = new boolean[pressed.length];
     }
     
     /**
