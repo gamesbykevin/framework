@@ -33,6 +33,9 @@ public class Keyboard
     {
         checkRange(keyCode);
         this.released[keyCode] = true;
+        
+        //if the key has been released, then it can't be pressed
+        removeKeyPressed(keyCode);
     }
     
     /**
@@ -93,6 +96,9 @@ public class Keyboard
     {
         checkRange(keyCode);
         pressed[keyCode] = true;
+        
+        //if this key is pressed then it can't be released
+        removeKeyReleased(keyCode);
     }
     
     /**
