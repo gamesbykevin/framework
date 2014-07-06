@@ -171,14 +171,14 @@ public class Location extends Cell
     
     /**
      * Does this Location have the specified wall
-     * @param wall
-     * @return boolean
+     * @param wall The wall we want to see if exists
+     * @return boolean true if this location has the wall, false otherwise
      */
     public boolean hasWall(Wall wall)
     {
-        for (Wall w : walls)
+        for (int i = 0; i < walls.size(); i++)
         {
-            if (w == wall)
+            if (walls.get(i) == wall)
                 return true;
         }
         
