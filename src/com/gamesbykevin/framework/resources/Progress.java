@@ -79,17 +79,15 @@ public class Progress implements Disposable
     }
     
     /**
-     * Set Text to display when render is called, can be null
-     * Note: You can only set the description once or else an 
-     * Exception will be thrown
-     * 
-     * @param description 
-     * @throws Exception
+     * Set Text to display when render is called, can be null.<br>
+     * Note: You can only set the description once.
+     * @param description The description to display
+     * @throws Exception if the description was already set previously and exception will be thrown.
      */
     public void setDescription(final String description) throws Exception
     {
         if (this.description != null)
-            throw new Exception("Description has already been set and can't be set again.");
+            throw new Exception("Description has already been set.");
         
         this.description = description;
     }

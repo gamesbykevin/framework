@@ -29,9 +29,6 @@ public final class Labyrinth implements Disposable
     //our random number generator
     private final Random random;
     
-    //the seed used to generate random numbers
-    private final long seed = System.nanoTime();
-    
     //has the maze been initialied
     private boolean initialized = false;
     
@@ -42,13 +39,27 @@ public final class Labyrinth implements Disposable
     private final int rows;
     
     /**
-     * Create a new labyrinth using the specified Algorithm and the number of columns/rows
+     * Create a new labyrinth
      * 
-     * @param cols
-     * @param rows
-     * @param algorithm 
+     * @param cols Size of labyrinth
+     * @param rows Size of labyrinth
+     * @param algorithm Algorithm used to generate labyrinth
      */
     public Labyrinth(final int cols, final int rows, final Algorithm algorithm) throws Exception
+    {
+        this(cols, rows, algorithm, System.nanoTime());
+    }
+    
+    
+    /**
+     * Create a new labyrinth
+     * 
+     * @param cols Size of labyrinth
+     * @param rows Size of labyrinth
+     * @param algorithm Algorithm used to generate labyrinth
+     * @param seed Use this for the Random object used to generate level
+     */
+    public Labyrinth(final int cols, final int rows, final Algorithm algorithm, final long seed) throws Exception
     {
         this.cols = cols;
         this.rows = rows;

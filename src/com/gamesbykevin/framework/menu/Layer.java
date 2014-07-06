@@ -692,7 +692,7 @@ public final class Layer implements Disposable
         this.optionContainerRatio = optionContainerRatio;
     }
     
-    protected void render(Graphics2D graphics, Rectangle screen) 
+    protected void render(Graphics2D graphics, Rectangle screen)
     {
         if (original == null)
             original = graphics.getComposite();

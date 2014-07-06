@@ -17,9 +17,13 @@ public class FullScreen
     //width-height of the full screen
     private Dimension dimension;
     
+    private GraphicsEnvironment environment;
+    private GraphicsDevice[] device;
+    
     public FullScreen()
     {
-        
+        this.environment = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        this.device = environment.getScreenDevices();
     }
     
     public void dispose()
@@ -45,68 +49,61 @@ public class FullScreen
         return this.enabled;
     }
     
-    public void switchFullScreen(JApplet applet, JPanel panel)
+    public void switchFullScreen(JApplet applet)
     {
         if (!enabled)
         {
             if (parent == null)
-            {
-                if (applet != null)
-                {
-                    parent = applet.getParent();
-                }
-                else
-                {
-                    parent = panel.getParent();
-                }
-            }
+                parent = applet.getParent();
 
             dimension = Toolkit.getDefaultToolkit().getScreenSize();
             
             frame.setUndecorated(true);
-            
-            if (applet != null)
-            {
-                frame.add(applet);
-            }
-            else
-            {
-                frame.add(panel);
-            }
-            
+            frame.add(applet);
             frame.setVisible(true);
             frame.setSize(dimension);
             
-            GraphicsEnvironment environment = GraphicsEnvironment.getLocalGraphicsEnvironment();
-            GraphicsDevice[] device = environment.getScreenDevices();
             device[0].setFullScreenWindow(frame);            
             
             enabled = true;      
         }
         else
         {
-            if (applet != null)
-            {
-                parent.add(applet);
-            }
-            else
-            {
-                parent.add(panel);
-            }
-            
+            parent.add(applet);
             frame.dispose();
             enabled = false;
         }
         
-        if (applet != null)
+        applet.setBounds(0, 0, applet.getParent().getSize().width, applet.getParent().getSize().height);
+        applet.requestFocus();
+   }
+    
+    public void switchFullScreen(JPanel panel)
+    {
+        if (!enabled)
         {
-            applet.setBounds(0, 0, applet.getParent().getSize().width, applet.getParent().getSize().height);
-            applet.requestFocus();
+            if (parent == null)
+                parent = panel.getParent();
+
+            dimension = Toolkit.getDefaultToolkit().getScreenSize();
+            
+            frame.setUndecorated(true);
+            frame.add(panel);
+            frame.setVisible(true);
+            frame.setSize(dimension);
+            
+            device[0].setFullScreenWindow(frame);            
+            
+            enabled = true;      
         }
         else
         {
-            panel.setBounds(0, 0, panel.getParent().getSize().width, panel.getParent().getSize().height);
-            panel.requestFocus();
+            parent.add(panel);
+            frame.dispose();
+            enabled = false;
         }
+        
+        panel.setBounds(0, 0, panel.getParent().getSize().width, panel.getParent().getSize().height);
+        panel.requestFocus();
    }
 }
