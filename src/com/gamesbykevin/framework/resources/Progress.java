@@ -34,6 +34,9 @@ public class Progress implements Disposable
     //the text width will be 75% of the container width
     private static final double TEXT_CONTAINER_WIDTH_RATIO = .75;
     
+    //extra text to include with loading description
+    private static final String EXTRA_TEXT = "99%";
+    
     //store the font in this object so when the progress is rendered everything is consistent
     private Font font;
     
@@ -194,7 +197,7 @@ public class Progress implements Disposable
         if (image == null)
         {
             //create an image of the same size as Rectangle screen
-            image = new BufferedImage(screen.width, screen.height, BufferedImage.TYPE_INT_ARGB);
+            this.image = new BufferedImage(screen.width, screen.height, BufferedImage.TYPE_INT_ARGB);
             
             //get Graphics object so we can write to image
             Graphics imageGraphics = image.createGraphics();
@@ -207,31 +210,37 @@ public class Progress implements Disposable
             imageGraphics.fillRect(screen.x, screen.y, screen.width, screen.height);
 
             //we will display the information in the middle
-            int middleX = screen.x + (screen.width /2);
-            int middleY = screen.y + (screen.height/2);
+            final int middleX = screen.x + (screen.width /2);
+            final int middleY = screen.y + (screen.height/2);
 
             //default description
             String loadingDesc = "Loading ";
 
             //if a description exists we will use it
-            if (getDescription() != null && getDescription().length() > 0)
+            if (getDescription() != null && getDescription().trim().length() > 0)
                 loadingDesc = getDescription() + " ";
 
             //add extra text to loadingDesc so the overall result will appear centered
-            float fontSize = Menu.getFontSize(loadingDesc + "100%", (int)(screen.width * TEXT_CONTAINER_WIDTH_RATIO), imageGraphics);
+            float fontSize = Menu.getFontSize(loadingDesc + EXTRA_TEXT, (int)(screen.width * TEXT_CONTAINER_WIDTH_RATIO), imageGraphics);
             
             //correct font size has been found, so we set it
             imageGraphics.setFont(graphics.getFont().deriveFont(fontSize));
 
-            //store the font for consistency sake
-            font = imageGraphics.getFont();
+            //now get the font height
+            final int fontHeight = imageGraphics.getFontMetrics().getHeight();
             
-            //get the pixel width of our description
-            int textWidth = imageGraphics.getFontMetrics().stringWidth(loadingDesc);
+            //also store the font for consistency
+            this.font = imageGraphics.getFont();
+            
+            //get the pixel width of our full description including extra text
+            final int fullTextWidth = imageGraphics.getFontMetrics().stringWidth(loadingDesc + EXTRA_TEXT);
 
+            //get the pixel width of just the text description not including extra text
+            final int textWidth = imageGraphics.getFontMetrics().stringWidth(loadingDesc);
+            
             //make the appropriate calculations do the display text will appear in the center
-            int drawX = middleX - (textWidth / 2);
-            int drawY = middleY + ((imageGraphics.getFontMetrics().getHeight() / 2));
+            final int drawX = middleX - (fullTextWidth / 2);
+            final int drawY = middleY;
 
             //write the loading description to image as this information will not change
             imageGraphics.setColor(Color.WHITE);
@@ -241,34 +250,33 @@ public class Progress implements Disposable
             progressTextLocation = new Point(drawX + textWidth, drawY);
             
             //the starting point where we will draw the progress bar
-            progressBarDimension = new Rectangle(drawX, drawY + (imageGraphics.getFontMetrics().getHeight() * 2), textWidth, imageGraphics.getFontMetrics().getHeight());
+            progressBarDimension = new Rectangle(screen.x, drawY + fontHeight, screen.width, imageGraphics.getFontMetrics().getHeight());
         }
         
         //draw background loading image
-        graphics.drawImage(image, screen.x, screen.y, screen.width, screen.height, null);
+        graphics.drawImage(this.image, screen.x, screen.y, screen.width, screen.height, null);
         
         //set same font and color to match background image
         graphics.setColor(Color.WHITE);
-        graphics.setFont(font);
+        graphics.setFont(this.font);
         
         //these display values need to be calculated on the fly as they will dynamically change
-        graphics.drawString(getPercentComplete() + "%", progressTextLocation.x, progressTextLocation.y);
+        graphics.drawString(getCompleteProgress() + "%", progressTextLocation.x, progressTextLocation.y);
         graphics.fillRect(progressBarDimension.x, progressBarDimension.y, (int)(progressBarDimension.width * getProgress()), progressBarDimension.height);
     }
     
     /**
-     * Calculate the percentage complete as an integer.
-     * Return value will be a number 0 - 100
+     * Calculate the percentage complete as a percentage.
      * 
-     * @return int 
+     * @return int Percent complete from 0% - 100%
      */
-    private int getPercentComplete()
+    private int getCompleteProgress()
     {
-        int percentComplete = (int)(getProgress() * 100);
+        int complete = (int)(getProgress() * 100);
         
-        if (percentComplete >= 100)
-            percentComplete = 100;
+        if (complete >= 100)
+            complete = 100;
         
-        return percentComplete;
+        return complete;
     }
 }
