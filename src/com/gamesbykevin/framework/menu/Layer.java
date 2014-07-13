@@ -127,6 +127,9 @@ public final class Layer implements Disposable
     //if the layer contains options how big is the option container
     private float optionContainerRatio = OPTION_CONTAINER_RATIO_DEFAULT;
     
+    //if the layer contains options, how thick is the border
+    private float optionContainerBorderStroke = 0.0f;
+    
     public Layer(Type type, Rectangle screen)
     {
         this.screen = screen;
@@ -692,6 +695,19 @@ public final class Layer implements Disposable
         this.optionContainerRatio = optionContainerRatio;
     }
     
+    /**
+     * Set the thickness of the option border
+     * @param optionContainerBorderStroke The thickness of the option border
+     * @throws Exception if the thickness of the border is less than 0
+     */
+    protected void setOptionContainerBorderThickness(final float optionContainerBorderStroke) throws Exception
+    {
+        if (optionContainerBorderStroke < 0)
+            throw new Exception("Border Thickness can't be less than 0");
+        
+        this.optionContainerBorderStroke = optionContainerBorderStroke;
+    }
+    
     protected void render(Graphics2D graphics, Rectangle screen)
     {
         if (original == null)
@@ -858,7 +874,7 @@ public final class Layer implements Disposable
             final int arcHeight = (int)(optionContainerImage.getHeight() * .15);
             
             //set stroke so outline drawn is thick
-            tmpGraphics.setStroke(new BasicStroke(10.0f));
+            tmpGraphics.setStroke(new BasicStroke(optionContainerBorderStroke));
 
             //if back ground color exists
             if (OPTION_BACKGROUND_COLOR != null)

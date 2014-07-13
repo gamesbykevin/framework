@@ -97,6 +97,7 @@ public abstract class Menu implements Disposable
             boolean force = false, pause = false;
             long duration = 0;
             float ratio = 1;
+            float borderStroke = 10.0f;
             
             //layer configurations for the resources
             String backgroundImageLocation, backgroundMusicLocation, optionSoundLocation;
@@ -192,6 +193,10 @@ public abstract class Menu implements Disposable
             if (layerElement.getElementsByTagName("optionContainerRatio").getLength() > 0)
                 ratio = Float.parseFloat(layerElement.getElementsByTagName("optionContainerRatio").item(0).getTextContent());
 
+            //the option container will only exist if there are options
+            if (layerElement.getElementsByTagName("optionBorderThickness").getLength() > 0)
+                borderStroke = Float.parseFloat(layerElement.getElementsByTagName("optionBorderThickness").item(0).getTextContent());
+            
             //determine the transisition type
             Layer.Type transitionType = Layer.Type.NONE;
             
@@ -227,6 +232,9 @@ public abstract class Menu implements Disposable
             
             //set the option container ratio
             layer.setOptionContainerRatio(ratio);
+            
+            //set how thick the border line will be
+            layer.setOptionContainerBorderThickness(borderStroke);
             
             //set the tile
             layer.setTitle(title);
