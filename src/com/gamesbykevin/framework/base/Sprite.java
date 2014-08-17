@@ -194,7 +194,7 @@ public class Sprite extends Cell implements Disposable
     }
     
     /**
-     * Set the location
+     * Set the (x, y) location
      * @param sprite We will use the getX() and getY() coordinates
      */
     public void setLocation(final Sprite sprite)

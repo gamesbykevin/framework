@@ -228,7 +228,7 @@ public final class Animation implements Disposable
         return finished;
     }
     
-    private void setFinished(final boolean finished)
+    public void setFinished(final boolean finished)
     {
         this.finished = finished;
     }
