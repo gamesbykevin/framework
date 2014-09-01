@@ -266,14 +266,14 @@ public final class SpriteSheet implements Disposable
      * Get current animation. If animation is not set exception will occur.
      * @return Animation based on the current animation set
      */
-    private Animation getSpriteSheetAnimation()
+    public Animation getSpriteSheetAnimation()
     {
         try
         {
-            if (current == null)
+            if (getCurrent() == null)
                 throw new Exception("The current animation was not found because the current animation has not been set yet. setCurrent() will set the current animation");
 
-            return getSpriteSheetAnimation(current);
+            return getSpriteSheetAnimation(getCurrent());
         }
         catch(Exception e)
         {
