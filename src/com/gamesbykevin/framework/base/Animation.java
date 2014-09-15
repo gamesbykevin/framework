@@ -45,6 +45,14 @@ public final class Animation implements Disposable
         delays = new ArrayList<>();
     }
     
+    public Animation(final int x, final int y, final int width, final int height, final long delay)
+    {
+        this();
+        
+        //add this animation
+        add(x, y, width, height, delay);
+    }
+    
     /**
      * Use this constructor for convenience if you only have one frame in your animation
      * @param location

@@ -119,6 +119,15 @@ public class Location extends Cell
     }
     
     /**
+     * For Kruskal's algorithm as each Location will begin with its own unique group.
+     * @param location Location that contains the group we want to set
+     */
+    public void setGroup(final Location location)
+    {
+        setGroup(location.getGroup());
+    }
+    
+    /**
      * Remove the Wall from the List
      * @param wall 
      */
