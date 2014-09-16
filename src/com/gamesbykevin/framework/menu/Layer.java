@@ -25,7 +25,7 @@ import java.util.LinkedHashMap;
  * 
  * @author GOD
  */
-public final class Layer implements Disposable 
+public final class Layer implements Disposable, Sound 
 {
     public enum Type
     {
@@ -130,6 +130,9 @@ public final class Layer implements Disposable
     //if the layer contains options, how thick is the border
     private float optionContainerBorderStroke = 0.0f;
     
+    //is the audio enabled
+    private boolean enabled = true;
+    
     public Layer(Type type, Rectangle screen)
     {
         this.screen = screen;
@@ -173,6 +176,24 @@ public final class Layer implements Disposable
         }
     }
     
+    @Override
+    public void setEnabled(final boolean enabled)
+    {
+        if (isEnabled() && !enabled)
+        {
+            sound.stopSound();
+            optionSound.stopSound();
+        }
+        
+        this.enabled = enabled;
+    }
+    
+    @Override
+    public boolean isEnabled()
+    {
+        return this.enabled;
+    }
+
     private boolean getPause()
     {
         return this.pause;
@@ -416,8 +437,11 @@ public final class Layer implements Disposable
                                     //highlight the new selection
                                     setHighlighted();
                                     
-                                    //play sound effect since option changed
-                                    optionSound.play(false);
+                                    if (isEnabled())
+                                    {
+                                        //play sound effect since option changed
+                                        optionSound.play(false);
+                                    }
                                 }
                             }
                         }
@@ -441,8 +465,11 @@ public final class Layer implements Disposable
                                     //highlight the new selection
                                     setHighlighted();
                                     
-                                    //play sound effect since option changed
-                                    optionSound.play(false);
+                                    if (isEnabled())
+                                    {
+                                        //play sound effect since option changed
+                                        optionSound.play(false);
+                                    }
                                 }
                                 else
                                 {

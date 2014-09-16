@@ -2,8 +2,9 @@ package com.gamesbykevin.framework.menu;
 
 import com.gamesbykevin.framework.input.Keyboard;
 import com.gamesbykevin.framework.input.Mouse;
-import com.gamesbykevin.framework.resources.Disposable;
 import com.gamesbykevin.framework.resources.Audio;
+import com.gamesbykevin.framework.resources.Disposable;
+import com.gamesbykevin.framework.resources.Sound;
 import com.gamesbykevin.framework.util.Timer;
 import com.gamesbykevin.framework.util.Timers;
 
@@ -21,7 +22,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-public abstract class Menu implements Disposable
+public abstract class Menu implements Disposable, Sound
 {
     //I used LinkedHashMap because it maintains order of items in map unlike HashMap
     private LinkedHashMap<Object, Layer> layers;
@@ -37,6 +38,9 @@ public abstract class Menu implements Disposable
     
     //the key that indicates the last layer of this menu
     private String finish;
+    
+    //is the audio enabled
+    private boolean enabled = true;
     
     /**
      * Create a new Menu that is to be displayed within Rectangle screen
@@ -365,13 +369,38 @@ public abstract class Menu implements Disposable
         screen = null;
     }
     
+    @Override
+    public void setEnabled(final boolean enabled)
+    {
+        this.enabled = enabled;
+        
+        //set the sound enabled/disabled for the layers as well
+        for (int i = 0; i < layers.size(); i++)
+        {
+            try
+            {
+                getLayer(layers.keySet().toArray()[i]).setEnabled(this.enabled);
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
+    }
+    
+    @Override
+    public boolean isEnabled()
+    {
+        return this.enabled;
+    }
+    
     /**
      * Add the Layer to this menu with the assigned key
      * 
      * @param key
      * @param Layer 
      */
-    protected void add(final String key, final Layer layer)
+    protected final void add(final String key, final Layer layer)
     {
         layers.put(key, layer);
     }
@@ -432,9 +461,13 @@ public abstract class Menu implements Disposable
         //store the next layer
         this.current = key.toString();
         
-        //if the new layer has background audio, play it on infinite loop
-        if (getLayer(this.current).getSound() != null)
-            getLayer(this.current).getSound().play(true);
+        //is audio enabled
+        if (isEnabled())
+        {
+            //if the new layer has background audio, play it on infinite loop
+            if (getLayer(this.current).getSound() != null)
+                getLayer(this.current).getSound().play(true);
+        }
         
         this.reset();
     }
@@ -444,7 +477,7 @@ public abstract class Menu implements Disposable
      * @param key The unique identifier to get the Layer
      * @return true if the Layer exists, false otherwise
      */
-    protected boolean hasLayer(final Object key)
+    protected final boolean hasLayer(final Object key)
     {
         return (layers.get(key) != null);
     }
