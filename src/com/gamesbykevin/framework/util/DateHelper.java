@@ -1,9 +1,11 @@
 package com.gamesbykevin.framework.util;
 
+import com.gamesbykevin.framework.resources.Disposable;
+
 import java.text.*;
 import java.util.*;
 
-public class DateHelper 
+public final class DateHelper implements Disposable 
 {
     /*
      * LEGEND HOW TO FORMAT DATE
@@ -34,29 +36,52 @@ public class DateHelper
     public static final String FORMAT_3 = "HH:mm:ss";
     public static final String FORMAT_4 = "HH:mm:ss.SSS";
     
-    public static synchronized String getFormatedDate()
+    //date format object
+    private DateFormat df;
+    
+    @Override
+    public void dispose()
+    {
+        df = null;
+    }
+    
+    /**
+     * Get formatted date of the current time
+     * @return The current time format as "MM/dd/yyyy HH:mm:ss.SSS"
+     */
+    public final String getFormatedDate()
     {   
         return getFormatedDate(FORMAT_1);
     }
     
-    public static synchronized String getFormatedDate(String dateFormat)
+    public final String getFormatedDate(String dateFormat)
     {
         return getFormatedDate(dateFormat, Calendar.getInstance());
     }
     
-    public static synchronized String getFormatedDate(String dateFormat, Calendar calendar)
+    public synchronized String getFormatedDate(String dateFormat, Calendar calendar)
     {
         return getFormatedDate(dateFormat, calendar.getTime());
     }
     
-    public static synchronized String getFormatedDate(String dateFormat, long milliSecondsElapsed)
+    /**
+     * Get formatted date
+     * @param dateFormat The format we want to see our result
+     * @param milliSecondsElapsed Time elapsed in milliseconds
+     * @return The formatted date
+     */
+    public synchronized String getFormatedDate(String dateFormat, long milliSecondsElapsed)
     {   //call this method when you want to convert how much time has passed all other methods convert date to a specific format
-        DateFormat df = new SimpleDateFormat(dateFormat);
-        df.setTimeZone(TimeZone.getTimeZone("UTC"));
+        if (df == null)
+        {
+            df = new SimpleDateFormat(dateFormat);
+            df.setTimeZone(TimeZone.getTimeZone("UTC"));
+        }
+        
         return df.format(milliSecondsElapsed);
     }
     
-    public static synchronized String getFormatedDate(String dateFormat, Date date)
+    public synchronized String getFormatedDate(String dateFormat, Date date)
     {
         return new SimpleDateFormat(dateFormat).format(date.getTime());
     }

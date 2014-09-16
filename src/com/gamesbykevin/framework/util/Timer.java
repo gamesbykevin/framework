@@ -1,8 +1,10 @@
 package com.gamesbykevin.framework.util;
 
+import com.gamesbykevin.framework.resources.Disposable;
+
 import java.util.concurrent.TimeUnit;
 
-public class Timer 
+public final class Timer implements Disposable
 {
     //how much time is remaining on this timer
     private long remaining;
@@ -13,6 +15,9 @@ public class Timer
     //do we pause timeDeduction
     private boolean pause;
     
+    //object used to format time/date
+    private DateHelper dateHelper;
+    
     public Timer()
     {   //we are not limiting time duration
         this(0);
@@ -22,6 +27,19 @@ public class Timer
     {
         setReset(reset);
         setRemaining(reset);
+        
+        //create new date helper
+        this.dateHelper = new DateHelper();
+    }
+    
+    @Override
+    public void dispose()
+    {
+        if (this.dateHelper != null)
+        {
+            this.dateHelper.dispose();
+            this.dateHelper = null;
+        }
     }
     
     /**
@@ -87,7 +105,7 @@ public class Timer
      * Change the reset time
      * @param reset 
      */
-    public void setReset(final long reset)
+    public final void setReset(final long reset)
     {
         this.reset = reset;
     }
@@ -96,7 +114,7 @@ public class Timer
      * Set the time remaining for this Timer
      * @param remaining 
      */
-    public void setRemaining(final long remaining)
+    public final void setRemaining(final long remaining)
     {
         this.remaining = remaining;
     }
@@ -148,6 +166,6 @@ public class Timer
         //MUST CONVERT NANOSECONDS TO MILLISECONDS
         long milliSeconds = TimeUnit.MILLISECONDS.convert(time, TimeUnit.NANOSECONDS);
         
-        return DateHelper.getFormatedDate(format, milliSeconds);
+        return dateHelper.getFormatedDate(format, milliSeconds);
     }
 }
