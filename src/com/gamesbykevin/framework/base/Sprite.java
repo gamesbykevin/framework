@@ -226,6 +226,15 @@ public class Sprite extends Cell implements Disposable
     
     /**
      * Set the x, y coordinate location for this sprite
+     * @param r Rectangle containing x, y coordinates that will be used to assign.
+     */
+    public void setLocation(final Rectangle r)
+    {
+        setLocation(r.x, r.y);
+    }
+    
+    /**
+     * Set the x, y coordinate location for this sprite
      * 
      * @param x
      * @param y 
