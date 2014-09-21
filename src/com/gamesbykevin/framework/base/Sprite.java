@@ -225,12 +225,13 @@ public class Sprite extends Cell implements Disposable
     }
     
     /**
-     * Set the x, y coordinate location for this sprite
-     * @param r Rectangle containing x, y coordinates that will be used to assign.
+     * Set the x, y coordinate location for this sprite.<br>
+     * The center of the rectangle will be the location set
+     * @param r Rectangle containing x, y, width, height coordinates.
      */
     public void setLocation(final Rectangle r)
     {
-        setLocation(r.x, r.y);
+        setLocation(r.x + (r.width / 2), r.y + (r.height / 2));
     }
     
     /**
@@ -637,16 +638,6 @@ public class Sprite extends Cell implements Disposable
     }
     
     /**
-     * Adjust the (x,y,z) based on the current velocity set
-     */
-    private void move()
-    {
-        this.setX(getX() + getVelocityX());
-        this.setY(getY() + getVelocityY());
-        this.setZ(getZ() + getVelocityZ());
-    }
-    
-    /**
      * Get a Rectangle object based on the current x, y, width, height
      * @return Rectangle
      */
@@ -668,8 +659,9 @@ public class Sprite extends Cell implements Disposable
      */
     public void update()
     {
-        //update x,y,z
-        move();
+        this.setX(getX() + getVelocityX());
+        this.setY(getY() + getVelocityY());
+        this.setZ(getZ() + getVelocityZ());
     }
     
     /**
