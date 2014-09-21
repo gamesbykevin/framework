@@ -394,13 +394,19 @@ public class Sprite extends Cell implements Disposable
     }
     
     /**
-     * Auto set the width/height based on the current sprite sheet animation<br><br>
-     * The sprite sheet must have a current animation set before calling this method
-     * or an error will occur.
+     * Set the width/height of the sprite based on the current sprite sheet animation<br><br>
+     * @throws Exception An exception will be thrown if the sprite sheet does not exist.
      */
-    public void setDimensions()
-    {   
-        setDimensions(getSpriteSheet().getLocation().getWidth(), getSpriteSheet().getLocation().getHeight());
+    public void setDimensions() throws Exception
+    {
+        if (getSpriteSheet() == null)
+        {
+            throw new Exception("Spritesheet has not been created.");
+        }
+        else
+        {
+            setDimensions(getSpriteSheet().getLocation().getWidth(), getSpriteSheet().getLocation().getHeight());
+        }
     }
     
     /**
