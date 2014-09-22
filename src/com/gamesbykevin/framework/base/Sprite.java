@@ -498,6 +498,17 @@ public class Sprite extends Cell implements Disposable
     }
     
     /**
+     * Assign the x, y, z velocity based on 
+     * @param sprite 
+     */
+    public void setVelocity(final Sprite sprite)
+    {
+        setVelocityX(sprite);
+        setVelocityY(sprite);
+        setVelocityZ(sprite);
+    }
+    
+    /**
      * Sets the x, y velocity so when update is called
      * the sprite position will be updated accordingly.
      * 
@@ -538,6 +549,17 @@ public class Sprite extends Cell implements Disposable
      * Sets the x velocity so when update is called
      * the sprite position will be updated accordingly.
      * 
+     * @param sprite Object with x-velocity
+     */
+    public void setVelocityX(final Sprite sprite)
+    {
+        setVelocityX(sprite.getVelocityX());
+    }
+    
+    /**
+     * Sets the x velocity so when update is called
+     * the sprite position will be updated accordingly.
+     * 
      * @param dx
      */
     public void setVelocityX(final double dx)
@@ -561,6 +583,17 @@ public class Sprite extends Cell implements Disposable
         return this.dx;
     }
     
+    /**
+     * Sets the y velocity so when update is called
+     * the sprite position will be updated accordingly.
+     * 
+     * @param sprite Object with y-velocity
+     */
+    public void setVelocityY(final Sprite sprite)
+    {
+        setVelocityY(sprite.getVelocityY());
+    }
+    
     public void setVelocityY(final double dy)
     {
         this.dy = dy;
@@ -574,6 +607,17 @@ public class Sprite extends Cell implements Disposable
     public double getVelocityY()
     {
         return this.dy;
+    }
+    
+    /**
+     * Sets the z velocity so when update is called
+     * the sprite position will be updated accordingly.
+     * 
+     * @param sprite Object with z-velocity
+     */
+    public void setVelocityZ(final Sprite sprite)
+    {
+        setVelocityZ(sprite.getVelocityZ());
     }
     
     /**

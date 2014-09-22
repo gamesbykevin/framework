@@ -45,6 +45,11 @@ public final class Animation implements Disposable
         delays = new ArrayList<>();
     }
     
+    public Animation(final double x, final double y, final double width, final double height, final long delay)
+    {
+        this((int)x, (int)y, (int)width, (int)height, delay);
+    }
+    
     public Animation(final int x, final int y, final int width, final int height, final long delay)
     {
         this();
