@@ -71,6 +71,7 @@ public final class SpriteSheet implements Disposable
         }
         
         animations.clear();
+        animations = null;
     
         current = null;
     }

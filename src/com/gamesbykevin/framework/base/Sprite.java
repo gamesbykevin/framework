@@ -119,7 +119,11 @@ public class Sprite extends Cell implements Disposable
             this.image = null;
         }
 
-        spriteSheet = null;
+        if (spriteSheet != null)
+        {
+            spriteSheet.dispose();
+            spriteSheet = null;
+        }
     }
     
     public SpriteSheet getSpriteSheet()
@@ -498,7 +502,7 @@ public class Sprite extends Cell implements Disposable
     }
     
     /**
-     * Assign the x, y, z velocity based on 
+     * Assign the x, y, z velocity based on the velocity of the sprite
      * @param sprite 
      */
     public void setVelocity(final Sprite sprite)
@@ -506,6 +510,32 @@ public class Sprite extends Cell implements Disposable
         setVelocityX(sprite);
         setVelocityY(sprite);
         setVelocityZ(sprite);
+    }
+    
+    /**
+     * Set the x, y, and z velocity
+     * @param dx x-velocity
+     * @param dy y-velocity
+     * @param dz z-velocity
+     */
+    public void setVelocity(final double dx, final double dy, final double dz)
+    {
+        setVelocityX(dx);
+        setVelocityY(dy);
+        setVelocityZ(dz);
+    }
+    
+    /**
+     * Set the x, y, and z velocity
+     * @param dx x-velocity
+     * @param dy y-velocity
+     * @param dz z-velocity
+     */
+    public void setVelocity(final int dx, final int dy, final int dz)
+    {
+        setVelocityX(dx);
+        setVelocityY(dy);
+        setVelocityZ(dz);
     }
     
     /**

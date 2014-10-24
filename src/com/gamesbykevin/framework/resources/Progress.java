@@ -23,7 +23,7 @@ public class Progress implements Disposable
     private int count = 0;
     
     //text to be displayed to the user
-    private String description;
+    private String description = null;
     
     //the location where the dynamic progress will be displayed
     private Point progressTextLocation;
