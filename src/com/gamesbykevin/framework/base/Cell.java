@@ -43,6 +43,17 @@ public class Cell
     }
     
     /**
+     * Get the distance between the locations
+     * @param goal The location we want
+     * @param current The current location we are at
+     * @return The distance between the two locations
+     */
+    public static double getDistance(final Cell goal, final Cell current)
+    {
+        return Math.sqrt(Math.pow(goal.getCol() - current.getCol(), 2) + Math.pow(goal.getRow() - current.getRow(), 2));
+    }
+    
+    /**
      * Set the boundary based on the values from the parameter Cell
      * 
      * @param cell
