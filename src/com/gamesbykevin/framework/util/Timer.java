@@ -45,7 +45,7 @@ public final class Timer implements Disposable
     /**
      * Update this timer by subtracting the deduction from the remaining time
      * 
-     * @param deduction 
+     * @param deduction The amount of time to remove from timer
      */
     public void update(final long deduction)
     {
