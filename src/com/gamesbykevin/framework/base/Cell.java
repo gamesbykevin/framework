@@ -103,26 +103,64 @@ public class Cell
     }
     
     /**
-     * Is the cell location within the boundary specified.
-     * @return boolean
+     * Is the cell located within the boundary specified?
+     * @return boolean true if so, false otherwise
      */
     public boolean hasBounds()
     {
-        return hasBounds(minCol, maxCol, minRow, maxRow);
+        return hasBounds(getMinCol(), getMaxCol(), getMinRow(), getMaxRow());
     }
     
     /**
-     * Is the Cell within the current boundary set.
+     * Is this Cell within the specified min/max boundary?
      * 
      * @param minCol Minimum value allowed for the Column
      * @param maxCol Maximum value allowed for the Column
      * @param minRow Minimum value allowed for the Row
      * @param maxRow Maximum value allowed for the Row
-     * @return boolean
+     * @return boolean true if within boundary specified, false otherwise
      */
     public boolean hasBounds(final double minCol, final double maxCol, final double minRow, final double maxRow)
     {
         return (getCol() >= minCol && getCol() <= maxCol && getRow() >= minRow && getRow() <= maxRow);
+    }
+    
+    /**
+     * Is the specified location within the cell min/max boundaries
+     * @param cell The location
+     * @return true if within the boundaries, false otherwise
+     */
+    public boolean hasBounds(final Cell cell)
+    {
+        return hasBounds(cell.getCol(), cell.getRow());
+    }
+    
+    /**
+     * Is the specified col,row location within the boundary set in this Cell?
+     * @param col Column
+     * @param row Row
+     * @return true if the (column, row) is within the assigned (min,max) values in this object, false otherwise
+     */
+    public boolean hasBounds(final double col, final double row)
+    {
+        //if the column is less than the minimum, return false
+        if (col < getMinCol())
+            return false;
+        
+        //if the column is greater than the maximum, return false
+        if (col > getMaxCol())
+            return false;
+        
+        //if the row is less than the minimum, return false
+        if (row < getMinRow())
+            return false;
+        
+        //if the row is greater than the maximum, return false
+        if (row > getMaxRow())
+            return false;
+        
+        //we are in bounds, return true
+        return true;
     }
     
     /**
