@@ -181,8 +181,11 @@ public final class Layer implements Disposable, Sound
     {
         if (isEnabled() && !enabled)
         {
-            sound.stopSound();
-            optionSound.stopSound();
+            if (sound != null)
+                sound.stopSound();
+            
+            if (optionSound != null)
+                optionSound.stopSound();
         }
         
         this.enabled = enabled;
