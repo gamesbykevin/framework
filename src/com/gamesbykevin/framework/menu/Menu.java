@@ -485,10 +485,10 @@ public abstract class Menu implements Disposable, Sound
     /**
      * Get the Layer with the specified key.
      * @param key The unique identifier to get the Layer
-     * @return Layer
+     * @return Layer The desired layer
      * @throws Exception If the Layer is not found with the specified key an Exception will be thrown
      */
-    private Layer getLayer(final String key) throws Exception
+    public Layer getLayer(final String key) throws Exception
     {
         if (!hasLayer(key))
         {
@@ -500,13 +500,23 @@ public abstract class Menu implements Disposable, Sound
         }
     }
     
-    private Layer getLayer(final Object key) throws Exception
+    /**
+     * Get the Layer
+     * @param key The key identifying the layer we want
+     * @return The specified layer in the menu
+     * @throws Exception 
+     */
+    public Layer getLayer(final Object key) throws Exception
     {
         return getLayer(key.toString());
     }
     
-    //gets the current Layer
-    private Layer getLayer() throws Exception
+    /**
+     * Get the current layer
+     * @return The current layer in the menu
+     * @throws Exception Will be thrown if layer is not found
+     */
+    public Layer getLayer() throws Exception
     {   
         return getLayer(getKey());
     }

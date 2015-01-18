@@ -183,6 +183,9 @@ public final class Option implements Disposable
             this.index = 0;
         if (this.index < 0)
             this.index = 0;
+        
+        //just in case the index changed, set the new description
+        setDescription();
     }
     
     /**
@@ -222,9 +225,6 @@ public final class Option implements Disposable
     {
         //increment the index to move to the next selection
         setIndex(getIndex() + 1);
-        
-        //set the new description
-        setDescription();
         
         //reset font size so we can ensure the next selection fits inside the container
         fontSize = 0.0f;

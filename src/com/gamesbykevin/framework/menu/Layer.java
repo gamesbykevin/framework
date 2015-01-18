@@ -681,8 +681,11 @@ public final class Layer implements Disposable, Sound
             setHighlighted();
         }
     }
-    
-    private void resetOptionsImage()
+
+    /**
+     * Flag that a new image needs to be drawn for the options
+     */
+    public void resetOptionsImage()
     {
         //flag that new image needs to be drawn
         renderNewOptionsImage = true;
