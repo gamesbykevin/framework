@@ -555,18 +555,22 @@ public abstract class Menu implements Disposable, Sound
     
     /**
      * This will get the index of a specific selection for a specific option for a specific layer
-     * @param layer  
-     * @param option 
-     * @return int
+     * @param layer The layer the option is located within
+     * @param option The option we are checking
+     * @return int The position of the selection for this option
+     * @throws Exception will be thrown if option is not found
      */
     public int getOptionSelectionIndex(final Object layer, final Object option) throws Exception
-    {   
+    {
+        //if option does not exist throw exception
+        if (getLayer(layer).getOption(option) == null)
+            throw new Exception("Option is not found (layer = " + layer.toString() + ", option = " + option.toString() + ")");
+            
         return getLayer(layer).getOption(option).getIndex();
     }
     
     /**
      * This will set the selection of all Options with the assigned Option key
-     * 
      * @param option The option key 
      * @param index The value we want set
      */

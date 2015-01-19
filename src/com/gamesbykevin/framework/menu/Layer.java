@@ -351,25 +351,21 @@ public final class Layer implements Disposable, Sound
         return (!options.isEmpty());
     }
     
-    protected Option getOption(Object key) throws Exception
+    protected Option getOption(Object key)
     {
         return getOption(key.toString());
     }
     
-    private Option getOption(final String key) throws Exception
+    private Option getOption(final String key)
     {
-        if (options.get(key) == null)
-            throw new Exception("Option does not exist = " + key);
-        
         return options.get(key);
     }
     
     /**
      * Get the current option
      * @return The current option
-     * @throws Exception if option is not found
      */
-    private Option getOption() throws Exception
+    private Option getOption()
     {
         return getOption(getCurrent());
     }
@@ -616,7 +612,7 @@ public final class Layer implements Disposable, Sound
      * 
      * @param previous Do we want the previous Option? If not get the next Option
      */
-    private void setNextOption(final boolean previous) throws Exception
+    private void setNextOption(final boolean previous)
     {
         //if the current Option has not been selected yet set the first one
         if (getCurrent() == null)
@@ -698,7 +694,7 @@ public final class Layer implements Disposable, Sound
     /**
      * Set all options not highlighted except for the current option
      */
-    private void setHighlighted() throws Exception
+    private void setHighlighted()
     {
         //reset options image
         resetOptionsImage();
