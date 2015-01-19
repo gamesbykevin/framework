@@ -315,7 +315,7 @@ public final class Layer implements Disposable, Sound
      * 
      * @param location 
      */
-    protected void setCurrent(final Point location)
+    protected void setCurrent(final Point location) throws Exception
     {
         for (Object key : options.keySet().toArray())
         {
@@ -351,21 +351,25 @@ public final class Layer implements Disposable, Sound
         return (!options.isEmpty());
     }
     
-    protected Option getOption(Object key)
+    protected Option getOption(Object key) throws Exception
     {
         return getOption(key.toString());
     }
     
-    private Option getOption(final String key)
+    private Option getOption(final String key) throws Exception
     {
+        if (options.get(key) == null)
+            throw new Exception("Option does not exist = " + key);
+        
         return options.get(key);
     }
     
     /**
      * Get the current option
-     * @return 
+     * @return The current option
+     * @throws Exception if option is not found
      */
-    private Option getOption()
+    private Option getOption() throws Exception
     {
         return getOption(getCurrent());
     }
@@ -612,7 +616,7 @@ public final class Layer implements Disposable, Sound
      * 
      * @param previous Do we want the previous Option? If not get the next Option
      */
-    private void setNextOption(final boolean previous)
+    private void setNextOption(final boolean previous) throws Exception
     {
         //if the current Option has not been selected yet set the first one
         if (getCurrent() == null)
@@ -694,7 +698,7 @@ public final class Layer implements Disposable, Sound
     /**
      * Set all options not highlighted except for the current option
      */
-    private void setHighlighted()
+    private void setHighlighted() throws Exception
     {
         //reset options image
         resetOptionsImage();
@@ -975,8 +979,15 @@ public final class Layer implements Disposable, Sound
         {
             for (Object key : options.keySet().toArray())
             {
-                getOption(key).dispose();
-                options.put(key, null);
+                try
+                {
+                    getOption(key).dispose();
+                    options.put(key, null);
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
             }
             
             options.clear();
