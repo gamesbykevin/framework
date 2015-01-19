@@ -172,7 +172,6 @@ public final class Audio implements Runnable, Disposable
 
                     //start playing sound
                     sequencer.start();
-                    
                     break;
 
                 case WAV:
@@ -186,7 +185,6 @@ public final class Audio implements Runnable, Disposable
                     {
                         ac.play();
                     }
-
                     break;     
 
                 case MP3:
@@ -219,7 +217,6 @@ public final class Audio implements Runnable, Disposable
                         //the thread will pause here as the framework plays the mp3 source
                         player.play(); 
                     }
-
                     break;
             }
         }
