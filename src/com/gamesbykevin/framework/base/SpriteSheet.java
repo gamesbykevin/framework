@@ -170,13 +170,19 @@ public final class SpriteSheet implements Disposable
     /**
      * Checks if a delay has been setup.<br><br>
      * The delay has been setup if the value is greater than or equal to 0.
-     * @return boolean
+     * @return boolean true if the delay is setup, false otherwise
      */
     public boolean hasDelay()
     {
         return hasDelay(getDelay());
     }
     
+    /**
+     * Checks if a delay has been setup.<br><br>
+     * The delay has been setup if the value is greater than or equal to 0.
+     * @param delay Time delay
+     * @return boolean true if the delay is setup, false otherwise
+     */
     public boolean hasDelay(final long delay)
     {
         return (delay >= 0);
@@ -242,6 +248,11 @@ public final class SpriteSheet implements Disposable
         animations.remove(key);
     }
     
+    /**
+     * Update the current assigned animation
+     * @param delay Time delay between each game update
+     * @throws Exception Will be thrown if the delay 
+     */
     public void update(final long delay) throws Exception
     {
         if (isPaused())
