@@ -320,26 +320,42 @@ public class Sprite extends Cell implements Disposable
         return this.y;
     }
     
+    /**
+     * Get the distance between the current (x, y) location and the parameter location
+     * @param sprite Object containing (x,y) coordinate
+     * @return The distance between the current (x, y) location and the parameter location.
+     */
     public double getDistance(final Sprite sprite)
     {
         return getDistance(sprite.getX(), sprite.getY());
     }
     
+    /**
+     * Get the distance between the current (x, y) location and the parameter location
+     * @param point Object containing (x,y) coordinate
+     * @return The distance between the current (x, y) location and the parameter location.
+     */
     public double getDistance(final Point point)
     {
         return getDistance((double)point.x, (double)point.y);
     }
     
+    /**
+     * Get the distance between the current (x, y) location and the parameter location
+     * @param x x-coordinate
+     * @param y y-coordinate
+     * @return The distance between the current (x, y) location and the parameter location.
+     */
     public double getDistance(final int x, final int y)
     {
         return getDistance((double)x, (double)y);
     }
     
     /**
-     * Get the distance between the current location and the parameter location
+     * Get the distance between the current (x, y) location and the parameter location
      * @param x x-coordinate
      * @param y y-coordinate
-     * @return The distance between the current location and the parameter location.
+     * @return The distance between the current (x, y) location and the parameter location.
      */
     public double getDistance(final double x, final double y)
     {
