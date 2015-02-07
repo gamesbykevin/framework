@@ -250,8 +250,8 @@ public final class SpriteSheet implements Disposable
     
     /**
      * Update the current assigned animation
-     * @param delay Time delay between each game update
-     * @throws Exception Will be thrown if the delay 
+     * @param delay Time delay between each game update "Note: must be greater than 0"
+     * @throws Exception Will be thrown if the delay is not properly set
      */
     public void update(final long delay) throws Exception
     {
