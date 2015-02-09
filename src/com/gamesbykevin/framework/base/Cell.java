@@ -50,7 +50,20 @@ public class Cell
      */
     public static double getDistance(final Cell goal, final Cell current)
     {
-        return Math.sqrt(Math.pow(goal.getCol() - current.getCol(), 2) + Math.pow(goal.getRow() - current.getRow(), 2));
+        return getDistance(goal.getCol(), goal.getRow(), current.getCol(), current.getRow());
+    }
+    
+    /**
+     * Get the distance between the locations
+     * @param column1 Column 1
+     * @param row1 Row 1
+     * @param column2 Column 2 
+     * @param row2 Row 2
+     * @return The distance between the two locations
+     */
+    public static double getDistance(final double column1, final double row1, final double column2, final double row2)
+    {
+        return Math.sqrt(Math.pow(column1 - column2, 2) + Math.pow(row1 - row2, 2));
     }
     
     /**
