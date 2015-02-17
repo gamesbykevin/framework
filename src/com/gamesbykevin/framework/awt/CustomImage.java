@@ -29,10 +29,10 @@ public abstract class CustomImage extends Sprite implements Disposable
         super.setWidth(width);
         super.setHeight(height);
         
-        //create buffered image capable of transparency
+        //create buffered image with transparency
         this.bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         
-        //get graphics object to draw image
+        //get graphics object to draw this image
         this.graphics2d = this.bufferedImage.createGraphics();
         
         //set transparent background by default
