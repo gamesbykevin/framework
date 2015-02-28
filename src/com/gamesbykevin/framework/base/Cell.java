@@ -71,7 +71,7 @@ public class Cell
      * 
      * @param cell
      */
-    public void setBounds(final Cell cell)
+    public final void setBounds(final Cell cell)
     {
         setBounds(cell.getMinCol(), cell.getMaxCol(), cell.getMinRow(), cell.getMaxRow());
     }
@@ -84,7 +84,7 @@ public class Cell
      * @param minRow The minimum row
      * @param maxRow The maximum row
      */
-    public void setBounds(final double minCol, final double maxCol, final double minRow, final double maxRow)
+    public final void setBounds(final double minCol, final double maxCol, final double minRow, final double maxRow)
     {
         this.minCol = minCol;
         this.maxCol = maxCol;
