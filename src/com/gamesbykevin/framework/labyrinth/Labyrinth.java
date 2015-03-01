@@ -358,7 +358,7 @@ public final class Labyrinth implements Disposable
      * @return Location, if the location does not exist null is returned
      * @throws Exception 
      */
-    public Location getLocation(Cell cell) throws Exception
+    public Location getLocation(final Cell cell) throws Exception
     {
         return getLocation((int)cell.getCol(), (int)cell.getRow());
     }
@@ -370,7 +370,7 @@ public final class Labyrinth implements Disposable
      * @return Location, if the location does not exist null is returned
      * @throws Exception 
      */
-    public Location getLocation(int col, int row) throws Exception
+    public Location getLocation(final int col, final int row) throws Exception
     {
         switch(algorithm)
         {
