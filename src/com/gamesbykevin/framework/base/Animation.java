@@ -52,10 +52,7 @@ public final class Animation implements Disposable
     
     public Animation(final int x, final int y, final int width, final int height, final long delay)
     {
-        this();
-        
-        //add this animation
-        add(x, y, width, height, delay);
+        this(new Rectangle(x, y, width, height), delay);
     }
     
     /**

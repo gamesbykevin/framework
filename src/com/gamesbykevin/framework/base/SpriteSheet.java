@@ -230,6 +230,20 @@ public final class SpriteSheet implements Disposable
     }
     
     /**
+     * Add an animation with a single frame
+     * @param x x-coordinate
+     * @param y y-coordinate
+     * @param w width
+     * @param h height
+     * @param delay time delay for frame
+     * @param key Unique identifier for this animation
+     */
+    public void add(final int x, final int y, final int w, final int h, final long delay, final Object key)
+    {
+        add(new Animation(x, y, w, h, delay), key);
+    }
+    
+    /**
      * Add animation to HashMap marking the key as the identifier
      * @param animation Sprite Animation
      * @param key Unique identifier for this animation
