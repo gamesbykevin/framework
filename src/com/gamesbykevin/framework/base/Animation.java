@@ -57,8 +57,8 @@ public final class Animation implements Disposable
     
     /**
      * Use this constructor for convenience if you only have one frame in your animation
-     * @param location
-     * @param delay 
+     * @param location Coordinates where you image is
+     * @param delay Time delay for animation
      */
     public Animation(final Rectangle location, final long delay)
     {
