@@ -40,9 +40,8 @@ public class FullScreen
     }
     
     /**
-     * Is full screen enabled
-     * 
-     * @return boolean
+     * Is full screen enabled?
+     * @return boolean true=yes, false=no
      */
     public boolean isEnabled()
     {
@@ -73,7 +72,7 @@ public class FullScreen
             frame.dispose();
             enabled = false;
         }
-        
+
         applet.setBounds(0, 0, applet.getParent().getSize().width, applet.getParent().getSize().height);
         applet.requestFocus();
    }
