@@ -373,6 +373,16 @@ public class Sprite extends Cell implements Disposable
     }
     
     /**
+     * Assign the dimensions of this sprite.<br>
+     * This will assign the same width/height
+     * @param dimensions The width/height
+     */
+    public void setDimensions(final int dimensions)
+    {
+        this.setDimensions(dimensions, dimensions);
+    }
+    
+    /**
      * Set the width and height based on parameters passed.
      * 
      * @param w Width
