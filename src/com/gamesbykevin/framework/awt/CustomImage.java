@@ -88,7 +88,7 @@ public abstract class CustomImage extends Sprite implements Disposable
      * Each child class will need to implement their own method to draw the image
      * @throws Exception if issue during render
      */
-    public abstract void renderImage() throws Exception;
+    public abstract void render() throws Exception;
     
     @Override
     public void dispose()
