@@ -233,13 +233,27 @@ public final class Animation implements Disposable
         this.started = started;
     }
     
+    /**
+     * Has the animation finished?<br>
+     * This will return false, if the animation is set to loop
+     * @return true if the animation is on the last index and that animation has finished, otherwise false
+     */
     public boolean hasFinished()
     {
-        return finished;
+        return this.finished;
     }
     
+    /**
+     * Manually flag the animation as finished.<br>
+     * If we flag true we will also set the index to the end as well
+     * @param finished true=yes, false=no
+     */
     public void setFinished(final boolean finished)
     {
         this.finished = finished;
+        
+        //if we flagged finish, also assign the last index
+        if (hasFinished())
+            setIndex(getSize() - 1);
     }
 }
