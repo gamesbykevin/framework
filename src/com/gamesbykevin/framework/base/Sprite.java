@@ -230,7 +230,7 @@ public class Sprite extends Cell implements Disposable
     
     /**
      * Set the x, y coordinate location for this sprite.<br>
-     * The center of the rectangle will be the location set
+     * The center of the rectangle will be the x,y location set
      * @param r Rectangle containing x, y, width, height coordinates.
      */
     public void setLocation(final Rectangle r)
@@ -360,6 +360,16 @@ public class Sprite extends Cell implements Disposable
     public double getDistance(final double x, final double y)
     {
         return Math.sqrt(Math.pow(x - getX(), 2) + Math.pow(y - getY(), 2));
+    }
+    
+    /**
+     * Set the width and height based on the same width/height of the sprite
+     * 
+     * @param sprite The sprite we want to copy the dimensions from
+     */
+    public void setDimensions(final Sprite sprite)
+    {
+        setDimensions(sprite.getWidth(), sprite.getHeight());
     }
     
     /**
