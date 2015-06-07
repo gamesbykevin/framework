@@ -235,7 +235,7 @@ public final class Animation implements Disposable
     
     /**
      * Has the animation finished?<br>
-     * This will return false, if the animation is set to loop
+     * If the animation is set to loop, this will return false unless the finish flag is set manually
      * @return true if the animation is on the last index and that animation has finished, otherwise false
      */
     public boolean hasFinished()
