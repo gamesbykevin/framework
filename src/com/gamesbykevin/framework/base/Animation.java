@@ -39,7 +39,7 @@ public final class Animation implements Disposable
     //how much longer until we can move to the next frame in animation (nanoseconds)
     private long currentDelay = 0;
     
-    public Animation()
+    private Animation()
     {
         locations = new ArrayList<>();
         delays = new ArrayList<>();

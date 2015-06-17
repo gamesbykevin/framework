@@ -32,11 +32,12 @@ public class Keyboard
     public void addKeyReleased(final int keyCode)
     {
         //make sure we are within range of array
-        checkRange(keyCode);
-        
-        //can't do both
-        released[keyCode] = true;
-        pressed[keyCode] = false;
+        if (hasRange(keyCode))
+        {
+            //can't do both
+            released[keyCode] = true;
+            pressed[keyCode] = false;
+        }
     }
     
     /**
@@ -46,11 +47,12 @@ public class Keyboard
     public void addKeyPressed(final int keyCode)
     {
         //make sure we are within range of array
-        checkRange(keyCode);
-        
-        //can't do both
-        pressed[keyCode] = true;
-        released[keyCode] = false;
+        if (hasRange(keyCode))
+        {
+            //can't do both
+            pressed[keyCode] = true;
+            released[keyCode] = false;
+        }
     }
     
     /**
@@ -60,10 +62,11 @@ public class Keyboard
     public void removeKeyReleased(final int keyCode)
     {
         //make sure we are within range of array
-        checkRange(keyCode);
-        
-        //unflag
-        released[keyCode] = false;
+        if (hasRange(keyCode))
+        {
+            //unflag
+            released[keyCode] = false;
+        }
     }
     
     /**
@@ -73,10 +76,11 @@ public class Keyboard
     public void removeKeyPressed(final int keyCode)
     {
         //make sure we are within range of array
-        checkRange(keyCode);
-        
-        //unflag
-        pressed[keyCode] = false;
+        if (hasRange(keyCode))
+        {
+            //unflag
+            pressed[keyCode] = false;
+        }
     }
     
     /**
@@ -119,10 +123,15 @@ public class Keyboard
     public boolean hasKeyPressed(final int keyCode)
     {
         //make sure we are within range of array
-        checkRange(keyCode);
-        
-        //return result
-        return pressed[keyCode];
+        if (hasRange(keyCode))
+        {
+            //return result
+            return pressed[keyCode];
+        }
+        else
+        {
+            return false;
+        }
     }
     
     /**
@@ -133,28 +142,41 @@ public class Keyboard
     public boolean hasKeyReleased(final int keyCode)
     {
         //make sure we are within range of array
-        checkRange(keyCode);
-        
-        //return result
-        return released[keyCode];
+        if (hasRange(keyCode))
+        {
+            //return result
+            return released[keyCode];
+        }
+        else
+        {
+            return false;
+        }
     }
 
     /**
-     * Here we will make sure that the index is within the range of key pressed/released.<br>
-     * An exception error will be displayed if the index is out of bounds
-     * @param index The index
+     * Do we have range?
+     * @param index Index location we want to check
+     * @return true if we are within range of the list, otherwise false
      */
-    private void checkRange(final int index)
+    private boolean hasRange(final int index)
     {
         try
         {
             if (index < 0 || index > pressed.length - 1 || index > released.length - 1)
-                throw new Exception("The keyCode value: " + index + " is too large for the keyboard array and can't be cheked for keyboard events");
+            {
+                //print to command line key not available
+                System.out.println("The keyCode value: " + index + " is too large for the keyboard array list and can't be cheked for keyboard events");
+                
+                //return false
+                return false;
+            }
         }
         catch (Exception e)
         {
             e.printStackTrace();
         }
+        
+        return true;
     }
     
     /**
