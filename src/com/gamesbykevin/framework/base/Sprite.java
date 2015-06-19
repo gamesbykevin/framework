@@ -943,7 +943,7 @@ public class Sprite extends Cell implements Disposable
      * @param sy1 Source y1
      * @param sx2 Source x2
      * @param sy2 Source y2
-     * @throws Exception will be thrown if the sprite dimensions are not set "< 1"
+     * @throws Exception will be thrown if the sprite dimensions are not set or are less than 1, or if the image is null
      */
     public void draw(final Graphics graphics, final Image image, final int dx1, final int dy1, final int dx2, final int dy2, final int sx1, final int sy1, final int sx2, final int sy2) throws Exception
     {
@@ -951,6 +951,8 @@ public class Sprite extends Cell implements Disposable
             throw new Exception("Sprite can't be drawn because the width is less than 1");
         if (dy2 - dy1 < 1)
             throw new Exception("Sprite can't be drawn because the height is less than 1");
+        if (image == null)
+            throw new Exception("Sprite can't be drawn because the specified image is null");
 
         graphics.drawImage(image, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, null);
     }
