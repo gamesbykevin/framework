@@ -44,11 +44,24 @@ public class Timers
      */
     public static final String FORMAT_8 = "mm:ss";
     
-    
-    //how many nano seconds per .......
+    /**
+     * Number of nanoseconds per 1 second
+     */
     public static final long NANO_SECONDS_PER_SECOND      = 1000000000;
+    
+    /**
+     * Number of nanoseconds per 1 millisecond
+     */
     public static final long NANO_SECONDS_PER_MILLISECOND = 1000000;
+    
+    /**
+     * Number of nanoseconds per 1 minute
+     */
     public static final long NANO_SECONDS_PER_MINUTE      = 60000000000L;
+    
+    /**
+     * Number of nanoseconds per 1 hour
+     */
     public static final long NANO_SECONDS_PER_HOUR        = 3600000000000L;
     
     //list of timers as well as the key to retrieving each timer
