@@ -799,12 +799,10 @@ public class Sprite extends Cell implements Disposable
     }
     
     /**
-     * Draw our sprite object with the specified 
-     * parameter image and draw a specified portion 
-     * of that image.
-     * @param graphics Graphics object to draw to
+     * Draw our sprite object with the specified parameter image and draw a portion of that image.
+     * @param graphics Graphics object we will draw to
      * @param image Image to be drawn
-     * @param location Portion of Image we want to draw
+     * @param location Location on image that we want to draw, use null if you want to draw the entire image
      * @throws Exception will be thrown if the sprite dimensions are not set "< 1"
      */
     public void draw(final Graphics graphics, final Image image, final Rectangle location) throws Exception
@@ -947,13 +945,32 @@ public class Sprite extends Cell implements Disposable
      */
     public void draw(final Graphics graphics, final Image image, final int dx1, final int dy1, final int dx2, final int dy2, final int sx1, final int sy1, final int sx2, final int sy2) throws Exception
     {
+        if (image == null)
+            throw new Exception("Sprite can't be drawn because the specified image is null");
+        
+        //make sure the source coordinates are within the dimensions of the image, or else nothing will be drawn
+        if (sx1 < 0 || sx2 > image.getWidth(null) || sy1 < 0 || sy2 > image.getHeight(null))
+        {
+            //get the rectangle of the image
+            final String imageDescription = "Image Rectangle (0,0," + image.getWidth(null) + "," + image.getHeight(null) + ")";
+            
+            //the dimensions of the animation
+            final int height = (sy1  > sy2) ? sy1 - sy2 : sy2 - sy1;
+            final int width = (sx1  > sx2) ? sx1 - sx2 : sx2 - sx1;
+            
+            //get the rectangle of the animation
+            final String animationDescription = "Animation Rectangle (" + sx1 + "," + sy1 + "," + width + "," + height + ")";
+            
+            //display to show how the animation is out of bounds
+            throw new Exception("The coordinates of the animation source are outside the image dimensions. " + imageDescription + ". " + animationDescription);
+        }
+        
         if (dx2 - dx1 < 1)
             throw new Exception("Sprite can't be drawn because the width is less than 1");
         if (dy2 - dy1 < 1)
             throw new Exception("Sprite can't be drawn because the height is less than 1");
-        if (image == null)
-            throw new Exception("Sprite can't be drawn because the specified image is null");
 
+        //finally we draw our specifed image
         graphics.drawImage(image, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, null);
     }
 }
