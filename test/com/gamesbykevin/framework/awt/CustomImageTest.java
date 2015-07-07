@@ -71,7 +71,7 @@ public class CustomImageTest
     }
     
     @After
-    public void tearDown() 
+    public void tearDown()
     {
         image.dispose();
         
@@ -82,5 +82,11 @@ public class CustomImageTest
         assertNull(image.getBufferedImage());
         
         image = null;
+    }
+    
+    @Test
+    public void hello()
+    {
+        
     }
 }

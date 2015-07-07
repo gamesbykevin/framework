@@ -44,6 +44,16 @@ public class Progress implements Disposable
     private Rectangle screen;
     
     /**
+     * Default loading text to be displayed
+     */
+    private static final String DEFAULT_DESCRIPTION_LOADING_TEXT = "Loading ";
+    
+    /**
+     * Default screen to set if none exist
+     */
+    private static final Rectangle DEFAULT_SCREEN = new Rectangle(0,0,100,100);
+    
+    /**
      * Create new Progress tracker with the goal set
      * 
      * @param goal 
@@ -55,7 +65,19 @@ public class Progress implements Disposable
     
     /**
      * Set the screen where the progress will be shown
-     * @param screen 
+     * @param x x-coordinate
+     * @param y y-coordinate
+     * @param w width
+     * @param h height
+     */
+    public void setScreen(final int x, final int y, final int w, final int h)
+    {
+        setScreen(new Rectangle(x, y, w, h));
+    }
+    
+    /**
+     * Set the screen where the progress will be shown
+     * @param screen Dimensions of our window
      */
     public void setScreen(final Rectangle screen)
     {
@@ -82,17 +104,16 @@ public class Progress implements Disposable
     }
     
     /**
-     * Set Text to display when render is called, can be null.<br>
-     * Note: You can only set the description once.
-     * @param description The description to display
-     * @throws Exception if the description was already set previously and exception will be thrown.
+     * Assign the text to display when rendering the progress.
+     * @param description The description to display next to the progress. Example "Loading .."
      */
-    public void setDescription(final String description) throws Exception
+    public void setDescription(final String description)
     {
-        if (this.description != null)
-            throw new Exception("Description has already been set.");
-        
+        //assign the description
         this.description = description;
+        
+        //remove the existing image, because a new one will need to be drawn
+        this.image = null;
     }
     
     /**
@@ -177,27 +198,24 @@ public class Progress implements Disposable
     }
     
     /**
-     * Draw the progress within the set screen.<br>
-     * If the screen is not set a null exception will be thrown
-     * @param graphics 
+     * Draw the progress
+     * @param graphics Object used to write image
      */
     public void render(Graphics graphics)
     {
-        render(graphics, getScreen());
-    }
-    
-    /**
-     * Draw the progress within Rectangle container
-     * @param graphics
-     * @param screen
-     */
-    public void render(Graphics graphics, Rectangle screen)
-    {
+        //if there is no screen, create a default
+        if (getScreen() == null)
+            setScreen(DEFAULT_SCREEN);
+        
+        //set a default description if not already set
+        if (getDescription() == null)
+            setDescription(DEFAULT_DESCRIPTION_LOADING_TEXT);
+            
         //create image of Progress information as all information will be static except getProgress()
         if (image == null)
         {
             //create an image of the same size as Rectangle screen
-            this.image = new BufferedImage(screen.width, screen.height, BufferedImage.TYPE_INT_ARGB);
+            this.image = new BufferedImage(getScreen().width, getScreen().height, BufferedImage.TYPE_INT_ARGB);
             
             //get Graphics object so we can write to image
             Graphics imageGraphics = image.createGraphics();
@@ -207,21 +225,14 @@ public class Progress implements Disposable
             
             //make the background the size of our Rectangle and fill it with Black Color
             imageGraphics.setColor(Color.BLACK);
-            imageGraphics.fillRect(screen.x, screen.y, screen.width, screen.height);
+            imageGraphics.fillRect(getScreen().x, getScreen().y, getScreen().width, getScreen().height);
 
             //we will display the information in the middle
-            final int middleX = screen.x + (screen.width /2);
-            final int middleY = screen.y + (screen.height/2);
-
-            //default description
-            String loadingDesc = "Loading ";
-
-            //if a description exists we will use it
-            if (getDescription() != null && getDescription().trim().length() > 0)
-                loadingDesc = getDescription() + " ";
+            final int middleX = getScreen().x + (getScreen().width /2);
+            final int middleY = getScreen().y + (getScreen().height/2);
 
             //add extra text to loadingDesc so the overall result will appear centered
-            float fontSize = Menu.getFontSize(loadingDesc + EXTRA_TEXT, (int)(screen.width * TEXT_CONTAINER_WIDTH_RATIO), imageGraphics);
+            float fontSize = Menu.getFontSize(getDescription() + EXTRA_TEXT, (int)(getScreen().width * TEXT_CONTAINER_WIDTH_RATIO), imageGraphics);
             
             //correct font size has been found, so we set it
             imageGraphics.setFont(graphics.getFont().deriveFont(fontSize));
@@ -233,10 +244,10 @@ public class Progress implements Disposable
             this.font = imageGraphics.getFont();
             
             //get the pixel width of our full description including extra text
-            final int fullTextWidth = imageGraphics.getFontMetrics().stringWidth(loadingDesc + EXTRA_TEXT);
+            final int fullTextWidth = imageGraphics.getFontMetrics().stringWidth(getDescription() + EXTRA_TEXT);
 
             //get the pixel width of just the text description not including extra text
-            final int textWidth = imageGraphics.getFontMetrics().stringWidth(loadingDesc);
+            final int textWidth = imageGraphics.getFontMetrics().stringWidth(getDescription());
             
             //make the appropriate calculations do the display text will appear in the center
             final int drawX = middleX - (fullTextWidth / 2);
@@ -244,17 +255,17 @@ public class Progress implements Disposable
 
             //write the loading description to image as this information will not change
             imageGraphics.setColor(Color.WHITE);
-            imageGraphics.drawString(loadingDesc, drawX, drawY);
+            imageGraphics.drawString(getDescription(), drawX, drawY);
 
             //the location where we will draw the dynamic Progress
             progressTextLocation = new Point(drawX + textWidth, drawY);
             
             //the starting point where we will draw the progress bar
-            progressBarDimension = new Rectangle(screen.x, drawY + fontHeight, screen.width, imageGraphics.getFontMetrics().getHeight());
+            progressBarDimension = new Rectangle(getScreen().x, drawY + fontHeight, getScreen().width, imageGraphics.getFontMetrics().getHeight());
         }
         
         //draw background loading image
-        graphics.drawImage(this.image, screen.x, screen.y, screen.width, screen.height, null);
+        graphics.drawImage(this.image, getScreen().x, getScreen().y, getScreen().width, getScreen().height, null);
         
         //set same font and color to match background image
         graphics.setColor(Color.WHITE);
@@ -266,8 +277,7 @@ public class Progress implements Disposable
     }
     
     /**
-     * Calculate the percentage complete as a percentage.
-     * 
+     * Calculate the progress complete as a percentage.
      * @return int Percent complete from 0% - 100%
      */
     private int getCompleteProgress()

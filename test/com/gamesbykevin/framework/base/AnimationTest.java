@@ -33,13 +33,20 @@ public class AnimationTest
     @AfterClass
     public static void tearDownClass() 
     {
+        final int x = 10;
+        final long delay = 0;
         
+        Animation animation = new Animation(new Rectangle(x,x,x,x), delay);
+        animation.dispose();
+        animation = null;
+        assertNull(animation);
     }
     
     @Before
     public void setUp() 
     {
-        
+        animation = new Animation(new Rectangle(0,0,10,10), 100);
+        assertNotNull(animation);
     }
     
     @After

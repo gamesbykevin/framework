@@ -196,7 +196,10 @@ public abstract class ResourceManager implements IResourceManager
     @Override
     public void render(final Graphics graphics, final Rectangle screen)
     {
+        //assign the progress window
+        progress.setScreen(screen);
+        
         //draw our progress withing the specified window
-        progress.render(graphics, screen);
+        progress.render(graphics);
     }
 }

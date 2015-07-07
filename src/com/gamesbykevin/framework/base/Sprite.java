@@ -7,6 +7,7 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.util.UUID;
 
 public class Sprite extends Cell implements Disposable
 {
@@ -19,10 +20,10 @@ public class Sprite extends Cell implements Disposable
     private double z = 0, dz = 0;
     
     //each object will have it's own id
-    private final long id = System.nanoTime();
+    private final UUID id = UUID.randomUUID();
     
     //does this object belong to another
-    private long parentId = 0;
+    private UUID parentId;
     
     //switch image east/west
     private boolean horizontalFlip = false;
@@ -54,7 +55,7 @@ public class Sprite extends Cell implements Disposable
      * Create a new Sprite copying all the information from the parameter Sprite
      * @param sprite 
      */
-    public Sprite(final Sprite sprite)
+    public Sprite(final Sprite sprite) throws Exception
     {
         this();
         
@@ -87,7 +88,7 @@ public class Sprite extends Cell implements Disposable
      * Which object does this one belong to
      * @return The unique identifier of the object this belongs to
      */
-    public long getParentId()
+    public UUID getParentId()
     {
         return this.parentId;
     }
@@ -96,16 +97,16 @@ public class Sprite extends Cell implements Disposable
      * Set the id so we know which object this one belongs to
      * @param parentId The unique identifier of the parent object
      */
-    public void setParentId(final long parentId)
+    public void setParentId(final UUID parentId)
     {
         this.parentId = parentId;
     }
     
     /**
      * Get the unique identifier for this object
-     * @return The unique id
+     * @return The unique identifier
      */
-    public long getId()
+    public UUID getId()
     {
         return this.id;
     }

@@ -25,9 +25,9 @@ public final class SpriteSheet implements Disposable
     
     /**
      * Create a new sprite sheet and copy all the animations
-     * @param spriteSheet 
+     * @param spriteSheet Another sprite sheet whose attributes/properties we want to copy
      */
-    public SpriteSheet(final SpriteSheet spriteSheet)
+    public SpriteSheet(final SpriteSheet spriteSheet) throws Exception
     {
         this();
         
@@ -80,7 +80,7 @@ public final class SpriteSheet implements Disposable
      * Has the current animation finished
      * @return boolean
      */
-    public boolean hasFinished()
+    public boolean hasFinished() throws Exception
     {
         return getSpriteSheetAnimation().hasFinished();
     }
@@ -89,7 +89,7 @@ public final class SpriteSheet implements Disposable
      * Has the current animation started
      * @return boolean
      */
-    public boolean hasStarted()
+    public boolean hasStarted() throws Exception
     {
         return getSpriteSheetAnimation().hasStarted();
     }
@@ -98,7 +98,7 @@ public final class SpriteSheet implements Disposable
      * Is the current animation set to loop
      * @return true if the current animation is set to loop, false otherwise
      */
-    public boolean hasLoop()
+    public boolean hasLoop() throws Exception
     {
         return getSpriteSheetAnimation().hasLoop();
     }
@@ -107,7 +107,7 @@ public final class SpriteSheet implements Disposable
      * Returns the location of the current animation
      * @return Rectangle location of the current animation
      */
-    public Rectangle getLocation()
+    public Rectangle getLocation() throws Exception
     {
         return getSpriteSheetAnimation().getLocation();
     }
@@ -115,23 +115,23 @@ public final class SpriteSheet implements Disposable
     /**
      * Resets current animation
      */
-    public void reset()
+    public void reset() throws Exception
     {
         getSpriteSheetAnimation().reset();
     }
     
     /**
      * Checks to see if the animation exists
-     * @return boolean
+     * @return boolean true if the specified animation exists, false otherwise
      */
     public boolean hasAnimation(final Object current)
     {
-        return (animations.get(current) != null);
+        return (animations != null && animations.get(current) != null);
     }
     
     /**
      * Return true if any animations exist
-     * @return boolean
+     * @return boolean true if at least 1 animation exists, false otherwise
      */
     public boolean hasAnimations()
     {
@@ -140,22 +140,16 @@ public final class SpriteSheet implements Disposable
     
     /**
      * Sets the current animation with the assigned unique key
-     * @param current Object that uniquely identifies the animation
+     * @param key Key to identify the animation
+     * @throws Exception If the specified animation does not exist
      */
-    public void setCurrent(final Object key)
+    public void setCurrent(final Object key) throws Exception
     {
-        try
-        {
-            //if the animation does not exist throw exception because we can't set it
-            if (getSpriteSheetAnimation(key) == null)
-                throw new Exception("Animation does not exist for: " + key.toString());
-        
-            this.current = key;
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
+        //if the animation does not exist throw exception because we can't set it
+        if (getSpriteSheetAnimation(key) == null)
+            throw new Exception("Animation does not exist for: " + key.toString());
+
+        this.current = key;
     }
     
     /**
@@ -199,9 +193,9 @@ public final class SpriteSheet implements Disposable
     
     /**
      * gets the duration of the current frame in the current animation
-     * @return 
+     * @return The delay of the current frame of the current animation assigned
      */
-    public long getDelayMax()
+    public long getDelayMax() throws Exception
     {
         return getSpriteSheetAnimation().getDelayMax();
     }
@@ -289,45 +283,34 @@ public final class SpriteSheet implements Disposable
     }
     
     /**
-     * Get current animation. If animation is not set exception will occur.
+     * 
      * @return Animation based on the current animation set
      */
-    public Animation getSpriteSheetAnimation()
+    /**
+     * Get the current animation. <br>
+     * If animation is not set an exception will be thrown.
+     * @return The current animation assigned
+     * @throws Exception If the current animation is not assigned
+     */
+    public Animation getSpriteSheetAnimation() throws Exception
     {
-        try
-        {
-            if (getCurrent() == null)
-                throw new Exception("The current animation was not found because the current animation has not been set yet. setCurrent() will set the current animation");
+        if (getCurrent() == null)
+            throw new Exception("The current animation was not found because the current animation has not been set yet. Call setCurrent() to set the current animation");
 
-            return getSpriteSheetAnimation(getCurrent());
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-        }
-        
-        return null;
+        return getSpriteSheetAnimation(getCurrent());
     }
     
     /**
      * Get the sprite sheet animation. If animation is not set exception will occur.
      * @param key Unique identifier used to get the appropriate animation
      * @return Animation that corresponds with parameter key
+     * @throws Exception If the specified key is null
      */
-    public Animation getSpriteSheetAnimation(Object key)
+    public Animation getSpriteSheetAnimation(Object key) throws Exception
     {
-        try
-        {
-            if (key == null)
-                throw new Exception("animation key is null and not set.");
+        if (key == null)
+            throw new Exception("animation key is null and not set.");
 
-            return animations.get(key);
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-        }
-        
-        return null;
+        return animations.get(key);
     }
 }
