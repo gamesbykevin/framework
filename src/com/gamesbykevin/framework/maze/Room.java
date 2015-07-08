@@ -48,7 +48,7 @@ public class Room implements Disposable
      * @param col Column
      * @param row Row
      */
-    protected Room(final int col, final int row)
+    public Room(final int col, final int row)
     {
         this.col = col;
         this.row = row;

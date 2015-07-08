@@ -112,6 +112,20 @@ public class SpriteTest
         assertTrue(sprite.getId().equals(sprite.getId()));
     }
     
+    @Test
+    public void hasIdTest() 
+    {
+        UUID uuid = UUID.randomUUID();
+        
+        assertFalse(sprite.hasId(uuid));
+        assertFalse(sprite1.hasId(uuid));
+        assertFalse(sprite.hasId(sprite1));
+        assertFalse(sprite1.hasId(sprite));
+        
+        assertTrue(sprite.hasId(sprite.getId()));
+        assertTrue(sprite1.hasId(sprite1.getId()));
+    }
+    
     @Test 
     public void disposeTest()
     {

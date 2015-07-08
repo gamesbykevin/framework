@@ -72,11 +72,17 @@ public final class Animation implements Disposable
     @Override
     public void dispose()
     {
-        locations.clear();
-        locations = null;
+        if (locations != null)
+        {
+            locations.clear();
+            locations = null;
+        }
     
-        delays.clear();
-        delays = null;
+        if (delays != null)
+        {
+            delays.clear();
+            delays = null;
+        }
     }
     
     /**

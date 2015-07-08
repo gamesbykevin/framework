@@ -85,7 +85,7 @@ public class Sprite extends Cell implements Disposable
     }
     
     /**
-     * Which object does this one belong to
+     * Which object does this one belong to.
      * @return The unique identifier of the object this belongs to
      */
     public UUID getParentId()
@@ -111,6 +111,26 @@ public class Sprite extends Cell implements Disposable
         return this.id;
     }
     
+    /**
+     * Does this sprite have the matching id?
+     * @param sprite The Sprite containing the id we want to check
+     * @return true if it matches, false otherwise
+     */
+    public boolean hasId(final Sprite sprite)
+    {
+        return (getId().equals(sprite.getId()));
+    }
+    
+    /**
+     * Does this sprite have the matching id?
+     * @param id The id we want to check
+     * @return true if it matches, false otherwise
+     */
+    public boolean hasId(final UUID id)
+    {
+        return (getId().equals(id));
+    }
+    
     @Override
     public void dispose()
     {
@@ -127,6 +147,10 @@ public class Sprite extends Cell implements Disposable
         }
     }
     
+    /**
+     * Get the sprite sheet.
+     * @return The object containing the mappings of all animations for this sprite
+     */
     public SpriteSheet getSpriteSheet()
     {
         return spriteSheet;
