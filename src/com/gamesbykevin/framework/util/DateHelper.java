@@ -1,14 +1,12 @@
 package com.gamesbykevin.framework.util;
 
-import com.gamesbykevin.framework.resources.Disposable;
-
 import java.text.*;
 import java.util.*;
 
-public final class DateHelper implements Disposable 
+public final class DateHelper
 {
     /*
-     * LEGEND HOW TO FORMAT DATE
+    LEGEND HOW TO FORMAT DATE
     Letter 	Date or Time Component 	Presentation            Examples
     G           Era designator          Text                    AD
     y           Year                    Year                    1996; 96
@@ -31,37 +29,65 @@ public final class DateHelper implements Disposable
     Z           Time zone               RFC 822 time zone 	-0800    
     */
     
+    /**
+     * Date format "MM/dd/yyyy HH:mm:ss.SSS"
+     */
     public static final String FORMAT_1 = "MM/dd/yyyy HH:mm:ss.SSS";
+    
+    /**
+     * Date format "MM/dd/yyyy HH:mm:ss"
+     */
     public static final String FORMAT_2 = "MM/dd/yyyy HH:mm:ss";
+    
+    /**
+     * Date format "HH:mm:ss"
+     */
     public static final String FORMAT_3 = "HH:mm:ss";
+    
+    /**
+     * Date format "HH:mm:ss.SSS"
+     */
     public static final String FORMAT_4 = "HH:mm:ss.SSS";
-    
-    //date format object
-    private DateFormat df;
-    
-    @Override
-    public void dispose()
-    {
-        df = null;
-    }
     
     /**
      * Get formatted date of the current time
      * @return The current time format as "MM/dd/yyyy HH:mm:ss.SSS"
      */
-    public final String getFormatedDate()
+    public static final String getFormattedDate()
     {   
-        return getFormatedDate(FORMAT_1);
+        return getFormattedDate(FORMAT_1);
     }
     
-    public final String getFormatedDate(String dateFormat)
+    /**
+     * Get the formatted date of the current time
+     * @param dateFormat The desired date format
+     * @return The current time in the specified format
+     */
+    public static final String getFormattedDate(String dateFormat)
     {
-        return getFormatedDate(dateFormat, Calendar.getInstance());
+        return getFormattedDate(dateFormat, Calendar.getInstance());
     }
     
-    public synchronized String getFormatedDate(String dateFormat, Calendar calendar)
+    /**
+     * Get the formatted date of the specified time
+     * @param dateFormat The format we want to see our result
+     * @param calendar Object containing the desired time
+     * @return The current time in the specified format
+     */
+    public static synchronized String getFormattedDate(String dateFormat, Calendar calendar)
     {
-        return getFormatedDate(dateFormat, calendar.getTime());
+        return getFormattedDate(dateFormat, calendar.getTime());
+    }
+    
+    /**
+     * Get the formatted date of the specified time
+     * @param dateFormat The format we want to see our result
+     * @param date Object containing the desired time
+     * @return The current time in the specified format
+     */
+    public static synchronized String getFormattedDate(final String dateFormat, final Date date)
+    {
+        return getFormattedDate(dateFormat, date.getTime());
     }
     
     /**
@@ -70,19 +96,15 @@ public final class DateHelper implements Disposable
      * @param milliSecondsElapsed Time elapsed in milliseconds
      * @return The formatted date
      */
-    public synchronized String getFormatedDate(String dateFormat, long milliSecondsElapsed)
-    {   //call this method when you want to convert how much time has passed all other methods convert date to a specific format
-        if (df == null)
-        {
-            df = new SimpleDateFormat(dateFormat);
-            df.setTimeZone(TimeZone.getTimeZone("UTC"));
-        }
-        
-        return df.format(milliSecondsElapsed);
-    }
-    
-    public synchronized String getFormatedDate(String dateFormat, Date date)
+    public static synchronized String getFormattedDate(String dateFormat, long milliSecondsElapsed)
     {
-        return new SimpleDateFormat(dateFormat).format(date.getTime());
+        //create new date format
+        DateFormat df = new SimpleDateFormat(dateFormat);
+        
+        //set the assume UTC
+        df.setTimeZone(TimeZone.getTimeZone("UTC"));
+        
+        //return the formatted date
+        return df.format(milliSecondsElapsed);
     }
 }

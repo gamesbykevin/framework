@@ -28,8 +28,10 @@ public class MazeTest
     protected static final int COLS = 20;
     protected static final int ROWS = 20;
     
-    //static buffered image
-    private static final BufferedImage IMAGE = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
+    /**
+     * Static test image
+     */
+    public static final BufferedImage IMAGE = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
     
     /**
      * The number of mazes to create
@@ -394,5 +396,80 @@ public class MazeTest
         }
         
         maze.render(graphics);
+    }
+    
+    /**
+     * Here we are making sure each room has their own unique id
+     * @param maze The maze we want to check
+     */
+    protected void roomIdTest(final Maze maze)
+    {
+        assertNotNull(maze);
+        
+        for (int col1 = 0; col1 < maze.getCols(); col1++)
+        {
+            for (int row1 = 0; row1 < maze.getRows(); row1++)
+            {
+                final Room other = maze.getRoom(col1, row1);
+
+                for (int col = 0; col < maze.getCols(); col++)
+                {
+                    for (int row = 0; row < maze.getRows(); row++)
+                    {
+                        //don't check the same location
+                        if (col == col1 && row == row1)
+                            continue;
+
+                        final Room room = maze.getRoom(col, row);
+
+                        //assume each room has their own id
+                        assertFalse(room.hasId(other));
+                    }
+                }
+            }
+        }
+    }
+    
+    /**
+     * At this point we assume the maze has been generated,<br> 
+     * so we make sure there aren't any rooms with 4 walls.<br>
+     * @param maze The maze we want to check
+     */
+    protected void roomWallTest(final Maze maze)
+    {
+        assertNotNull(maze);
+        
+        //make sure there aren't any rooms with 4 walls
+        for (int col = 0; col < maze.getCols(); col++)
+        {
+            for (int row = 0; row < maze.getRows(); row++)
+            {
+                final Room room = maze.getRoom(col, row);
+
+                assertNotNull(room);
+                assertNotNull(room.getWalls());
+
+                if (room.getWalls().size() == 4)
+                    System.out.println("Room has 4 walls (" + col + "," + row + ")");
+
+                assertTrue(room.getWalls().size() < 4);
+            }
+        }
+    }
+    
+    /**
+     * Here we will generate the maze until it is 100% generated
+     * @param maze The maze we want to generate
+     */
+    protected void generateMazeTest(final Maze maze, final int index) throws Exception
+    {
+        assertNotNull(maze);
+        
+        System.out.println("Creating Maze " + maze.toString() + " count = " + index);
+
+        while (!maze.isGenerated())
+        {
+            maze.update(getRandom());
+        }
     }
 }

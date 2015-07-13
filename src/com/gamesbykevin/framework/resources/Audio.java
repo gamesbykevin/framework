@@ -48,6 +48,9 @@ public final class Audio implements Runnable, Disposable
     
     public Audio(Class source, String relativePath) throws Exception
     {
+        if (source == null)
+            throw new Exception("source parameter is null, and audio will not be loaded");
+        
         //store the file name in case we need it later
         this.relativePath = relativePath;
 
@@ -142,7 +145,7 @@ public final class Audio implements Runnable, Disposable
     }
     
     /**
-     * Play the audio
+     * Play the audio with no audio loop
      */
     public void play()
     {
@@ -163,6 +166,7 @@ public final class Audio implements Runnable, Disposable
             switch(getType())
             {
                 case MID:
+                    
                     //are we looping sound
                     if (loop)
                     {
@@ -176,6 +180,7 @@ public final class Audio implements Runnable, Disposable
 
                 case WAV:
                 case OTHER:
+                    
                     //are we looping sound
                     if (loop)
                     {
@@ -188,6 +193,7 @@ public final class Audio implements Runnable, Disposable
                     break;     
 
                 case MP3:
+                    
                     //are we looping sound
                     if (loop)
                     {

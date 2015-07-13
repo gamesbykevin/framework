@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<images>
+    <image id="Test1">resources/test.bmp</image>
+    <image id="Test2">resources/test.gif</image>
+    <image id="Test3">resources/test.jpg</image>
+    <image id="Test4">resources/test.png</image>
+    <image id="Test5">resources/test.tif</image>
+</images>

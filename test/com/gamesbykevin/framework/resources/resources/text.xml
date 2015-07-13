@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<textFiles>
+    <textFile id="Test1">resources/test1.txt</textFile>
+    <textFile id="Test2">resources/test2.txt</textFile>
+    <textFile id="Test3">resources/test3.txt</textFile>
+</textFiles>

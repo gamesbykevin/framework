@@ -47,7 +47,7 @@ public final class Layer implements Disposable, Sound
     }
     
     //the transition for this layer
-    private Type type;
+    private final Type type;
     
     //the key representing our current option selected
     private String current;
@@ -62,7 +62,7 @@ public final class Layer implements Disposable, Sound
     private Rectangle location;
     
     //window of the full screen
-    private Rectangle screen;
+    private final Rectangle screen;
     
     //transparency of layer
     private float visibility = 1;
@@ -133,13 +133,28 @@ public final class Layer implements Disposable, Sound
     //is the audio enabled
     private boolean enabled = true;
     
-    public Layer(Type type, Rectangle screen)
+    public Layer(Type type, final int x, final int y, final int w, final int h) throws Exception
+    {
+        this(type, new Rectangle(x, y, w, h));
+    }
+    
+    public Layer(Type type, Rectangle screen) throws Exception
     {
         this.screen = screen;
+        this.type = type;
         
+        //create new hashmap to contain the options
         this.options = new LinkedHashMap<>();
         
-        this.type = type;
+        //make sure the screen exists
+        if (this.screen == null)
+            throw new Exception("The game screen can't be null");
+        
+        //data quality
+        if (this.screen.width < 1)
+            throw new Exception("The screen width is less than 1 " + this.screen.width);
+        if (this.screen.height < 1)
+            throw new Exception("The screen height is less than 1 " + this.screen.height);
         
         switch (type)
         {
@@ -173,6 +188,9 @@ public final class Layer implements Disposable, Sound
             case CURTAIN_OPEN_VERTICAL:
                 location = new Rectangle(screen);
                 break;
+                
+            default:
+                throw new Exception("Layer type is not setup here " + type.toString());
         }
     }
     
@@ -250,14 +268,21 @@ public final class Layer implements Disposable, Sound
     }
     
     /**
-     * Does this Layer contain a sound we should be playing
-     * @param sound 
+     * Assign the background music to play while the user is viewing this layer.<br>
+     * This sound will be played in a continuous loop while viewing the layer.<br>
+     * This can be null.
+     * @param sound Audio object
      */
     protected void setSound(final Audio sound)
     {
         this.sound = sound;
     }
     
+    /**
+     * Set the sound effect to play when cycling through the options.<br>
+     * This can be null.
+     * @param optionSound Audio object
+     */
     protected void setOptionSound(final Audio optionSound)
     {
         this.optionSound = optionSound;
@@ -310,20 +335,35 @@ public final class Layer implements Disposable, Sound
     }
     
     /**
-     * If the mouse location is within the boundary of any Option
-     * set that as the current Option which will in turn highlight
-     * 
-     * @param location 
+     * Set the current option according to the supplied parameter(s).<br>
+     * If the location is contained within the boundary of any option we will set that option as the current.<br>
+     * This will also highlight that option when rendered
+     * @param location The mouse (x,y)
      */
     protected void setCurrent(final Point location) throws Exception
     {
+        setCurrent(location.x, location.y);
+    }
+    
+    /**
+     * If the mouse location is within the boundary of any Option set that as the current Option which will in turn highlight
+     * @param x x-coordinate
+     * @param y y-coordinate
+     * @throws Exception 
+     */
+    protected void setCurrent(final int x, final int y) throws Exception
+    {
+        //don't bother checking if the container area does not exist
+        if (this.optionContainerArea == null)
+            return;
+        
         for (Object key : options.keySet().toArray())
         {
             //only check if there is a change
             if (key != getCurrent())
             {
                 //is the mouse location within the boundary of this option
-                if (options.get(key).hasBoundary(location, this.optionContainerArea.x, this.startOptionsY))
+                if (options.get(key).hasBoundary(x, y, this.optionContainerArea.x, this.startOptionsY))
                 {
                     setCurrent(key);
                     setHighlighted();
@@ -385,10 +425,9 @@ public final class Layer implements Disposable, Sound
      * @param menu Our Menu that contains this layer
      * @param mouse Mouse Input
      * @param keyboard Keyboard Input
-     * @param screen Window Layer is contained within
      * @param timeDeduction Time to deduct from timer
      */
-    protected void update(final Menu menu, final Mouse mouse, final Keyboard keyboard, final Rectangle screen, final long time) throws Exception
+    protected void update(final Menu menu, final Mouse mouse, final Keyboard keyboard, final long time) throws Exception
     {
         //make sure we aren't forced to view this layer
         if (!getForce())
@@ -442,8 +481,11 @@ public final class Layer implements Disposable, Sound
                                     
                                     if (isEnabled())
                                     {
-                                        //play sound effect since option changed
-                                        optionSound.play(false);
+                                        if (optionSound != null)
+                                        {
+                                            //play sound effect since option changed
+                                            optionSound.play(false);
+                                        }
                                     }
                                 }
                             }
@@ -470,8 +512,11 @@ public final class Layer implements Disposable, Sound
                                     
                                     if (isEnabled())
                                     {
-                                        //play sound effect since option changed
-                                        optionSound.play(false);
+                                        if (optionSound != null)
+                                        {
+                                            //play sound effect since option changed
+                                            optionSound.play(false);
+                                        }
                                     }
                                 }
                                 else
@@ -538,6 +583,9 @@ public final class Layer implements Disposable, Sound
                 //if the Layer does not have pause enabled
                 if (!getPause())
                 {
+                    if (getNextLayerKey() == null)
+                        throw new Exception("We can't move to the next layer because it is not assigned. Current Layer Key = " + menu.getKey());
+                    
                     //set the new layer
                     menu.setLayer(getNextLayerKey());
                 }
@@ -597,9 +645,8 @@ public final class Layer implements Disposable, Sound
     }
     
     /**
-     * Get the background audio. <br><br>
-     * If it does not exist null is returned.
-     * @return Audio
+     * Get the background audio. <br>
+     * @return Audio The assigned music to play in the background, if it does not exist, null is returned.
      */
     protected Audio getSound()
     {
@@ -741,7 +788,7 @@ public final class Layer implements Disposable, Sound
         this.optionContainerBorderStroke = optionContainerBorderStroke;
     }
     
-    protected void render(Graphics2D graphics, Rectangle screen)
+    protected void render(Graphics2D graphics, Rectangle screen) throws Exception
     {
         if (original == null)
             original = graphics.getComposite();
@@ -822,7 +869,7 @@ public final class Layer implements Disposable, Sound
      * Draw all the options as 1 image
      * @param graphics 
      */
-    private void drawOptions(final Graphics2D graphics)
+    private void drawOptions(final Graphics2D graphics) throws Exception
     {
         if (optionsImage == null)
         {

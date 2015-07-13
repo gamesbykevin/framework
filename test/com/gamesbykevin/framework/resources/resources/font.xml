@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<fonts>
+    <font id="Test1">resources/test1.ttf</font>
+    <font id="Test2">resources/test2.ttf</font>
+    <font id="Test3">resources/test3.ttf</font>
+</fonts>

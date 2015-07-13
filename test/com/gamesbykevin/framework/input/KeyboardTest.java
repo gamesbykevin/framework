@@ -18,6 +18,8 @@ public class KeyboardTest
 {
     private Keyboard keyboard;
     
+    public static Keyboard TEST_KEYBOARD = new Keyboard();
+    
     private static final JPanel PANEL = new JPanel();
     
     //default key events

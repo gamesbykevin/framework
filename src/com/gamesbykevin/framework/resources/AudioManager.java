@@ -27,6 +27,12 @@ public class AudioManager extends ResourceManager implements IResourceManager
         this(xmlConfigurationLocation, NODE_NAME);
     }
     
+    /**
+     * Create new Audio manager that will contain a collection of audio files
+     * @param xmlConfigurationLocation The location of the xml configuration file
+     * @param nodeName The node in the xml file containing the location of the audio files
+     * @throws Exception 
+     */
     public AudioManager(final String xmlConfigurationLocation, final String nodeName) throws Exception
     {
         //call to parent constructor

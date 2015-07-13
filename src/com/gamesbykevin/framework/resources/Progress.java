@@ -144,8 +144,8 @@ public class Progress implements Disposable
     }
     
     /**
-     * Where are we currently at
-     * @return int
+     * Where are we currently at in regards to our goal
+     * @return int The number of updates made to this object
      */
     public int getCount()
     {
@@ -178,8 +178,8 @@ public class Progress implements Disposable
     }
     
     /**
-     * Get the progress towards reaching the goal in the form of a decimal ranging from 0.0 to 1.0
-     * @return double
+     * Get the progress towards reaching the goal in the form of a decimal.
+     * @return double Progress ranging from 0.0 to 1.0
      */
     public double getProgress()
     {

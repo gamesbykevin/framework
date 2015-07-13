@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<sounds>
+    <sound id="Test1">resources/test.wav</sound>
+    <sound id="Test2">resources/test.mp3</sound>
+</sounds>

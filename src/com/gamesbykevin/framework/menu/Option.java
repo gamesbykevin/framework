@@ -77,7 +77,6 @@ public final class Option implements Disposable
         {
             for (Object key : selections.keySet().toArray())
             {
-                getSelection(key).dispose();
                 selections.put(key, null);
             }
             
@@ -110,8 +109,19 @@ public final class Option implements Disposable
     
     /**
      * Set the container this option will be contained within
-     * 
-     * @param location 
+     * @param x x-coordinate
+     * @param y y-coordinate
+     * @param w width
+     * @param h height
+     */
+    public void setBoundary(final int x, final int y, final int w, final int h)
+    {
+        this.setBoundary(new Rectangle(x, y, w, h));
+    }
+    
+    /**
+     * Set the container this option will be contained within
+     * @param boundary Rectangle containing the location and dimensions of the boundary
      */
     public void setBoundary(final Rectangle boundary)
     {
@@ -128,16 +138,7 @@ public final class Option implements Disposable
     }
     
     /**
-     * Check if the point is inside the boundary.
-     * This is so we can determine if the mouse
-     * is inside this Option
-     * 
-     * @param location
-     * @return boolean
-     */
-    /**
-     * Is the location inside the boundary.<br>
-     * This is to determine if the mouse is inside the option.
+     * Is the location inside the boundary?<br>
      * @param location Location of the mouse
      * @param offsetX additional x pixels to add to the mouse location
      * @param offsetY additional y pixels to add to the mouse location
@@ -145,10 +146,24 @@ public final class Option implements Disposable
      */
     public boolean hasBoundary(final Point location, final int offsetX, final int offsetY)
     {
+        return hasBoundary(location.x, location.y, offsetX, offsetY);
+    }
+    
+    /**
+     * Is the location inside the boundary?
+     * @param x x-coordinate we want to check (mouse location)
+     * @param y y-coordinate we want to check (mouse location)
+     * @param offsetX additional x pixels to add to the mouse location
+     * @param offsetY additional y pixels to add to the mouse location
+     * @return true if the point is inside the boundary, false otherwise
+     */
+    public boolean hasBoundary(final int x, final int y, final int offsetX, final int offsetY)
+    {
+        //if the boundary does not exist
         if (boundary == null)
             return false;
         
-        return boundary.contains(location.x - offsetX, location.y - offsetY);
+        return boundary.contains(x - offsetX, y - offsetY);
     }
     
     /**
@@ -285,20 +300,15 @@ public final class Option implements Disposable
      * @param color2 The text color if this Option is highlighted
      * @throws Exception
      */
-    public void render(final Graphics graphics, final Color color1, final Color color2)
+    public void render(final Graphics graphics, final Color color1, final Color color2) throws Exception
     {
-        try
-        {
-            if (getBoundary() == null)
-                throw new Exception("The boundary needs to be set before this option can be drawn");
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-        }
+        if (getBoundary() == null)
+            throw new Exception("The boundary needs to be set before this option can be drawn");
+        if (!hasSelection())
+            throw new Exception("You have to add() at least one selection to this option to render it.");
         
         //if the font size isn't set
-        if (fontSize == 0)
+        if (fontSize < 1.0f)
         {
             fontSize = Menu.getFontSize(getDescription(), getBoundary().width, graphics);
             
@@ -324,4 +334,46 @@ public final class Option implements Disposable
             graphics.drawString(getDescription(), drawX, drawY);
         }
     }
+    
+    /**
+     * Selection
+     */
+    private class Selection
+    {
+        //text to display for selection
+        private String description;
+
+        //the value of the selection
+        private String value;
+
+        /**
+         * Create a new selection
+         * @param value The value
+         * @param description The description
+         */
+        private Selection(final String value, final String description)
+        {
+            this.value = value;
+            this.description = description;
+        }
+
+        /**
+         * Get the value of the selection
+         * @return the value
+         */
+        public String getValue()
+        {
+            return this.value;
+        }
+
+        /**
+         * Get the text that is displayed for this option selection
+         * @return String the description
+         */
+        public String getDescription()
+        {
+            return this.description;
+        }
+    }
 }
+

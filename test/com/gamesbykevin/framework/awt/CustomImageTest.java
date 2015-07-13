@@ -3,6 +3,7 @@ package com.gamesbykevin.framework.awt;
 import com.gamesbykevin.framework.awt.CustomImage;
 
 import java.awt.Color;
+import java.awt.image.BufferedImage;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -17,6 +18,8 @@ import static org.junit.Assert.*;
  */
 public class CustomImageTest 
 {
+    public static final BufferedImage TEST_IMAGE = new BufferedImage(2000,2000, BufferedImage.TYPE_INT_ARGB);
+    
     private class MyImage extends CustomImage
     {
         protected MyImage(final int width, final int height)

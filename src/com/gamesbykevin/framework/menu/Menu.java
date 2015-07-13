@@ -87,7 +87,7 @@ public abstract class Menu implements Disposable, Sound
         //our option object
         Option option;
         
-        for (int temp = 0; temp < layerNodeList.getLength(); temp++) 
+        for (int temp = 0; temp < layerNodeList.getLength(); temp++)
         {
             Node layerNode = layerNodeList.item(temp);
 
@@ -369,12 +369,18 @@ public abstract class Menu implements Disposable, Sound
         screen = null;
     }
     
+    /**
+     * Set the audio enabled or disabled for all the layers in the menu.
+     * @param enabled true if the audio is enabled, false otherwise
+     */
     @Override
     public void setEnabled(final boolean enabled)
     {
         this.enabled = enabled;
         
-        //set the sound enabled/disabled for the layers as well
+        /**
+         * Check all of the layers in the menu
+         */
         for (int i = 0; i < layers.size(); i++)
         {
             try
@@ -388,6 +394,10 @@ public abstract class Menu implements Disposable, Sound
         }
     }
     
+    /**
+     * Is the audio enabled?
+     * @return true if the audio is enabled for all layers, false otherwise
+     */
     @Override
     public boolean isEnabled()
     {
@@ -407,11 +417,14 @@ public abstract class Menu implements Disposable, Sound
     
     /**
      * Check if the parameter key is the current Layer
-     * @param key
+     * @param key The key of the layer we want to check
      * @return boolean
      */
-    protected boolean hasCurrent(final Object key)
+    protected boolean isCurrentLayer(final Object key)
     {
+        if (getCurrent() == null)
+            return false;
+        
         return getCurrent().equalsIgnoreCase(key.toString());
     }
     
@@ -432,7 +445,6 @@ public abstract class Menu implements Disposable, Sound
      * Set the last layer so we will know when the menu is finished
      * @param key Unique identifier for the specific layer
      */
-    //lets us know which layer is the last
     public void setFinish(final Object key)
     {
         this.finish = key.toString();
@@ -479,7 +491,7 @@ public abstract class Menu implements Disposable, Sound
      */
     protected final boolean hasLayer(final Object key)
     {
-        return (layers.get(key) != null);
+        return (layers.get(key.toString()) != null);
     }
     
     /**
@@ -512,28 +524,35 @@ public abstract class Menu implements Disposable, Sound
     }
     
     /**
-     * Get the current layer
-     * @return The current layer in the menu
+     * Get the current layer.<br>
+     * If no current layer has been assigned null will be returned.
+     * @return The current assigned layer in the menu
      * @throws Exception Will be thrown if layer is not found
      */
     public Layer getLayer() throws Exception
-    {   
+    {
+        if (getKey() == null)
+            return null;
+        
         return getLayer(getKey());
     }
     
     /**
-     * Gets the current key
-     * @return Object
+     * Gets the current key of the currently assigned layer.
+     * @return Object, if the current key is not assigned null is returned.
      */
     public String getKey()
-    {   
+    {
+        if (current == null)
+            return null;
+        
         return current.toString();
     }
     
     /**
-     * Does the specified option exist in the specified layer
-     * @param layer
-     * @param option
+     * Does the specified option exist in the specified layer?
+     * @param layer Key of the layer we want to check
+     * @param option Key of the option we are looking for
      * @return true if exists, false otherwise
      */
     public boolean hasOption(final Object layer, final Object option) throws Exception
@@ -570,7 +589,8 @@ public abstract class Menu implements Disposable, Sound
     }
     
     /**
-     * This will set the selection of all Options with the assigned Option key
+     * This will set the selection of all Options with the assigned Option key.<br>
+     * 
      * @param option The option key 
      * @param index The value we want set
      */
@@ -587,24 +607,26 @@ public abstract class Menu implements Disposable, Sound
         }
     }
     
-    //if no layers have been added the menu is not setup
     /**
-     * Has this Menu been setup yet?
+     * Has this Menu been setup yet?<br>
      * If this Menu has at least 1 Layer it has been setup.
-     * 
-     * @return boolean
+     * @return boolean true if at least 1 layer exists, false otherwise
      */
     public boolean isSetup()
-    {   
+    {
         return (!layers.isEmpty());
     }
     
     /**
-     * If the current Layer is the Layer marked as the last
-     * @return boolean
+     * Is the menu finished?<br>
+     * If there is no current layer assigned, false is returned
+     * @return boolean true if the current assigned layer is also the assigned finish layer, false otherwise
      */
     public boolean hasFinished()
     {
+        if (getCurrent() == null)
+            return false;
+            
         return getCurrent().equalsIgnoreCase(getFinish());
     }
     
@@ -616,11 +638,14 @@ public abstract class Menu implements Disposable, Sound
      */
     public void update(final Mouse mouse, final Keyboard keyboard, final long time) throws Exception
     {
+        if (getFinish() == null)
+            throw new Exception("Please assign the layer key of the finish. setFinish()");
+        
         //if the menu has finished we will not update the current layer
         if (hasFinished())
             return;
         
-        getLayer().update(this, mouse, keyboard, screen, time);
+        getLayer().update(this, mouse, keyboard, time);
     }
     
     /**

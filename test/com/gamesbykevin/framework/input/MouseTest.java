@@ -22,6 +22,8 @@ public class MouseTest
 {
     private Mouse mouse;
     
+    public static Mouse TEST_MOUSE = new Mouse();
+    
     private static final JPanel PANEL = new JPanel();
     
     private static final Point DEFAULT_LOCATION = new Point(100,100);

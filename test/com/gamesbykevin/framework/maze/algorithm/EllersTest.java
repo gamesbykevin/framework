@@ -66,54 +66,14 @@ public class EllersTest extends MazeTest
             
             maze = new Ellers(totalCols, totalRows);
             
-            for (int col1 = 0; col1 < maze.getCols(); col1++)
-            {
-                for (int row1 = 0; row1 < maze.getRows(); row1++)
-                {
-                    final Room other = maze.getRoom(col1, row1);
-                    
-                    for (int col = 0; col < maze.getCols(); col++)
-                    {
-                        for (int row = 0; row < maze.getRows(); row++)
-                        {
-                            //don't check the same location
-                            if (col == col1 && row == row1)
-                                continue;
-                            
-                            final Room room = maze.getRoom(col, row);
-                            
-                            //assume each room has their own id
-                            assertFalse(room.hasId(other));
-                        }
-                    }
-                }
-            }
+            //make sure each room has its own id
+            super.roomIdTest(maze);
             
-            System.out.println("Creating Maze " + maze.toString() + " " + index);
+            //generate the maze
+            super.generateMazeTest(maze, index);
             
-            while (!maze.isGenerated())
-            {
-                maze.update(super.getRandom());
-            }
-
-            System.out.println("Maze Created " + maze.toString() + " " + index);
-            
-            //make sure there aren't any rooms with 4 walls
-            for (int col = 0; col < maze.getCols(); col++)
-            {
-                for (int row = 0; row < maze.getRows(); row++)
-                {
-                    final Room room = maze.getRoom(col, row);
-                    
-                    assertNotNull(room);
-                    assertNotNull(room.getWalls());
-                    
-                    if (room.getWalls().size() == 4)
-                        System.out.println("Room has 4 walls (" + col + "," + row + ")");
-                    
-                    assertTrue(room.getWalls().size() < 4);
-                }
-            }
+            //make sure there are no rooms with all 4 walls
+            super.roomWallTest(maze);
         }
     }
     
