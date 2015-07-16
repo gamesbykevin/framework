@@ -17,7 +17,7 @@ public final class GrowingTree extends Maze
     //temporary list of optional rooms
     private List<Room> options, tmp;
     
-    public GrowingTree(final int cols, final int rows)
+    public GrowingTree(final int cols, final int rows) throws Exception
     {
         super(cols, rows);
         

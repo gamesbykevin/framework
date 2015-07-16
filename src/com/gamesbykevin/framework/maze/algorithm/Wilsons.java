@@ -34,7 +34,7 @@ public final class Wilsons extends Maze
     //count the number of moves made before meeting a room part of the maze
     private int count = 0;
     
-    public Wilsons(final int cols, final int rows)
+    public Wilsons(final int cols, final int rows) throws Exception
     {
         super(cols, rows);
         

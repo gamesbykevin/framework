@@ -15,7 +15,7 @@ public final class Ellers extends Maze
     //our current location
     private int col = 0, row = 0;
     
-    public Ellers(final int cols, final int rows)
+    public Ellers(final int cols, final int rows) throws Exception
     {
         super(cols, rows);
         

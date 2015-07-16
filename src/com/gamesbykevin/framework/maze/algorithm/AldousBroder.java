@@ -35,7 +35,7 @@ public class AldousBroder extends Maze
     //temporary object used to generate maze
     private List<Room> options;
     
-    public AldousBroder(final int cols, final int rows)
+    public AldousBroder(final int cols, final int rows) throws Exception
     {
         super(cols, rows);
         

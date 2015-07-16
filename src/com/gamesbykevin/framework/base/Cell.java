@@ -55,6 +55,18 @@ public class Cell
     
     /**
      * Get the distance between the locations
+     * @param column Column 
+     * @param row Row 
+     * @param cell Cell containing (column, row)
+     * @return The distance between the two locations
+     */
+    public static double getDistance(final double column, final double row, final Cell cell)
+    {
+        return getDistance(column, row, cell.getCol(), cell.getRow());
+    }
+    
+    /**
+     * Get the distance between the locations
      * @param column1 Column 1
      * @param row1 Row 1
      * @param column2 Column 2 

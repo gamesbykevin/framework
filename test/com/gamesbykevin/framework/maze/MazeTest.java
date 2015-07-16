@@ -25,8 +25,8 @@ public class MazeTest
     //our maze object
     private Maze maze;
     
-    protected static final int COLS = 20;
-    protected static final int ROWS = 20;
+    protected static final int COLS = 21;
+    protected static final int ROWS = 21;
     
     /**
      * Static test image
@@ -41,12 +41,22 @@ public class MazeTest
     //the minimum dimension size of the maze
     protected static final int MIN = 10;
     
-    public MazeTest()
+    public MazeTest() throws Exception
     {
         random = new Random();
         
         //create a new instance of this maze, just for testing
         this.maze = new Kruskals(Maze.DEFAULT_MAZE_DIMENSION, Maze.DEFAULT_MAZE_DIMENSION);
+    }
+    
+    protected int getRandomCols()
+    {
+        return (getRandom().nextInt(COLS - MIN) + MIN);
+    }
+    
+    protected int getRandomRows()
+    {
+        return (getRandom().nextInt(ROWS - MIN) + MIN);
     }
     
     protected Random getRandom()
@@ -60,7 +70,7 @@ public class MazeTest
     }
     
     @BeforeClass
-    public static void setUpClass() 
+    public static void setUpClass() throws Exception
     {
         Maze maze = new Kruskals(10, 10);
         
@@ -68,7 +78,7 @@ public class MazeTest
     }
     
     @AfterClass
-    public static void tearDownClass() 
+    public static void tearDownClass() throws Exception
     {
         Maze maze = new Kruskals(10, 10);
         maze.dispose();
@@ -76,7 +86,7 @@ public class MazeTest
     }
     
     @Before
-    public void setUp() 
+    public void setUp() throws Exception
     {
         //create new instance, use this for testing
         maze = new Kruskals(COLS, ROWS);
@@ -107,14 +117,14 @@ public class MazeTest
     }
     
     @After
-    public void tearDown() 
+    public void tearDown() throws Exception
     {
         maze.dispose();
         maze = null;
     }
     
     @Test
-    public void getProgressTest() 
+    public void getProgressTest() throws Exception
     {
         //create new instance, use this for testing
         maze = new Kruskals(COLS, ROWS);
@@ -142,7 +152,7 @@ public class MazeTest
     }
     
     @Test
-    public void getStartRowTest()
+    public void getStartRowTest() throws Exception
     {
         //create new instance, use this for testing
         maze = new Kruskals(COLS, ROWS);
@@ -158,7 +168,7 @@ public class MazeTest
     }
     
     @Test
-    public void getStartColTest()
+    public void getStartColTest() throws Exception
     {
         //create new instance, use this for testing
         maze = new Kruskals(COLS, ROWS);
@@ -174,7 +184,7 @@ public class MazeTest
     }
     
     @Test
-    public void getStartLocationTest()
+    public void getStartLocationTest() throws Exception
     {
         //create new instance, use this for testing
         maze = new Kruskals(COLS, ROWS);
@@ -192,7 +202,7 @@ public class MazeTest
     }
 
     @Test
-    public void getFinishRowTest()
+    public void getFinishRowTest() throws Exception
     {
         //create new instance, use this for testing
         maze = new Kruskals(COLS, ROWS);
@@ -208,7 +218,7 @@ public class MazeTest
     }
     
     @Test
-    public void getFinishColTest()
+    public void getFinishColTest() throws Exception
     {
         //create new instance, use this for testing
         maze = new Kruskals(COLS, ROWS);
@@ -224,7 +234,7 @@ public class MazeTest
     }
     
     @Test
-    public void getFinishLocationTest()
+    public void getFinishLocationTest() throws Exception
     {
         //create new instance, use this for testing
         maze = new Kruskals(COLS, ROWS);
@@ -242,7 +252,7 @@ public class MazeTest
     }
     
     @Test
-    public void populateRoomsTest()
+    public void populateRoomsTest() throws Exception
     {
         //create new instance, use this for testing
         maze = new Kruskals(COLS, ROWS);
@@ -259,7 +269,7 @@ public class MazeTest
     }
     
     @Test
-    public void hasBoundsTest()
+    public void hasBoundsTest() throws Exception
     {
         //create new instance, use this for testing
         maze = new Kruskals(Maze.DEFAULT_MAZE_DIMENSION, Maze.DEFAULT_MAZE_DIMENSION);
@@ -271,7 +281,7 @@ public class MazeTest
     }
     
     @Test
-    public void disposeTest()
+    public void disposeTest() throws Exception
     {
         //create new instance, use this for testing
         maze = new Kruskals(Maze.DEFAULT_MAZE_DIMENSION, Maze.DEFAULT_MAZE_DIMENSION);
@@ -284,15 +294,22 @@ public class MazeTest
     }
     
     @Test
-    public void getRoomTest()
+    public void getRoomTest() throws Exception
     {
         //create new instance, use this for testing
         maze = new Kruskals(COLS, ROWS);
         
-        assertNotNull(maze.getRoom(COLS - 3, ROWS - 7));
+        //only assume if in bounds
+        if (maze.hasBounds(COLS - 3, ROWS - 7))
+            assertNotNull(maze.getRoom(COLS - 3, ROWS - 7));
+        
         assertNull(maze.getRoom(-1, 0));
         assertNotNull(maze.getRoom(0, 0));
-        assertNotNull(maze.getRoom(COLS - 1, ROWS - 1));
+        
+        //only assume if in bounds
+        if (maze.hasBounds(COLS - 1, ROWS - 1))
+            assertNotNull(maze.getRoom(COLS - 1, ROWS - 1));
+        
         assertNull(maze.getRoom(COLS, ROWS));
         
         for (int col = 0; col < maze.getCols(); col++)
@@ -307,7 +324,7 @@ public class MazeTest
     }
     
     @Test
-    public void getRoomsTest()
+    public void getRoomsTest() throws Exception
     {
         //create new instance, use this for testing
         maze = new Kruskals(COLS, ROWS);
@@ -318,7 +335,7 @@ public class MazeTest
     }
     
     @Test
-    public void getColsTest()
+    public void getColsTest() throws Exception
     {
         //create new instance, use this for testing
         maze = new Kruskals(COLS, ROWS);
@@ -326,7 +343,7 @@ public class MazeTest
     }
     
     @Test
-    public void getRowsTest()
+    public void getRowsTest() throws Exception
     {
         //create new instance, use this for testing
         maze = new Kruskals(COLS, ROWS);
@@ -335,7 +352,7 @@ public class MazeTest
     }
     
     @Test
-    public void updateProgrssTest()
+    public void updateProgrssTest() throws Exception
     {
         //create new instance, use this for testing
         maze = new Kruskals(COLS, ROWS);
@@ -358,7 +375,7 @@ public class MazeTest
     }
     
     @Test
-    public void setDisplayProgressTest()
+    public void setDisplayProgressTest() throws Exception
     {
         //create new instance, use this for testing
         maze = new Kruskals(COLS, ROWS);

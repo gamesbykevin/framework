@@ -20,7 +20,7 @@ public final class Sidewinder extends Maze
     //the current location
     private int currentCol, currentRow;
     
-    public Sidewinder(final int cols, final int rows)
+    public Sidewinder(final int cols, final int rows) throws Exception
     {
         super(cols, rows);
         

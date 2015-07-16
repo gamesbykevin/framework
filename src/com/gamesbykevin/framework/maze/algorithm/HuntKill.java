@@ -24,7 +24,7 @@ public final class HuntKill extends Maze
     //have we hit a dead end
     private boolean deadend = false;
     
-    public HuntKill(final int cols, final int rows)
+    public HuntKill(final int cols, final int rows) throws Exception
     {
         super(cols, rows);
         

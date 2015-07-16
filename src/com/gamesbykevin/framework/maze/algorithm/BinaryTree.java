@@ -31,7 +31,7 @@ public class BinaryTree extends Maze
     //the direction we will use
     private Directions direction;
     
-    public BinaryTree(final int cols, final int rows)
+    public BinaryTree(final int cols, final int rows) throws Exception
     {
         super(cols, rows);
         

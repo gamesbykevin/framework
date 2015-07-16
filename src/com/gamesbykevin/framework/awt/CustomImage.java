@@ -93,6 +93,8 @@ public abstract class CustomImage extends Sprite implements Disposable
     @Override
     public void dispose()
     {
+        super.dispose();
+        
         if (graphics2d != null)
         {
             graphics2d.dispose();

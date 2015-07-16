@@ -16,7 +16,7 @@ import java.util.UUID;
  */
 public final class Kruskals extends Maze
 {
-    public Kruskals(final int cols, final int rows)
+    public Kruskals(final int cols, final int rows) throws Exception
     {
         super(cols, rows);
         
@@ -40,13 +40,13 @@ public final class Kruskals extends Maze
         
         //create a list of optional directions to randomly choose from
         List<Room.Wall> directions = new ArrayList<>();
-        
+
         //now check if not part of a set for each neighbor (north, south, east, west)
         final Room east = getRoom(room.getCol() + 1, room.getRow());
         final Room west = getRoom(room.getCol() - 1, room.getRow());
         final Room north = getRoom(room.getCol(), room.getRow() - 1);
         final Room south = getRoom(room.getCol(), room.getRow() + 1);
-        
+
         //if the room exists and is not part of the same set
         if (east != null && !east.hasId(room))
             directions.add(Wall.East);
@@ -56,7 +56,7 @@ public final class Kruskals extends Maze
             directions.add(Wall.North);
         if (south != null && !south.hasId(room))
             directions.add(Wall.South);
-        
+
         //now randomly join a neighboring room
         joinRooms(room, directions.get(random.nextInt(directions.size())));
         
@@ -109,9 +109,9 @@ public final class Kruskals extends Maze
     }
     
     /**
-     * Get the room with the lowest weight
+     * Get the room with the lowest weight.
      * @param random Object used to make random decisions
-     * @return The room with the fewest amount of matching sets, 
+     * @return The room with the fewest amount of matching sets, if no rooms are available return null
      */
     private Room getLowestWeight(final Random random)
     {

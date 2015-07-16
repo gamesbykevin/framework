@@ -17,7 +17,7 @@ public final class Prims extends Maze
     //list of rooms to check
     private List<Room> options;
     
-    public Prims(final int cols, final int rows)
+    public Prims(final int cols, final int rows) throws Exception
     {
         super(cols, rows);
         

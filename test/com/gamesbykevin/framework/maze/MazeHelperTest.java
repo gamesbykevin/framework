@@ -15,7 +15,7 @@ import static org.junit.Assert.*;
  */
 public class MazeHelperTest extends MazeTest
 {
-    public MazeHelperTest()
+    public MazeHelperTest() throws Exception
     {
         super();
     }
@@ -35,26 +35,31 @@ public class MazeHelperTest extends MazeTest
     @Test
     public void joinRoomsTest() throws Exception
     {
+        //don't continue if not big enough
+        if (getMaze().getCols() < 2)
+            return;
+        if (getMaze().getRows() < 2)
+            return;
+        
         //fill each room with 4 walls
         getMaze().populateRooms();
         
         Room room1 = getMaze().getRoom(0, 0);
         Room room2 = getMaze().getRoom(1, 0);
-        
+
         assertTrue(room1.getWalls().size() == Wall.values().length);
         assertTrue(room2.getWalls().size() == Wall.values().length);
-        
+
         MazeHelper.joinRooms(room1, room2);
-        
+
         assertFalse(room1.getWalls().size() == Wall.values().length);
         assertFalse(room2.getWalls().size() == Wall.values().length);
-        
+
         assertTrue(room1.getWalls().size() == Wall.values().length - 1);
         assertTrue(room2.getWalls().size() == Wall.values().length - 1);
-        
+
         assertFalse(room1.hasWall(Wall.East));
         assertFalse(room2.hasWall(Wall.West));
-        
         
         //fill each room with 4 walls
         getMaze().populateRooms();
@@ -170,9 +175,9 @@ public class MazeHelperTest extends MazeTest
         
         int cost = 0;
         
-        for (int col = 0; col < getMaze().getCols(); col++)
+        for (int row = 0; row < getMaze().getRows(); row++)
         {
-            for (int row = 0; row < getMaze().getRows(); row++)
+            for (int col = 0; col < getMaze().getCols(); col++)
             {
                 //get the current room
                 final Room room = getMaze().getRoom(col, row);
@@ -188,7 +193,7 @@ public class MazeHelperTest extends MazeTest
             }
         }
         
-        //no we know who should win, so lets calculate the finish
+        //now we know who should win, so lets calculate the finish
         MazeHelper.locateFinish(getMaze());
         
         //assume this is the location

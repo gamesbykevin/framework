@@ -46,9 +46,15 @@ public abstract class Maze extends Sprite implements IMaze
      * Create a new maze of specified size
      * @param cols Total columns
      * @param rows Total rows
+     * @throws Exception If the minimum required dimensions is not provided
      */
-    protected Maze(final int cols, final int rows)
+    protected Maze(final int cols, final int rows) throws Exception
     {
+        if (cols < 2)
+            throw new Exception("The maze must contain at least 2 columns");
+        if (rows < 2)
+            throw new Exception("The maze must contain at least 2 rows");
+        
         this.cols = cols;
         this.rows = rows;
         

@@ -19,19 +19,19 @@ public class KruskalsTest extends MazeTest
     //our maze object
     private Maze maze;
     
-    public KruskalsTest() 
+    public KruskalsTest() throws Exception
     {
         super();
     }
     
     @BeforeClass
-    public static void setUpClass() 
+    public static void setUpClass() throws Exception
     {
         Maze maze = new Kruskals(COLS, ROWS);
     }
     
     @AfterClass
-    public static void tearDownClass() 
+    public static void tearDownClass() throws Exception
     {
         Maze maze = new Kruskals(COLS, ROWS);
         maze.dispose();
@@ -40,7 +40,7 @@ public class KruskalsTest extends MazeTest
     
     @Before
     @Override
-    public void setUp() 
+    public void setUp() throws Exception
     {
         maze = new Kruskals(COLS, ROWS);
         assertNotNull(maze);
@@ -48,7 +48,7 @@ public class KruskalsTest extends MazeTest
     
     @After
     @Override
-    public void tearDown() 
+    public void tearDown() throws Exception
     {
         maze = new Kruskals(COLS, ROWS);
         maze.dispose();
@@ -61,8 +61,8 @@ public class KruskalsTest extends MazeTest
     {
         for (int index = 0; index < CREATE_MAZE_LIMIT; index++)
         {
-            final int totalCols = getRandom().nextInt(COLS - MIN) + MIN;
-            final int totalRows = getRandom().nextInt(ROWS - MIN) + MIN;
+            final int totalCols = getRandomCols();
+            final int totalRows = getRandomRows();
             
             maze = new Kruskals(totalCols, totalRows);
             
@@ -79,7 +79,7 @@ public class KruskalsTest extends MazeTest
     
     @Test
     @Override
-    public void disposeTest() 
+    public void disposeTest() throws Exception
     {
         maze = new Kruskals(COLS, ROWS);
         maze.dispose();
