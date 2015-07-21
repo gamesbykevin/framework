@@ -36,7 +36,7 @@ public class MazeTest
     /**
      * The number of mazes to create
      */
-    protected static final int CREATE_MAZE_LIMIT = 1000;
+    protected static final int CREATE_MAZE_LIMIT = 500;
     
     //the minimum dimension size of the maze
     protected static final int MIN = 10;

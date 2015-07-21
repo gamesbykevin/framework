@@ -66,7 +66,7 @@ public class Cell
     }
     
     /**
-     * Get the distance between the locations
+     * Get the distance between the 2 locations (column1, row1) and (column2, row2)
      * @param column1 Column 1
      * @param row1 Row 1
      * @param column2 Column 2 

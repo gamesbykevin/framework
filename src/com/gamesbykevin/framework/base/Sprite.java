@@ -103,6 +103,32 @@ public class Sprite extends Cell implements Disposable
     }
     
     /**
+     * Do we have the parent id?
+     * @param sprite The Sprite containing the parent id we want to check
+     * @return true if we have the parent id, false otherwise
+     */
+    public boolean hasParentId(final Sprite sprite)
+    {
+        return (hasParentId(sprite.getParentId()));
+    }
+    
+    /**
+     * Do we have the parent id?
+     * @param parentId The parent if to check
+     * @return true if we have the parent id, false otherwise
+     */
+    public boolean hasParentId(final UUID parentId)
+    {
+        //if either is null, return false
+        if (parentId == null)
+            return false;
+        if (getParentId() == null)
+            return false;
+        
+        return (getParentId().equals(parentId));
+    }
+    
+    /**
      * Get the unique identifier for this object
      * @return The unique identifier
      */
