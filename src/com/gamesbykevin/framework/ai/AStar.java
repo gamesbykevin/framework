@@ -48,16 +48,6 @@ public class AStar implements Disposable
     private List<Node> closed;
     
     /**
-     * Did we start path finding
-     */
-    private boolean start = false;
-    
-    /**
-     * Have we finished the process
-     */
-    private boolean finish = false;
-    
-    /**
      * The additional cost to add when moving vertical or horizontal
      */
     protected static final int MOVE_VERTICAL_HORIZONTAL = 10;
@@ -197,6 +187,12 @@ public class AStar implements Disposable
      */
     public void generate()
     {
+        //clear lists before we generate
+        open.clear();
+        closed.clear();
+        path.clear();
+        boolean start = false;
+        
         //temporary node
         Node node;
         
@@ -261,9 +257,6 @@ public class AStar implements Disposable
 
                 //add this location to the path
                 path.add(new Cell(column, row));
-
-                //we are finished
-                finish = true;
 
                 //exit the loop
                 break;
