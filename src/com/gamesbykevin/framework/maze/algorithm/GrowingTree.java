@@ -12,7 +12,7 @@ import java.util.Random;
  * Growing Tree maze generation algorithm
  * @author GOD
  */
-public final class GrowingTree extends Maze
+public class GrowingTree extends Maze
 {
     //temporary list of optional rooms
     private List<Room> options, tmp;

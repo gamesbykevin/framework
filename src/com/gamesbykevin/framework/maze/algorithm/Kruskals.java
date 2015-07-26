@@ -14,7 +14,7 @@ import java.util.UUID;
  * Kruskal's maze generation algorithm
  * @author GOD
  */
-public final class Kruskals extends Maze
+public class Kruskals extends Maze
 {
     public Kruskals(final int cols, final int rows) throws Exception
     {

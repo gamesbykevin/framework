@@ -14,7 +14,7 @@ import java.util.Random;
  * Recursive Backtracking maze generation algorithm
  * @author GOD
  */
-public final class RecursiveBacktracking extends Maze
+public class RecursiveBacktracking extends Maze
 {
     //our current location
     private int col = 0, row = 0;

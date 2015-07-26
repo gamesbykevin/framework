@@ -152,6 +152,38 @@ public class MazeTest
     }
     
     @Test
+    public void getStartTest() throws Exception
+    {
+        //create new instance, use this for testing
+        maze = new Kruskals(COLS, ROWS);
+        
+        assertTrue(maze.getStart().getCol() == 0);
+        assertTrue(maze.getStart().getRow() == 0);
+        
+        //assign a value
+        maze.setFinishLocation(23, 10);
+        
+        assertTrue(maze.getFinish().getCol() == 23);
+        assertTrue(maze.getFinish().getRow() == 10);
+    }
+    
+    @Test
+    public void getFinishTest() throws Exception
+    {
+        //create new instance, use this for testing
+        maze = new Kruskals(COLS, ROWS);
+        
+        assertTrue(maze.getFinish().getCol() == 0);
+        assertTrue(maze.getFinish().getRow() == 0);
+        
+        //assign a value
+        maze.setFinishLocation(62, 343);
+        
+        assertTrue(maze.getFinish().getCol() == 62);
+        assertTrue(maze.getFinish().getRow() == 343);
+    }
+    
+    @Test
     public void getStartRowTest() throws Exception
     {
         //create new instance, use this for testing

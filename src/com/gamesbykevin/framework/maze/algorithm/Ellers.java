@@ -10,7 +10,7 @@ import java.util.Random;
  * Ellers maze generation algorithm
  * @author GOD
  */
-public final class Ellers extends Maze
+public class Ellers extends Maze
 {
     //our current location
     private int col = 0, row = 0;

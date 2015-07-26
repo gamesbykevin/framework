@@ -12,7 +12,7 @@ import java.util.Random;
  * Sidewinder maze generation algorithm
  * @author GOD
  */
-public final class Sidewinder extends Maze
+public class Sidewinder extends Maze
 {
     //temporary list of optional rooms
     private List<Room> options;

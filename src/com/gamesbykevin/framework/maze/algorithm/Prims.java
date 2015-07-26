@@ -12,7 +12,7 @@ import java.util.Random;
  * Prim's maze generation algorithm
  * @author GOD
  */
-public final class Prims extends Maze
+public class Prims extends Maze
 {
     //list of rooms to check
     private List<Room> options;

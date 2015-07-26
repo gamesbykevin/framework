@@ -105,6 +105,24 @@ public abstract class Maze extends Sprite implements IMaze
     }
     
     /**
+     * Get the finish location
+     * @return The finish (column, row)
+     */
+    public Cell getFinish()
+    {
+        return this.finish;
+    }
+    
+    /**
+     * Get the start location
+     * @return The start (column, row)
+     */
+    public Cell getStart()
+    {
+        return this.start;
+    }
+    
+    /**
      * Get the start column
      * @return The start column
      */
@@ -226,10 +244,10 @@ public abstract class Maze extends Sprite implements IMaze
     }
     
     /**
-     * Get rooms
+     * Get the rooms.
      * @return The array of rooms that make up the maze
      */
-    protected Room[][] getRooms()
+    public Room[][] getRooms()
     {
         return this.rooms;
     }
@@ -251,7 +269,6 @@ public abstract class Maze extends Sprite implements IMaze
     {
         return this.rows;
     }
-    
     
     /**
      * Update the progress of our maze creation.<br>

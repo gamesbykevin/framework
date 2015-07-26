@@ -13,7 +13,7 @@ import java.util.Random;
  * Hunt Kill maze generation algorithm
  * @author GOD
  */
-public final class HuntKill extends Maze
+public class HuntKill extends Maze
 {
     //current location
     private int currentCol, currentRow;

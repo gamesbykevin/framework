@@ -14,7 +14,7 @@ import java.util.Random;
  * Wilson's maze generation algorithm
  * @author GOD
  */
-public final class Wilsons extends Maze
+public class Wilsons extends Maze
 {
     //temporary list for rooms
     private List<Room> options;
